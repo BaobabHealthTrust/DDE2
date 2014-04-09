@@ -1,7 +1,15 @@
 require 'couchrest_model'
 
 class Person < CouchRest::Model::Base
-	property :national_id,String
+
+  def national_id
+    self['_id']
+  end
+
+  def national_id=(value)
+    self['_id']=value
+  end
+
   property :assigned_site,String
   property :patient_assigned,TrueClass, :default => false
   property :gender,String
