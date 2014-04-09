@@ -4,7 +4,7 @@ class Npid < CouchRest::Model::Base
 
   
 
-  def national_id
+  def incremantal_id
     self['_id']
   end
 
@@ -13,10 +13,11 @@ class Npid < CouchRest::Model::Base
     return previous_id
   end
 
-  def national_id=(value) 
+  def incremantal_id=(value) 
        self['_id'] = (value.to_i + 1).to_s
   end
-
+  
+  property :national_id, String  
   property :site_code, String
   property :assigned, TrueClass, :default => false
   
