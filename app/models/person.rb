@@ -10,10 +10,13 @@ class Person < CouchRest::Model::Base
     self['_id']=value
   end
 
-  property :assigned_site,String
-  property :patient_assigned,TrueClass, :default => false
-  property :gender,String
-  property :birthdate,String
-  property :birthdate_estimated,TrueClass, :default => false
+  property :assigned_site, String
+  property :patient_assigned, TrueClass, :default => false
+  property :gender, String
+  property :birthdate, String
+  property :birthdate_estimated,  TrueClass, :default => false
+
   timestamps!
+
+
 end
