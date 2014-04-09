@@ -28,6 +28,8 @@ gem 'couchrest_model'
 
 gem 'passenger'
 
+gem 'rb-readline'
+
 #gem 'bootstrap-sass', '>= 3.0.0.0'
 
 # Use ActiveModel has_secure_password
