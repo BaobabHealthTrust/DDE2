@@ -4,16 +4,16 @@ class Npid < CouchRest::Model::Base
 
   
 
-  def incremantal_id
+  def incremental_id
     self['_id']
   end
 
   def self.last_id
-    previous_id = self.by__id.last.national_id
+    previous_id = self.by__id.last.id
     return previous_id
   end
 
-  def incremantal_id=(value) 
+  def incremental_id=(value) 
        self['_id'] = (value.to_i + 1).to_s
   end
   
