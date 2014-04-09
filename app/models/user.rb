@@ -6,7 +6,7 @@ class User < CouchRest::Model::Base
   property :password_hash, String
   property :email, String
   property :description, String
-  property :disabled, TrueClass, :default => false
+  property :active, TrueClass, :default => true
   property :notify, TrueClass, :default => false
   property :site_code, String
   
