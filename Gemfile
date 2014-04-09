@@ -28,7 +28,7 @@ gem 'couchrest_model'
 
 gem 'passenger'
 
-gem 'bootstrap-sass', '>= 3.0.0.0'
+#gem 'bootstrap-sass', '>= 3.0.0.0'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
