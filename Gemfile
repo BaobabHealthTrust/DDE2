@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-
+ruby '1.9.3'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.0'
 # Use SCSS for stylesheets
@@ -27,6 +27,8 @@ gem 'spring',        group: :development
 gem 'couchrest_model'
 
 gem 'passenger'
+
+gem 'bootstrap-sass', '>= 3.0.0.0'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
