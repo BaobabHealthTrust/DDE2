@@ -10,9 +10,16 @@ class Site < CouchRest::Model::Base
     self['_id']=value
   end
 
+  def self.site_code
+      "KCH"
+  end
+
   property :name, String
   property :description, String
   
   timestamps!
 
+  design do
+    view :by__id
+  end
 end

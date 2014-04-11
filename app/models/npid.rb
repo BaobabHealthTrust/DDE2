@@ -23,9 +23,20 @@ class Npid < CouchRest::Model::Base
   
   timestamps!
 
-
   design do
     view :by__id
+    view :unassigned_to_site,
+         :map => "function(doc){
+            if (doc['type'] == 'Npid' && doc['site_code'] == ''){
+                  emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned});
+            }
+          }"
+    view :unassigned_at_site,
+         :map => "function(doc){
+            if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.site_code}' && !doc.assigned ){
+              emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned});
+            }
+          }"
   end
 
 end

@@ -20,3 +20,4 @@ mockups
 rerun.txt
 nbproject
 Gemfile.lock
+.idea/*

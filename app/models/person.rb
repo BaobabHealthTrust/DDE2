@@ -19,4 +19,7 @@ class Person < CouchRest::Model::Base
   timestamps!
 
 
+  design do
+    view :by__id
+  end
 end
