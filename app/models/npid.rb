@@ -3,13 +3,12 @@ require 'couchrest_model'
 class Npid < CouchRest::Model::Base
 
   
-
   def incremental_id
     self['_id']
   end
 
   def self.last_id
-    previous_id = self.by__id.last.id
+    previous_id = self.by__id.last.id rescue 0
     return previous_id
   end
 
