@@ -1,4 +1,16 @@
 Rails.application.routes.draw do
+  get 'people/index'
+
+  get 'people/new'
+
+  get 'people/create'
+
+  get 'people/edit'
+
+  get 'people/update'
+
+  get 'people/destroy'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
