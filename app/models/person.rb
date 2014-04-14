@@ -13,7 +13,7 @@ class Person < CouchRest::Model::Base
   property :assigned_site, String
   property :patient_assigned, TrueClass, :default => false
 
-  property :attributes  do
+  property :person_attributes  do
     property :citizenship, String
     property :occupation, String
     property :home_phone_number, String
