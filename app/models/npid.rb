@@ -37,6 +37,18 @@ class Npid < CouchRest::Model::Base
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned});
             }
           }"
+    view :assigned_at_site,
+         :map => "function(doc){
+            if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.site_code}' && doc.assigned ){
+              emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned});
+            }
+          }"
+    view :assigned_to_site,
+         :map => "function(doc){
+            if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.site_code}' ){
+              emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned});
+            }
+          }"
   end
 
 end
