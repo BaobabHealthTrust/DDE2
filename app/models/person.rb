@@ -29,10 +29,7 @@ class Person < CouchRest::Model::Base
   end
 
   property :patient do
-    property :identifiers do 
-     property :old_national_id,String
-     property :diabetes_number,String	
-    
+    property :identifiers, [String]
   end
 
   property :birthdate, String
