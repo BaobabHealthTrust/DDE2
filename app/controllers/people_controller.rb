@@ -46,7 +46,6 @@ class PeopleController < ApplicationController
         format.json { render :json => @person, :status => :created, :location => @person }
       else
         status = @person.errors.delete(:status) || :unprocessable_entity
-
         format.html { render :action => 'new' }
         format.xml  { render :xml  => @person.errors, :status => status }
         format.json { render :json => @person.errors, :status => status }
