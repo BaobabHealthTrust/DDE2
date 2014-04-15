@@ -1,4 +1,15 @@
 Rails.application.routes.draw do
+  root 'people#index'
+  
+  resources :people do
+    collection do
+      post :create, :update, :destroy
+      get :index, :new, :show, :edit
+    end
+  end
+
+  
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
