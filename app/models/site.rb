@@ -16,7 +16,7 @@ class Site < CouchRest::Model::Base
     end
   end
 
-  def self.currentsite_code
+  def self.current_code
     if self.proxy?
        SITE_CONFIG[:site_code]
     else
