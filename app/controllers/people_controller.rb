@@ -9,11 +9,9 @@ class PeopleController < ApplicationController
   end
 
   def create
-
     @person = Person.new()
-
-    @person.national_id = ""
-    @person.assigned_site =  Site.current_id 
+    @person.national_id = Npid.unassigned_at_site.first.national_id
+    @person.assigned_site =  Site.current_code
     @person.patient_assigned = true
     @person.person_attributes.citizenship = params[:person]["data"]["attributes"]["citizenship"] rescue nil
     @person.person_attributes.occupation = params[:person]["data"]["attributes"]["occupation"] rescue nil
