@@ -9,28 +9,36 @@ class PeopleController < ApplicationController
   end
 
   def create
-    @person = Person.new()
-    @person.national_id = Npid.unassigned_at_site.first.national_id
-    @person.assigned_site =  Site.current_code
-    @person.patient_assigned = true
-    @person.person_attributes.citizenship = params[:person]["data"]["attributes"]["citizenship"] rescue nil
-    @person.person_attributes.occupation = params[:person]["data"]["attributes"]["occupation"] rescue nil
-    @person.person_attributes.home_phone_number = params[:person]["data"]["attributes"]["home_phone_number"] rescue nil
-    @person.person_attributes.cell_phone_number = params[:person]["data"]["attributes"]["cell_phone_number"] rescue nil
-    @person.person_attributes.race = params[:person]["data"]["attributes"]["race"] rescue nil
-    @person.gender = params[:person]["data"]["gender"]
-    @person.names.given_name = params[:person]["data"]["names"]["given_name"]
-    @person.names.family_name = params[:person]["data"]["names"]["family_name"]
-    @person.birthdate = params[:person]["data"]["birthdate"] rescue nil
-    @person.birthdate_estimated = params[:person]["data"]["birthdate_estimated"] rescue nil
-    @person.addresses.current_residence = params[:person]["data"]["addresses"]["address1"] rescue nil
-    @person.addresses.current_village = params[:person]["data"]["addresses"]["addresses"] rescue nil
-    @person.addresses.current_ta = params[:person]["data"]["addresses"]["state_province"] rescue nil
-    @person.addresses.current_district = params[:person]["data"]["addresses"]["county_district"] rescue nil
-    @person.addresses.home_village = params[:person]["data"]["addresses"]["neighborhood_cell"] rescue nil
-    @person.addresses.home_ta = params[:person]["data"]["addresses"]["city_village"] rescue nil
-    @person.addresses.home_district = params[:person]["data"]["addresses"]["current_district"] rescue nil
+    @person = Person.new(
+      				 :national_id => Npid.unassigned_at_site.first.national_id,
+							 :assigned_site =>  Site.current_code,
+							 :patient_assigned => true,
+							 :person_attributes => { :citizenship => params[:person]["data"]["attributes"]["citizenship"] || nil,
+																			 :occupation => params[:person]["data"]["attributes"]["occupation"] || nil,
+																			 :home_phone_number => params[:person]["data"]["attributes"]["home_phone_number"] || nil,
+																			 :cell_phone_number => params[:person]["data"]["attributes"]["cell_phone_number"] || nil,
+																			 :race => params[:person]["data"]["attributes"]["race"] || nil
+										                  },
 
+								:gender => params[:person]["data"]["gender"],
+
+								:names => { :given_name => params[:person]["data"]["names"]["given_name"],
+							 					    :family_name => params[:person]["data"]["names"]["family_name"]
+										      },
+
+								:birthdate => params[:person]["data"]["birthdate"] || nil,
+								:birthdate_estimated => params[:person]["data"]["birthdate_estimated"] || nil,
+
+								:addresses => {:current_residence => params[:person]["data"]["addresses"]["address1"] || nil,
+												       :current_village => params[:person]["data"]["addresses"]["addresses"] || nil,
+												       :current_ta => params[:person]["data"]["addresses"]["state_province"] || nil,
+												       :current_district => params[:person]["data"]["addresses"]["county_district"] || nil,
+												       :home_village => params[:person]["data"]["addresses"]["neighborhood_cell"] || nil,
+												       :home_ta => params[:person]["data"]["addresses"]["city_village"] || nil,
+												       :home_district => params[:person]["data"]["addresses"]["current_district"] || nil
+                              }
+		 )
+    
     respond_to do |format|
       if @person.save
         format.html { redirect_to(@person, :notice => 'Person was successfully created.') }
