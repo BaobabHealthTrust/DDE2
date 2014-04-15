@@ -23,9 +23,20 @@ class PersonControllerTest < MiniTest::Test
     w = Npid.unassigned_at_site.first
     unless w.blank?
       new_person = Person.new
+
       new_person.id = w.national_id
       new_person.gender = "Male"
       new_person.birthdate = "1970-12-30".to_date
+      new_person.assigned_site = Site.site_code
+      new_person.patient_assigned = true
+      new_person.names = {:given_name => "Mary", :family_name => "banda"}
+      new_person.addresses =  {:current_residence => "Ntandire", :current_village => "Area 49",
+                               :current_district => "Lilongwe", :current_ta => "Area 49", :home_village => "Nsomba",
+                               :home_ta => "Kuntaja", :home_district => "Blantyre"}
+      new_person.person_attributes = {:citizenship => "Malawian", :occupation => "HouseWife",
+                                      :home_phone_number => "01678879", :cell_phone_number => "0118903153",
+                                      :race => "african"}
+
       if new_person.save
         w.assigned = true
         w.save
