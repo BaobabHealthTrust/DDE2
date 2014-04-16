@@ -50,19 +50,12 @@ class PersonControllerTest < MiniTest::Test
     current_people = Person.count
     #This method is an entry point for updating patient records when they are updated in an application
     params = {
-      :gender => "Male",
-      :birthdate => "2000-05-11",
-      :national_id => "HETXRA"
-    }
-    parameters = {
-        :gender => "Female",
-        :birthdate => "2007-05-11",
-        :national_id => "HETWLT"
+      :gender => "Female",
+      :birthdate => "1968-05-11",
     }
 
-    assert updated_person = update_person(params)
-    assert updated_person = update_person(parameters)
-    assert Person.count == (current_people + 2)
+    assert update_person(params)
+    assert Person.count == current_people
   end
 
   def test_updated_person
@@ -73,7 +66,80 @@ class PersonControllerTest < MiniTest::Test
 
   def update_person(params)
 
-    person = Person.find(params[:national_id])
+    person = Person.last
+    old_person = person.clone
+
+    person.gender = params[:gender]
+    person.birthdate = params[:birthdate]
+    person.names.given_name = "Mary"
+    person.names.family_name = "banda"
+    person.addresses.current_residence = "Ntandire"
+    person.addresses.current_village ="Area 49"
+    person.addresses.current_district = "Lilongwe"
+    person.addresses.current_ta = "Area 49"
+    person.addresses.home_village = "Nsomba"
+    person.addresses.home_ta = "Kuntaja"
+    person.addresses.home_district = "Blantyre"
+    person.person_attributes.citizenship = "Malawian"
+    person.person_attributes.occupation = "HouseWife"
+    person.person_attributes.home_phone_number = "01678879"
+    person.person_attributes.cell_phone_number = "0118903153"
+    person.person_attributes.race = "african"
+
+
+    print "Attribute".ljust(20)
+    print "Updated Demographic".ljust(20)
+    print "Old Demographic".ljust(20)
+    puts
+
+    print "National ID".ljust(20)
+    print "#{person.id}".ljust(20)
+    print "#{old_person.id}".ljust(20)
+    puts
+    print "First Name".ljust(20)
+    print "#{person.names['given_name']}".ljust(20)
+    print "#{old_person.names['given_name']}".ljust(20)
+    puts
+    print "Surname".ljust(20)
+    print "#{person.names['family_name']}".ljust(20)
+    print "#{old_person.names['family_name']}".ljust(20)
+    puts
+    print "Gender".ljust(20)
+    print "#{person.gender}".ljust(20)
+    print "#{old_person.gender}".ljust(20)
+    puts
+    print "Birthdate".ljust(20)
+    print "#{person.birthdate}".ljust(20)
+    print "#{old_person.birthdate}".ljust(20)
+    puts
+    print "Citizenship".ljust(20)
+    print "#{person.person_attributes['citizenship']}".ljust(20)
+    print "#{old_person.person_attributes['citizenship']}".ljust(20)
+    puts
+    print "Occupation".ljust(20)
+    print "#{person.person_attributes['occupation']}".ljust(20)
+    print "#{old_person.person_attributes['occupation']}".ljust(20)
+    puts
+    print "Home Phone Number".ljust(20)
+    print "#{person.person_attributes.home_phone_number}".ljust(20)
+    print "#{old_person.person_attributes.home_phone_number}".ljust(20)
+    puts
+    print "Cell Phone Number".ljust(20)
+    print "#{person.person_attributes.cell_phone_number}".ljust(20)
+    print "#{old_person.person_attributes.cell_phone_number}".ljust(20)
+    puts
+    print "Race".ljust(20)
+    print "#{person.person_attributes.race}".ljust(20)
+    print "#{old_person.person_attributes.race}".ljust(20)
+    puts
+    print "Please confirm the update : "
+    answer = gets.chomp
+    if answer == "Y"
+      return person.save
+    else
+      return false
+    end
+=begin
     if person.blank?
       person = Person.new
       person.gender = params[:gender]
@@ -88,9 +154,9 @@ class PersonControllerTest < MiniTest::Test
     else
       person.gender = params[:gender]
       person.birthdate = params[:birthdate]
-    end
+=end
 
-    person.save
+    #person.save
 
   end
 
