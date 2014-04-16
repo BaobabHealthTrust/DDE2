@@ -49,13 +49,46 @@ class PersonControllerTest < MiniTest::Test
   def test_update_person()
     current_people = Person.count
     #This method is an entry point for updating patient records when they are updated in an application
+    puts "Update Gender"
     params = {
-      :gender => "Female",
-      :birthdate => "1968-05-11",
+      :gender => "Female"
     }
-
     assert update_person(params)
-    assert Person.count == current_people
+    puts "Update Birthdate"
+    params = {
+        :birthdate => "1968-05-11"
+    }
+    assert update_person(params)
+    puts "Update Birthdate Estimated"
+    params = {
+        :birthdate_estimated => true
+    }
+    assert update_person(params)
+    puts "Update Given Name"
+    params = {
+        :given_name => "Maria"
+    }
+    assert update_person(params)
+    puts "Update Citizenship"
+    params = {
+        :citizenship => "Indian"
+    }
+    assert update_person(params)
+    puts "Update Race"
+    params = {
+        :race => "Asian"
+    }
+    assert update_person(params)
+    puts "Update Current District"
+    params = {
+        :current_district => "Mzimba"
+    }
+    assert update_person(params)
+    puts "Update Home District"
+    params = {
+        :home_district => "Dedza"
+    }
+    assert update_person(params)
   end
 
   def test_updated_person
@@ -69,22 +102,23 @@ class PersonControllerTest < MiniTest::Test
     person = Person.last
     old_person = person.clone
 
-    person.gender = params[:gender]
-    person.birthdate = params[:birthdate]
-    person.names.given_name = "Mary"
-    person.names.family_name = "banda"
-    person.addresses.current_residence = "Ntandire"
-    person.addresses.current_village ="Area 49"
-    person.addresses.current_district = "Lilongwe"
-    person.addresses.current_ta = "Area 49"
-    person.addresses.home_village = "Nsomba"
-    person.addresses.home_ta = "Kuntaja"
-    person.addresses.home_district = "Blantyre"
-    person.person_attributes.citizenship = "Malawian"
-    person.person_attributes.occupation = "HouseWife"
-    person.person_attributes.home_phone_number = "01678879"
-    person.person_attributes.cell_phone_number = "0118903153"
-    person.person_attributes.race = "african"
+    person.gender = params[:gender] unless params[:gender].blank?
+    person.birthdate = params[:birthdate] unless params[:birthdate].blank?
+    person.birthdate_estimated = params[:birthdate_estimated] unless params[:birthdate_estimated].blank?
+    person.names.given_name = params[:given_name] unless params[:given_name].blank?
+    person.names.family_name = params[:family_name] unless params[:family_name].blank?
+    person.addresses.current_residence = params[:current_residence] unless params[:current_residence].blank?
+    person.addresses.current_village = params[:current_village] unless params[:current_village].blank?
+    person.addresses.current_district = params[:current_district] unless params[:current_district].blank?
+    person.addresses.current_ta = params[:current_ta] unless params[:current_ta].blank?
+    person.addresses.home_village = params[:home_village] unless params[:home_village].blank?
+    person.addresses.home_ta = params[:home_ta] unless params[:home_ta].blank?
+    person.addresses.home_district = params[:home_district] unless params[:home_district].blank?
+    person.person_attributes.citizenship = params[:citizenship] unless params[:citizenship].blank?
+    person.person_attributes.occupation = params[:occupation] unless params[:occupation].blank?
+    person.person_attributes.home_phone_number = params[:home_phone_number] unless params[:home_phone_number].blank?
+    person.person_attributes.cell_phone_number = params[:cell_phone_number] unless params[:cell_phone_number].blank?
+    person.person_attributes.race = params[:race] unless params[:race].blank?
 
 
     print "Attribute".ljust(20)
@@ -112,6 +146,10 @@ class PersonControllerTest < MiniTest::Test
     print "#{person.birthdate}".ljust(20)
     print "#{old_person.birthdate}".ljust(20)
     puts
+    print "Birthdate Estimated".ljust(20)
+    print "#{person.birthdate_estimated}".ljust(20)
+    print "#{old_person.birthdate_estimated}".ljust(20)
+    puts
     print "Citizenship".ljust(20)
     print "#{person.person_attributes['citizenship']}".ljust(20)
     print "#{old_person.person_attributes['citizenship']}".ljust(20)
@@ -132,13 +170,17 @@ class PersonControllerTest < MiniTest::Test
     print "#{person.person_attributes.race}".ljust(20)
     print "#{old_person.person_attributes.race}".ljust(20)
     puts
-    print "Please confirm the update : "
-    answer = gets.chomp
-    if answer == "Y"
+    print "Home District".ljust(20)
+    print "#{person.addresses.home_district}".ljust(20)
+    print "#{old_person.addresses.home_district}".ljust(20)
+    puts
+    print "Current District".ljust(20)
+    print "#{person.addresses.current_district}".ljust(20)
+    print "#{old_person.addresses.current_district}".ljust(20)
+    puts
+    puts
       return person.save
-    else
-      return false
-    end
+
 =begin
     if person.blank?
       person = Person.new
