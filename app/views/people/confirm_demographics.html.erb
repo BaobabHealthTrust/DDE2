@@ -1,0 +1,123 @@
+<html>
+<style>
+    div.header{
+        width:100%;
+        text-align:center;
+        font-size: 200%;
+        font-family: arial;
+        border:0.01em solid black;
+        border-radius: 10px;
+        height: 5vh;
+        padding-top:1vh;
+        padding-bottom:1vh;
+        background-color: #c0c0c0;
+    }
+    button {
+        font-size: 1em;
+        min-width: 250px;
+        cursor: pointer;
+        height: 8vh;
+        border-radius: 15px !important;
+        margin: 1vh 1vw;
+    }
+
+    button.green {
+        background-color: #4BA614 !important;
+    }
+    tr{
+        height: 7vh;
+    }
+    td{
+
+        background-color: #98F5FF;
+        font-family: arial;
+        padding-left: 0.5%;
+
+    }
+    td.attribute{
+        font-weight: bold;
+        background-color: #87ceeb;
+    }
+
+    div.option{
+        font-family: arial;
+        font-size: 130%;
+        border: 1px solid #000000;
+        margin: 8px auto 4px auto;
+        width: 99%;
+    }
+    div.option:active{
+        background-color: #87ceeb;
+    }
+
+</style>
+<body>
+<div class="header">
+  Confirm Demographics
+</div>
+<div style="border: 1px solid black; height: 90vh;overflow: auto; margin-top: 0.5vh;">
+  <div class="option">
+     <table width="100%" cellspacing="0">
+       <tr>
+         <td class="attribute" width="10%">Name</td><td>Chimwemwe Chingayipechikomandimchere</td>
+         <td class="attribute" width="12%">Current District</td><td width="20%">chikulamayembe</td>
+         <td class="attribute" width="10%">Home District</td><td width="20%">chikulamayembe</td>
+       </tr>
+       <tr>
+         <td class="attribute">Gender</td><td>Female</td>
+         <td class="attribute">Current Village</td><td>chikulamayembe</td>
+         <td class="attribute">Home Village</td><td>chikulamayembe</td>
+       </tr>
+       <tr>
+         <td class="attribute">Date of Birth</td><td>12 November 2014</td>
+         <td class="attribute">Current TA</td><td>chikulamayembe</td>
+         <td class="attribute">Home TA</td><td>chikulamayembe</td>
+       </tr>
+       <tr>
+         <td class="attribute">Occupation</td><td>Housewife</td>
+         <td class="attribute">Current Residence</td><td>chikulamayembe</td>
+         <td class="attribute">Race</td><td>European</td>
+       </tr>
+       <tr>
+         <td class="attribute">Nationality</td><td>Scandanavian</td>
+         <td class="attribute">Cell Phone Number</td><td>0999542256</td>
+         <td class="attribute">Home Phone Number</td><td>01896856</td>
+       </tr>
+     </table>
+
+  </div>
+  <% (@matching || []).each do |record| %>
+      <div class="option">
+        <table width="100%">
+          <tr>
+            <td width="10%">Name</td><td width="1%">:</td><td width="20%">&nbsp;</td>
+            <td width="12%">Current District</td><td width="1%">:</td><td >&nbsp;</td>
+            <td width="10%">Home District</td><td width="1%">:</td><td width="20%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Gender</td><td>:</td><td>&nbsp;</td>
+            <td>Current Village</td><td>:</td><td>&nbsp;</td>
+            <td>Home Village</td><td>:</td><td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Date of Birth</td><td>:</td><td>&nbsp;</td>
+            <td>Current TA</td><td>:</td><td>&nbsp;</td>
+            <td>Home TA</td><td>:</td><td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Occupation</td><td>:</td><td>&nbsp;</td>
+            <td>Current Residence</td><td>:</td><td>&nbsp;</td>
+            <td>Race</td><td>:</td><td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Nationality</td><td>:</td><td>&nbsp;</td>
+            <td>Cell Phone Number</td><td>:</td><td>&nbsp;</td>
+            <td>Home Phone Number</td><td>:</td><td>&nbsp;</td>
+          </tr>
+        </table>
+      </div>
+  <% end %>
+</div>
+
+</body>
+</html>

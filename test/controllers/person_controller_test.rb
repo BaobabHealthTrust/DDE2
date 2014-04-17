@@ -97,6 +97,37 @@ class PersonControllerTest < MiniTest::Test
     assert true
   end
 
+  def test_compare_two_people
+
+    person_one = Person.last
+    person_two = Person.first
+    puts person_one.to_json
+    puts person_two.to_json
+    single_attributes = ["birthdate", "gender"]
+    addresses = ['current_residence','current_village','current_ta','current_district','home_village','home_ta','home_district',]
+    attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number']
+
+    single_attributes.each do |comparison|
+       if person_one[comparison] != person_two[comparison]
+         puts "Different #{comparison}" #return false
+       end
+    end
+
+    attributes.each do |comparison|
+      if person_one['person_attributes'][comparison] != person_two['person_attributes'][comparison]
+        puts "Different #{comparison}" #return false
+      end
+    end
+
+    addresses.each do |comparison|
+      if person_one['addresses'][comparison] != person_two['addresses'][comparison]
+        puts "Different #{comparison}" #return false
+      end
+    end
+
+
+  end
+
   def update_person(params)
 
     person = Person.last
@@ -180,26 +211,6 @@ class PersonControllerTest < MiniTest::Test
     puts
     puts
       return person.save
-
-=begin
-    if person.blank?
-      person = Person.new
-      person.gender = params[:gender]
-      person.birthdate = params[:birthdate]
-      person.national_id = params[:national_id]
-
-      npids = Npid.assigned_to_site.collect{|x| x}
-      npid = npids[npids.collect{|x| x.national_id}.index(params[:national_id])]
-      npid.site_code = Site.site_code
-      npid.assigned = true
-      npid.save
-    else
-      person.gender = params[:gender]
-      person.birthdate = params[:birthdate]
-=end
-
-    #person.save
-
   end
 
   def create_person

@@ -49,11 +49,17 @@ class PeopleController < ApplicationController
   end
 
   def edit
+
   end
 
   def update
+
   end
 
   def destroy
+  end
+
+  def confirm_demographics
+    @matching_records = params[:found_records]
   end
 end
