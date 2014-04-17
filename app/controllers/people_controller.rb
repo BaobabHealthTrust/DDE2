@@ -13,6 +13,11 @@ class PeopleController < ApplicationController
       				 :national_id => Npid.unassigned_at_site.first.national_id,
 							 :assigned_site =>  Site.current_code,
 							 :patient_assigned => true,
+
+               :npid => {
+                        	:value => Npid.unassigned_at_site.first.national_id
+               				  },
+
 							 :person_attributes => { :citizenship => params[:person]["data"]["attributes"]["citizenship"] || nil,
 																			 :occupation => params[:person]["data"]["attributes"]["occupation"] || nil,
 																			 :home_phone_number => params[:person]["data"]["attributes"]["home_phone_number"] || nil,
@@ -29,13 +34,13 @@ class PeopleController < ApplicationController
 								:birthdate => params[:person]["data"]["birthdate"] || nil,
 								:birthdate_estimated => params[:person]["data"]["birthdate_estimated"] || nil,
 
-								:addresses => {:current_residence => params[:person]["data"]["addresses"]["address1"] || nil,
-												       :current_village => params[:person]["data"]["addresses"]["addresses"] || nil,
+								:addresses => {:current_residence => params[:person]["data"]["addresses"]["city_village"] || nil,
+												       :current_village => params[:person]["data"]["addresses"]["city_village"] || nil,
 												       :current_ta => params[:person]["data"]["addresses"]["state_province"] || nil,
-												       :current_district => params[:person]["data"]["addresses"]["county_district"] || nil,
-												       :home_village => params[:person]["data"]["addresses"]["neighborhood_cell"] || nil,
-												       :home_ta => params[:person]["data"]["addresses"]["city_village"] || nil,
-												       :home_district => params[:person]["data"]["addresses"]["current_district"] || nil
+												       :current_district => params[:person]["data"]["addresses"]["state_province"] || nil,
+												       :home_village => params[:person]["data"]["addresses"]["neighbourhood_cell"] || nil,
+												       :home_ta => params[:person]["data"]["addresses"]["county_district"] || nil,
+												       :home_district => params[:person]["data"]["addresses"]["address2"] || nil
                               }
 		 )
     
