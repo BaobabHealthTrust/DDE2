@@ -2,18 +2,9 @@ require 'couchrest_model'
 
 class Site < CouchRest::Model::Base
 
-  def code
-    self['_id']
-  end
-
-
-  def self.current_id
-    SITE_CONFIG[:site_id].to_i
-  end
-
   def self.current     
     if self.proxy?
-      self.find self.current_id
+      self.by__id.key("KCH").first
     end
   end
 
@@ -27,7 +18,7 @@ class Site < CouchRest::Model::Base
 
   def self.current_code
     if self.proxy?
-      self.current.try(:code) || '???'
+       SITE_CONFIG[:site_code]
     else
       'DDE'
     end
@@ -42,12 +33,12 @@ class Site < CouchRest::Model::Base
   end
    
 
-  def code=(value)
+  def site_code=(value)
     self['_id']=value
   end
 
-  def self.site_code
-      "KCH"
+  def site_code
+      self['_id']
   end
 
   property :name, String
