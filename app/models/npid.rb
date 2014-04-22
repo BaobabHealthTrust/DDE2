@@ -24,6 +24,7 @@ class Npid < CouchRest::Model::Base
 
   design do
     view :by__id
+    view :by__national_id
     view :unassigned_to_site,
          :map => "function(doc){
             if (doc['type'] == 'Npid' && doc['site_code'] == ''){
@@ -49,5 +50,7 @@ class Npid < CouchRest::Model::Base
             }
           }"
   end
+  
+  
 
 end

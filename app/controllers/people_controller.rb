@@ -43,9 +43,17 @@ class PeopleController < ApplicationController
 												       :home_district => params[:person]["data"]["addresses"]["address2"] || nil
                               }
 		 )
-    
+      npid =  Npid.by__national_id.key(@person.national_id).first
+        raise npid.inspect
+        npid.assigned = true
+        npid.save
     respond_to do |format|
       if @person.save
+        npid =  Npid.by__national_id.key(@person.national_id).first
+        raise npid.inspect
+        npid.assigned = true
+        npid.save
+        
         format.html { redirect_to(@person, :notice => 'Person was successfully created.') }
         format.xml  { render :xml  => @person, :status => :created, :location => @person }
         format.json { render :json => @person, :status => :created, :location => @person }
