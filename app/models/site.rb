@@ -16,17 +16,11 @@ class Site < CouchRest::Model::Base
   timestamps!
 
   def self.current     
-    if self.proxy?
-      self.by__id.key(self.current_code).first
-    end
+     return self.by__id.key(self.current_code).first
   end
 
   def self.current_name
-    if self.proxy?
-      self.current.try(:name) || '- unknown -'
-    else
-      'Master Service'
-    end
+     return self.current.try(:name) || 'Master Service'
   end
 
   def self.current_code
