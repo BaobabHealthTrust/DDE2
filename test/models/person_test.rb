@@ -2,6 +2,7 @@ require 'test_helper'
 
 class PersonTest < ActiveSupport::TestCase
   
+  # <!--------------------- Check for input parameters in this group ------------------------/>
   test "check if process_person_data argument is a JSON Object" do
     exception = assert_raises(RuntimeError) {
       Person.process_person_data("random string") 
@@ -83,10 +84,60 @@ class PersonTest < ActiveSupport::TestCase
     assert_equal("First argument can only be a version 4 ID", exception.message)
   end   
   
-  test "check if process_person_data result is a JSON Object" do
+  # <!----------------------------------- End of group --------------------------/>
+  
+  
+  
+  # <!------------------------------ Check return value types ---------------/>
+  
+  test "check if process_person_data return result is a JSON Object" do
     result = Person.process_person_data('{}') rescue nil
     
     assert_not_nil(result, "Return value expected to be a JSON Object")
   end
+  
+  test "check if record_has_v4_id return result is a boolean" do
+    result = Person.record_has_v4_id('{}') rescue nil
+    
+    assert_not_nil(result, "Return value expected to be a boolean")
+  end
+
+  test "check if search_for_record_by_params return result is a JSON Object" do
+    result = Person.search_for_record_by_params("test", "test", "test")  rescue nil
+    
+    assert_not_nil(result, "Return value expected to be a JSON Object")
+  end
+  
+  test "check if confirm_record_to_update return result is an array" do
+    result = Person.confirm_record_to_update('{}') rescue nil
+    
+    assert_kind_of(Array, result, "Return value expected to be an array")
+  end
+
+  test "check if create_person_record return result is a boolean" do
+    result = Person.create_person_record('{}') rescue nil
+    
+    assert_not_nil(result, "Return value expected to be a boolean")
+  end
+
+  test "check if update_person_record return result is a boolean" do
+    result = Person.update_person_record('{}') rescue nil
+    
+    assert_not_nil(result, "Return value expected to be a boolean")
+  end
+
+  test "check if get_person_record return result is a JSON Object" do
+    result = Person.get_person_record("XXXXXX") rescue nil
+    
+    assert_not_nil(result, "Return value expected to be a JSON Object")
+  end
+  
+  test "check if search_by_npid return result is an array" do
+    result = Person.search_by_npid("XXXXXX") rescue nil
+    
+    assert_kind_of(Array, result, "Return value expected to be an array")
+  end
+
+  # <!-------------------------- End of group ------------------------------/>
   
 end
