@@ -6,7 +6,7 @@ development: &development
   suffix: development
   username:
   password:
-  site_code: MLS
+  sitecode: MLS
 
 test:
   <<: *development
@@ -20,4 +20,4 @@ production:
   suffix: production
   username: root
   password: 123
-  site_code: MLS
+  sitecode: MLS
