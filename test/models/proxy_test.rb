@@ -44,31 +44,31 @@ class ProxyTest < ActiveSupport::TestCase
   # <!------------------------------ Check return value types ---------------/>
   
   test "check if check_if_npids_available return result is a JSON Object" do
-    result = Person.check_if_npids_available() rescue nil
+    result = Proxy.check_if_npids_available() rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
   
   test "check if assign_npid_to_person return result is a JSON Object" do
-    result = Person.assign_npid_to_person('{}') rescue nil
+    result = Proxy.assign_npid_to_person('{}') rescue nil
     
     assert_not_nil(result, "Return value expected to be a JSON Object")
   end
   
   test "check if assign_temporary_npid return result is a JSON Object" do
-    result = Person.assign_temporary_npid('{}') rescue nil
+    result = Proxy.assign_temporary_npid('{}') rescue nil
     
     assert_not_nil(result, "Return value expected to be a JSON Object")
   end
   
   test "check if get_unassigned_npids return result is an array" do
-    result = Person.get_unassigned_npids() rescue nil
+    result = Proxy.get_unassigned_npids() rescue nil
     
     assert_kind_of(Array, result, "Return value expected to be an array")
   end
 
   test "check if request_for_npids return result is a JSON Object" do
-    result = Person.request_for_npids("test", "test") rescue nil
+    result = Proxy.request_for_npids("test", "test") rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
