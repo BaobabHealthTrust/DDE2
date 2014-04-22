@@ -4,7 +4,7 @@ class Site < CouchRest::Model::Base
 
   def self.current     
     if self.proxy?
-      self.by__id.key("KCH").first
+      self.by__id.key(self.current_code).first
     end
   end
 
@@ -17,21 +17,8 @@ class Site < CouchRest::Model::Base
   end
 
   def self.current_code
-    if self.proxy?
-       SITE_CONFIG[:site_code]
-    else
-      'DDE'
-    end
+    return CONFIG["site_code"]
   end
-
-  def self.master?
-    SITE_CONFIG[:mode] == 'master'
-  end
-
-  def self.proxy?
-    SITE_CONFIG[:mode] == 'proxy'
-  end
-   
 
   def site_code=(value)
     self['_id']=value
