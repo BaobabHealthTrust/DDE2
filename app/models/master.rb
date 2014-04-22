@@ -1,4 +1,4 @@
-class Master < CouchRest::Model::Base
+class Master
   
 =begin
   + assign_npids_to_site(
