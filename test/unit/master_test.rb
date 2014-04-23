@@ -30,7 +30,7 @@ class MasterTest < ActiveSupport::TestCase
   # <!------------------------------ Check return value types ---------------/>
   
   test "check if assign_npids_to_site return result is a boolean" do
-    result = Utils::Master.assign_npids_to_site("TST", 10) rescue nil
+    result = Utils::Master.assign_npids_to_site("TST", 1) rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
@@ -61,7 +61,14 @@ class MasterTest < ActiveSupport::TestCase
   # <!------------------------------ Check results of processing ---------------/>
   
   test "check the effect of assigning ids to a site with assign_npids_to_site" do
-  
+    startcount = Npid.unassigned_to_site.count
+    
+    result = Utils::Master.assign_npids_to_site("TST", 10)
+    
+    endcount = Npid.unassigned_to_site.count
+    
+    assert_equal((startcount - endcount), 10)
+    
   end
   
   test "check if site added by add_site" do

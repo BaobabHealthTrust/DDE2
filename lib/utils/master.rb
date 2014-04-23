@@ -19,6 +19,17 @@ module Utils
       
       raise "Second argument is supposed to be an integer" if !quantity.to_s.match(/^\d+$/)
     
+      i = 0 
+      
+      Npid.unassigned_to_site.each do |e| 
+        e.update_attributes(site_code:"TST") 
+        
+         i += 1
+         
+        return true if i == quantity.to_i
+      end
+    
+      return false
     end
    
 =begin
@@ -43,19 +54,19 @@ module Utils
 =begin
   + get_unassigned_npids():Array(JSON)
   
-  
+    A list of all npids that have not been assigned to a site.
 =end
     def self.get_unassigned_npids()
-    
+      Npid.unassigned_to_site.collect{|e| e}
     end
     
 =begin
   + get_all_sites():Array(JSON)
   
-  
+    A list of all sites captured.
 =end
     def self.get_all_sites()
-    
+      Site.all.collect{|s| s}
     end
      
   end
