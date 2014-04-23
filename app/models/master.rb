@@ -9,9 +9,9 @@ class Master
 =end
   def self.assign_npids_to_site(site, quantity)
   
-    raise "First argument cannot be empty" unless site.to_s.strip.match(/^$/)
+    raise "First argument cannot be blank" if site.to_s.strip.match(/^$/)
     
-    raise "Second argument is supposed to be an integer" unless quantity.to_s.match(/^\d+$/)
+    raise "Second argument is supposed to be an integer" if !quantity.to_s.match(/^\d+$/)
   
   end
    
