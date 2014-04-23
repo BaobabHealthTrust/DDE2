@@ -2,6 +2,8 @@ require 'couchrest_model'
 
 class Person < CouchRest::Model::Base
 
+  use_database "person"
+ 
   def national_id
     self['_id']
   end
