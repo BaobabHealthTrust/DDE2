@@ -1,11 +1,15 @@
 require 'test_helper'
 
-class ProxyTest < ActiveSupport::TestCase
+class UtilsProxy
+  include Utils
+end
+
+class UtilsProxyTest < ActiveSupport::TestCase
   
   # <!--------------------- Check for input parameters in this group ------------------------/>
   test "check if assign_npid_to_person argument is a JSON Object" do
     exception = assert_raises(RuntimeError) {
-      Proxy.assign_npid_to_person("random string") 
+      UtilsProxy::Proxy.assign_npid_to_person("random string") 
     }
     
     assert_equal("First argument can only be a JSON Object", exception.message)    
@@ -13,7 +17,7 @@ class ProxyTest < ActiveSupport::TestCase
   
   test "check if assign_temporary_npid argument is a JSON Object" do
     exception = assert_raises(RuntimeError) {
-      Proxy.assign_temporary_npid("random string") 
+      UtilsProxy::Proxy.assign_temporary_npid("random string") 
     }
     
     assert_equal("First argument can only be a JSON Object", exception.message)    
@@ -22,7 +26,7 @@ class ProxyTest < ActiveSupport::TestCase
   test "check if request_for_npids first argument is not blank" do
     
     exception = assert_raises(RuntimeError) {
-      Proxy.request_for_npids(nil, "test") 
+      UtilsProxy::Proxy.request_for_npids(nil, "test") 
     }
     
     assert_equal("First argument cannot be blank", exception.message)
@@ -31,7 +35,7 @@ class ProxyTest < ActiveSupport::TestCase
   test "check if request_for_npids second argument is not blank" do
     
     exception = assert_raises(RuntimeError) {
-      Proxy.request_for_npids("test", nil) 
+      UtilsProxy::Proxy.request_for_npids("test", nil) 
     }
     
     assert_equal("Second argument cannot be blank", exception.message)
@@ -44,31 +48,31 @@ class ProxyTest < ActiveSupport::TestCase
   # <!------------------------------ Check return value types ---------------/>
   
   test "check if check_if_npids_available return result is a JSON Object" do
-    result = Proxy.check_if_npids_available() rescue nil
+    result = UtilsProxy::Proxy.check_if_npids_available() rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
   
   test "check if assign_npid_to_person return result is a JSON Object" do
-    result = Proxy.assign_npid_to_person('{}') rescue nil
+    result = UtilsProxy::Proxy.assign_npid_to_person('{}') rescue nil
     
     assert_not_nil(result, "Return value expected to be a JSON Object")
   end
   
   test "check if assign_temporary_npid return result is a JSON Object" do
-    result = Proxy.assign_temporary_npid('{}') rescue nil
+    result = UtilsProxy::Proxy.assign_temporary_npid('{}') rescue nil
     
     assert_not_nil(result, "Return value expected to be a JSON Object")
   end
   
   test "check if get_unassigned_npids return result is an array" do
-    result = Proxy.get_unassigned_npids() rescue nil
+    result = UtilsProxy::Proxy.get_unassigned_npids() rescue nil
     
     assert_kind_of(Array, result, "Return value expected to be an array")
   end
 
   test "check if request_for_npids return result is a JSON Object" do
-    result = Proxy.request_for_npids("test", "test") rescue nil
+    result = UtilsProxy::Proxy.request_for_npids("test", "test") rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
