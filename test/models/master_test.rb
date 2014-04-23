@@ -19,7 +19,7 @@ class MasterTest < ActiveSupport::TestCase
       Master.assign_npids_to_site("test", nil) 
     }
     
-    assert_equal("Second argument cannot be blank", exception.message)
+    assert_equal("Second argument is supposed to be an integer", exception.message)
   end 
     
   # <!----------------------------------- End of group --------------------------/>
