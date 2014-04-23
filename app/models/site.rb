@@ -2,6 +2,8 @@ require 'couchrest_model'
 
 class Site < CouchRest::Model::Base
 
+=begin
+  # Not sure of the relevance of this code
   def self.current     
     if self.proxy?
       self.by__id.key(self.current_code).first
@@ -15,9 +17,12 @@ class Site < CouchRest::Model::Base
       'Master Service'
     end
   end
+=end
 
   def self.current_code
-    return CONFIG["site_code"]
+    settings = YAML.load_file("#{Rails.root}/config/couchdb.yml")[Rails.env] rescue {}
+    
+    return settings["site_code"]
   end
 
   def site_code=(value)
