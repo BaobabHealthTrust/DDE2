@@ -24,10 +24,19 @@ class Site < CouchRest::Model::Base
   end
 
   def self.current_code
-    return CONFIG["sitecode"]
+
+    if CONFIG["sitecode"].blank?
+       settings = YAML.load_file(Rails.root.join('config', 'couchdb.yml'))[Rails.env]
+    else
+       settings = CONFIG
+    end
+
+    return settings["sitecode"]
+
   end
 
   design do
     view :by__id
   end
+
 end
