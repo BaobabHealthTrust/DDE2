@@ -12,32 +12,6 @@ class Person < CouchRest::Model::Base
     self['_id']=value
   end
 
-  def compare(person)
-    single_attributes = ["birthdate", "gender"]
-    addresses = ['current_residence','current_village','current_ta','current_district','home_village','home_ta','home_district',]
-    attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number']
-
-    single_attributes.each do |comparison|
-      if self[comparison] != person[comparison]
-        return false
-      end
-    end
-
-    attributes.each do |comparison|
-      if self['person_attributes'][comparison] != person['person_attributes'][comparison]
-        return false
-      end
-    end
-
-    addresses.each do |comparison|
-      if self['addresses'][comparison] != person['addresses'][comparison]
-        return false
-      end
-    end
-
-    return true
-  end
-
   property :assigned_site, String
   property :patient_assigned, TrueClass, :default => false
 
