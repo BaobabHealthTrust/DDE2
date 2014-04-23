@@ -30,13 +30,15 @@ class MasterTest < ActiveSupport::TestCase
   # <!------------------------------ Check return value types ---------------/>
   
   test "check if assign_npids_to_site return result is a boolean" do
-    result = Utils::Master.assign_npids_to_site("test", 10) rescue nil
+    result = Utils::Master.assign_npids_to_site("TST", 10) rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
   
-  test "check if add_site return result is a boolean" do
-    result = Utils::Master.add_site("test", "test") rescue nil
+  test "check if add_site return result is a boolean" do    
+    Site.find_by__id("TST").destroy rescue nil
+    
+    result = Utils::Master.add_site("test", "TST") rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
@@ -52,5 +54,30 @@ class MasterTest < ActiveSupport::TestCase
     
     assert_kind_of(Array, result, "Return value expected to be an array")
   end
+  
+  # <!----------------------------------- End of group --------------------------/>
+  
+  
+  # <!------------------------------ Check results of processing ---------------/>
+  
+  test "check the effect of assigning ids to a site with assign_npids_to_site" do
+  
+  end
+  
+  test "check if site added by add_site" do
+    site = "Test"
+    site_code = "TST"
+    
+    Site.find_by__id("TST").destroy rescue nil
+    
+    Utils::Master.add_site(site, site_code) rescue nil
+    
+    result = Site.find_by__id(site_code) # rescue nil
+    
+    assert_not_nil(result, "Failed to create site")
+    
+  end
+  
+  # <!-------------------------- End of group ------------------------------/>
   
 end

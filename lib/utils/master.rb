@@ -7,7 +7,11 @@ module Utils
       site:String, quantity:Integer
     ):BOOLEAN
   
+  Given a site code and the number of ids to assign, this function aims at assigning 
+  the given range of ids to the given site.
   
+  An example would be given a site with code 'MLS' which has to be assigned 10 ids,
+  given the last assigned id was 20, the new ids to be assigned are from 21 to 31.
 =end
     def self.assign_npids_to_site(site, quantity)
     
@@ -22,13 +26,17 @@ module Utils
       site:String, site_code:String
     ):BOOLEAN
   
-  
+    Given a site name and a site code, add a unique site.
 =end
     def self.add_site(site, site_code)
     
-      raise "First argument cannot be empty" unless site.to_s.strip.match(/^$/)
+      raise "First argument cannot be empty" if site.to_s.strip.match(/^$/)
       
-      raise "Second argument cannot be empty" unless site.to_s.strip.match(/^$/)
+      raise "Second argument cannot be empty" if site.to_s.strip.match(/^$/)
+    
+      result = Site.create(name: site, site_code: site_code) # rescue nil
+    
+      return !result.nil?
     
     end
     
