@@ -65,13 +65,60 @@ module Utils
     end
    
 =begin
-  + create_person_record(JSON):BOOLEAN
+  + create_person(JSON):BOOLEAN
   
   
 =end
-    def self.create_person_record(json)
+    def self.create_person(json)
+       @person = Person.new(
+      				 :national_id => Npid.unassigned_at_site.first.national_id,
+							 :assigned_site =>  Site.current_code,
+							 :patient_assigned => true,
+
+               :npid => {
+                        	:value => Npid.unassigned_at_site.first.national_id
+               				  },
+
+							 :person_attributes => { :citizenship => json[:person]["data"]["attributes"]["citizenship"] || nil,
+																			 :occupation => json[:person]["data"]["attributes"]["occupation"] || nil,
+																			 :home_phone_number => json[:person]["data"]["attributes"]["home_phone_number"] || nil,
+																			 :cell_phone_number => json[:person]["data"]["attributes"]["cell_phone_number"] || nil,
+																			 :race => json[:person]["data"]["attributes"]["race"] || nil
+										                  },
+
+								:gender => json[:person]["data"]["gender"],
+
+								:names => { :given_name => json[:person]["data"]["names"]["given_name"],
+							 					    :family_name => json[:person]["data"]["names"]["family_name"]
+										      },
+
+								:birthdate => json[:person]["data"]["birthdate"] || nil,
+								:birthdate_estimated => json[:person]["data"]["birthdate_estimated"] || nil,
+
+								:addresses => {:current_residence => json[:person]["data"]["addresses"]["city_village"] || nil,
+												       :current_village => json[:person]["data"]["addresses"]["city_village"] || nil,
+												       :current_ta => json[:person]["data"]["addresses"]["state_province"] || nil,
+												       :current_district => json[:person]["data"]["addresses"]["state_province"] || nil,
+												       :home_village => json[:person]["data"]["addresses"]["neighbourhood_cell"] || nil,
+												       :home_ta => json[:person]["data"]["addresses"]["county_district"] || nil,
+												       :home_district => json[:person]["data"]["addresses"]["address2"] || nil
+                              }
+		 )
+      
+      person_saved = @person.save
+
+      if person_saved
+        npid =  Npid.by__national_id.key(@person.national_id).first
+        npid.assigned = true
+        npid.save
+      end
     
-    end
+     return person_saved
+
+   end
+     
+      
+    
     
 =begin
   + update_person_record(JSON):BOOLEAN
