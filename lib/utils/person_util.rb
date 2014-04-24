@@ -11,30 +11,34 @@ module Utils
     
       raise "First argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
      #check if json object is whole person data or just person national id 
-     unless json[:value].blank?
-       #person data
-       npid = json[:value]
-       if self.person_has_v4_id(json)
-         self.get_person(npid)
-       else
-         self.get_person(npid)
-       end
-     else
-       #person national_id
-       person = self.get_person(npid)
-       unless person.blank?
-         #record footprint
-         Utils::FootprintUtil.log_application_and_site(json)
-         #return found person 
-         return person
-       else
-         #inform user no match found
-       end
-     end
-      
+
+      person = nil
+		  if json[:value].blank?
+          #create person
+          person = self.create_person(json)
+          return person
+		  else
+       	if json.length == 4
+         #json object is only a npid
+         person = self.get_person(npid)
+         Utils::FootprintUtil.log_application_and_site(json) if person
+		     return person
+        else
+         #json object is person data
+          if self.person_has_v4_id(json)
+           #json object has valid version 4 id
+		       person = self.get_person(npid)
+           return person
+		     	else
+           #json object has no valid version 4 id therefore create person and keep id
+		       person = self.create_person(json)
+           return person
+		     	end
+        end  
+		  end      
     end
-
-
+   
+   
 =begin
   + search_by_npid(npid:String):Array(JSON)
   
@@ -93,56 +97,54 @@ module Utils
   
 =end
     def self.create_person(json)
+
+       js = Proxy.assign_npid_to_person(json)
+
+       unless js.blank?
+
        @person = Person.new(
-      				 :national_id => Npid.unassigned_at_site.first.national_id,
+      				 :national_id => js[:national_id],
 							 :assigned_site =>  Site.current_code,
 							 :patient_assigned => true,
 
                :npid => {
-                        	:value => Npid.unassigned_at_site.first.national_id
+                        	:value => js[:national_id]
                				  },
 
-							 :person_attributes => { :citizenship => json[:person]["data"]["attributes"]["citizenship"] || nil,
-																			 :occupation => json[:person]["data"]["attributes"]["occupation"] || nil,
-																			 :home_phone_number => json[:person]["data"]["attributes"]["home_phone_number"] || nil,
-																			 :cell_phone_number => json[:person]["data"]["attributes"]["cell_phone_number"] || nil,
-																			 :race => json[:person]["data"]["attributes"]["race"] || nil
+							 :person_attributes => { :citizenship => js[:person]["data"]["attributes"]["citizenship"] || nil,
+																			 :occupation => js[:person]["data"]["attributes"]["occupation"] || nil,
+																			 :home_phone_number => js[:person]["data"]["attributes"]["home_phone_number"] || nil,
+																			 :cell_phone_number => js[:person]["data"]["attributes"]["cell_phone_number"] || nil,
+																			 :race => js[:person]["data"]["attributes"]["race"] || nil
 										                  },
 
-								:gender => json[:person]["data"]["gender"],
+								:gender => js[:person]["data"]["gender"],
 
-								:names => { :given_name => json[:person]["data"]["names"]["given_name"],
-							 					    :family_name => json[:person]["data"]["names"]["family_name"]
+								:names => { :given_name => js[:person]["data"]["names"]["given_name"],
+							 					    :family_name => js[:person]["data"]["names"]["family_name"]
 										      },
 
-								:birthdate => json[:person]["data"]["birthdate"] || nil,
+								:birthdate => js[:person]["data"]["birthdate"] || nil,
 								:birthdate_estimated => json[:person]["data"]["birthdate_estimated"] || nil,
 
-								:addresses => {:current_residence => json[:person]["data"]["addresses"]["city_village"] || nil,
-												       :current_village => json[:person]["data"]["addresses"]["city_village"] || nil,
-												       :current_ta => json[:person]["data"]["addresses"]["state_province"] || nil,
-												       :current_district => json[:person]["data"]["addresses"]["state_province"] || nil,
-												       :home_village => json[:person]["data"]["addresses"]["neighbourhood_cell"] || nil,
-												       :home_ta => json[:person]["data"]["addresses"]["county_district"] || nil,
-												       :home_district => json[:person]["data"]["addresses"]["address2"] || nil
+								:addresses => {:current_residence => js[:person]["data"]["addresses"]["city_village"] || nil,
+												       :current_village => js[:person]["data"]["addresses"]["city_village"] || nil,
+												       :current_ta => js[:person]["data"]["addresses"]["state_province"] || nil,
+												       :current_district => js[:person]["data"]["addresses"]["state_province"] || nil,
+												       :home_village => js[:person]["data"]["addresses"]["neighbourhood_cell"] || nil,
+												       :home_ta => js[:person]["data"]["addresses"]["county_district"] || nil,
+												       :home_district => js[:person]["data"]["addresses"]["address2"] || nil
                               }
 		 )
       
-      person_saved = @person.save
-
-      if person_saved
-        npid =  Npid.by__national_id.key(@person.national_id).first
-        npid.assigned = true
-        npid.save
-      end
-    
+     person_saved = @person.save 
+   
      return person_saved
 
+     end
+
    end
-     
-      
-    
-    
+         
 =begin
   + update_person(JSON):BOOLEAN
   
