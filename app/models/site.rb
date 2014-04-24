@@ -14,6 +14,8 @@ class Site < CouchRest::Model::Base
   property :description, String
   property :region, String
   property :threshold, Integer, :default => 10
+  property :batch_size, Integer, :default => 100
+  property :site_id_count, Integer, :default => 0
   
   timestamps!
 
