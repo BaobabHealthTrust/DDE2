@@ -19,7 +19,13 @@ module Utils
          self.search_by_npid(npid)
        end
      else
-       self.search_by_npid(npid)
+       found = self.search_by_npid(npid)
+       unless found.blank?
+         #record footprint
+         Utils::FootprintUtil.log_application_and_site(json)
+       else
+         #inform user no match found
+       end
      end
       
     end
