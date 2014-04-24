@@ -18,7 +18,7 @@ if !settings["mode"].nil? && Rails.env.downcase != "test"
         
         logger.info("Received #{result}")
         
-        sleep 10
+        sleep 1000
         
         logger.info("Processing queues")
         
@@ -26,7 +26,7 @@ if !settings["mode"].nil? && Rails.env.downcase != "test"
         
         logger.info("Received #{result}")
         
-        sleep 10
+        sleep 1000
         
       end
 
