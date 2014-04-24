@@ -13,7 +13,7 @@ module Utils
       
      unless json.length == 4
        npid = json[:value]
-       if self.record_has_v4_id(json)
+       if self.person_has_v4_id(json)
          self.search_by_npid(npid)
        else
          self.search_by_npid(npid)
@@ -25,11 +25,11 @@ module Utils
     end
    
 =begin
-  + record_has_v4_id(JSON):BOOLEAN
+  + person_has_v4_id(JSON):BOOLEAN
   
   
 =end
-    def self.record_has_v4_id(json)
+    def self.person_has_v4_id(json)
 
        unless json[:value].blank?
            return true if json[:value].length == 6
@@ -40,7 +40,7 @@ module Utils
     end
    
 =begin
-  + search_for_record_by_params(
+  + search_for_person_by_params(
       first_name:String,
       last_name:String,
       gender:String,
@@ -51,16 +51,16 @@ module Utils
   
   
 =end
-    def self.search_for_record_by_params(first_name, gender, date_of_birth=nil, home_t_a=nil, home_district=nil)
+    def self.search_for_person_by_params(first_name, gender, date_of_birth=nil, home_t_a=nil, home_district=nil)
     
     end
   
 =begin
-  + confirm_record_to_update(JSON):Array(JSON)
+  + confirm_person_to_update(JSON):Array(JSON)
   
   
 =end
-    def self.confirm_record_to_update(json)
+    def self.confirm_person_to_update(json)
     
     end
    
@@ -121,20 +121,20 @@ module Utils
     
     
 =begin
-  + update_person_record(JSON):BOOLEAN
+  + update_person(JSON):BOOLEAN
   
   
 =end
-    def self.update_person_record(json)
+    def self.update_person(json)
     
     end
     
 =begin
-  + get_person_record(npid:String):JSON
+  + get_person(npid:String):JSON
   
   
 =end
-    def self.get_person_record(json)
+    def self.get_person(json)
     
     end
       
