@@ -12,6 +12,8 @@ class Site < CouchRest::Model::Base
 
   property :name, String
   property :description, String
+  property :region, String
+  property :threshold, Integer, :default => 10
   
   timestamps!
 
@@ -32,6 +34,18 @@ class Site < CouchRest::Model::Base
     end
 
     return settings["sitecode"]
+
+  end
+
+  def self.current_region
+
+    if CONFIG["region"].blank?
+       settings = YAML.load_file(Rails.root.join('config', 'couchdb.yml'))[Rails.env]
+    else
+       settings = CONFIG
+    end
+
+    return settings["region"]
 
   end
 
