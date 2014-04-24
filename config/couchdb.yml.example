@@ -7,7 +7,7 @@ development: &development
   username:
   password:
   sitecode: MLS
-  masterip: http://masterserver
+  region: Central  
 
 test:
   <<: *development
@@ -22,4 +22,4 @@ production:
   username: root
   password: 123
   sitecode: MLS
-  masterip: http://masterserver
+  region: Central  
