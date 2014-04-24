@@ -12,7 +12,7 @@ module Utils
   
 =end
     def self.log_application_and_site(npid, application, site)
-      footprint = FootPrint.create(npid: npid,application: application, site: site_code)
+      footprint = FootPrint.create(npid: npid,application: application, site_code: site)
       return footprint.to_json
     end
      
