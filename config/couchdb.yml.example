@@ -8,6 +8,7 @@ development: &development
   password:
   sitecode: MLS
   region: Central  
+  mode: master  # master/proxy
 
 test:
   <<: *development
@@ -22,4 +23,5 @@ production:
   username: root
   password: 123
   sitecode: MLS
-  region: Central  
+  region: Central   
+  mode: master  # master/proxy
