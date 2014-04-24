@@ -32,7 +32,20 @@ module Utils
      end
       
     end
-   
+
+
+=begin
+  + search_by_npid(npid:String):Array(JSON)
+  
+  
+=end
+    def self.search_by_npid(json)
+       npid = json[:value]
+       return  self.get_person(npid)       
+    end
+
+
+   private
 =begin
   + person_has_v4_id(JSON):BOOLEAN
   
@@ -151,17 +164,7 @@ module Utils
           return {}
        end
     end
-      
-=begin
-  + search_by_npid(npid:String):Array(JSON)
-  
-  
-=end
-    def self.search_by_npid(json)
-       npid = json[:value]
-       return  self.get_person(npid)       
-    end
-   
+         
   end
   
 end
