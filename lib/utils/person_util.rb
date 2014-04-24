@@ -10,19 +10,22 @@ module Utils
     def self.process_person_data(json)
     
       raise "First argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
-      
-     unless json.length == 4
+     #check if json object is whole person data or just person national id 
+     unless json[:value].blank?
+       #person data
        npid = json[:value]
        if self.person_has_v4_id(json)
-         self.search_by_npid(npid)
+         self.get_person(npid)
        else
-         self.search_by_npid(npid)
+         self.get_person(npid)
        end
      else
-       found = self.search_by_npid(npid)
+       #person national_id
+       found = self.get_person(npid)
        unless found.blank?
          #record footprint
          Utils::FootprintUtil.log_application_and_site(json)
+         
        else
          #inform user no match found
        end
@@ -140,8 +143,13 @@ module Utils
   
   
 =end
-    def self.get_person(json)
-    
+    def self.get_person(npid)
+       person = Person.get(npid) rescue nil
+       unless person.blank?
+          return person.to_json
+       else
+          return {}
+       end
     end
       
 =begin
@@ -149,14 +157,9 @@ module Utils
   
   
 =end
-    def self.search_by_npid(npid)
-       person = Person.get(npid) rescue nil
-       unless person.blank?
-          return person.to_json
-       else
-          return {}
-       end
-       
+    def self.search_by_npid(json)
+       npid = json[:value]
+       return  self.get_person(npid)       
     end
    
   end
