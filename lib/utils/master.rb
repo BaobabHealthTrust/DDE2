@@ -68,7 +68,64 @@ module Utils
     def self.get_all_sites()
       Site.all.collect{|s| s}
     end
-     
+       
+=begin
+  + que_site(site:String, site_code:String, threshold:Integer, region:String):BOOLEAN
+  
+    Que a site for npids batch assignement.
+=end
+    def self.que_site(site, site_code, threshold, region)
+      
+    end
+        
+=begin
+  + check_site_thresholds():BOOLEAN
+  
+    Check all sites that have reached their thresholds for queueing.
+=end
+    def self.check_site_thresholds()
+      
+    end
+         
+=begin
+  + process_queued_sites():BOOLEAN
+  
+    Assign npids to all sites that have been queued.
+=end
+    def self.process_queued_sites()
+      
+    end
+      
+=begin
+  + assign_npids_to_region(
+      region:String, quantity:Integer
+    ):BOOLEAN
+  
+  Given a region and the number of ids to assign, this function aims at assigning 
+  the given range of ids to the given region.
+  
+  An example would be given a region 'Central' which has to be assigned 10 ids,
+  given the last assigned id was 20, the new ids to be assigned are from 21 to 31.
+=end
+    def self.assign_npids_to_region(region, quantity)
+    
+      raise "First argument cannot be blank" if region.to_s.strip.match(/^$/)
+      
+      raise "Second argument is supposed to be an integer" if !quantity.to_s.match(/^\d+$/)
+    
+      i = 0 
+      
+      Npid.unassigned_to_region.each do |r| 
+        r.update_attributes(region: region) 
+        
+         i += 1
+         
+        return true if i == quantity.to_i
+      end
+    
+      return false
+    end
+   
   end
 
 end
