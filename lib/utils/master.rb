@@ -21,7 +21,7 @@ module Utils
     
       i = 0 
       
-      Npid.unassigned_to_site.each do |e| 
+      Npid.unassigned_to_region.each do |e| 
         e.update_attributes(site_code:"TST") 
         
          i += 1
@@ -34,18 +34,22 @@ module Utils
    
 =begin
   + add_site(
-      site:String, site_code:String
+      site:String, site_code:String, region:String, threshold:Integer
     ):BOOLEAN
   
     Given a site name and a site code, add a unique site.
 =end
-    def self.add_site(site, site_code)
+    def self.add_site(site, site_code, region, threshold)
     
-      raise "First argument cannot be empty" if site.to_s.strip.match(/^$/)
+      raise "First argument cannot be blank" if site.to_s.strip.match(/^$/)
       
-      raise "Second argument cannot be empty" if site.to_s.strip.match(/^$/)
+      raise "Second argument cannot be blank" if site_code.to_s.strip.match(/^$/)
     
-      result = Site.create(name: site, site_code: site_code) # rescue nil
+      raise "Third argument cannot be blank" if region.to_s.strip.match(/^$/)
+    
+      raise "Fourth argument can only be a number" if !threshold.to_s.strip.match(/^\d+$/)
+    
+      result = Site.create(name: site, site_code: site_code, region: region, threshold: threshold) # rescue nil
     
       return !result.nil?
     
@@ -76,6 +80,17 @@ module Utils
 =end
     def self.que_site(site, site_code, threshold, region)
       
+      raise "First argument cannot be blank" if site.to_s.strip.match(/^$/)
+      
+      raise "Second argument cannot be blank" if site_code.to_s.strip.match(/^$/)
+    
+      raise "Third argument can only be an integer" if !threshold.to_s.strip.match(/^\d+$/)
+    
+      raise "Fourth argument cannot be blank" if region.to_s.strip.match(/^$/)
+    
+      result = RequestsQue.create(site_code: site_code, region: region, threshold: threshold)
+      
+      return !result.nil?
     end
         
 =begin
