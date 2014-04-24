@@ -125,7 +125,7 @@ module Utils
 										      },
 
 								:birthdate => js[:person]["data"]["birthdate"] || nil,
-								:birthdate_estimated => json[:person]["data"]["birthdate_estimated"] || nil,
+								:birthdate_estimated => js[:person]["data"]["birthdate_estimated"] || nil,
 
 								:addresses => {:current_residence => js[:person]["data"]["addresses"]["city_village"] || nil,
 												       :current_village => js[:person]["data"]["addresses"]["city_village"] || nil,
@@ -137,9 +137,9 @@ module Utils
                               }
 		 )
       
-     person_saved = @person.save 
+     person = @person.save 
    
-     return person_saved
+     return person
 
      end
 
