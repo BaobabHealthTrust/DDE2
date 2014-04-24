@@ -10,7 +10,7 @@ module Utils
     def self.process_person_data(json)
     
       raise "First argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
-      
+         
     end
    
 =begin
@@ -19,7 +19,13 @@ module Utils
   
 =end
     def self.record_has_v4_id(json)
-    
+
+       unless json[:value].blank?
+           return true if json[:value].length == 6
+			 end
+
+       return false
+
     end
    
 =begin
