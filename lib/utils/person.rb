@@ -10,7 +10,18 @@ module Utils
     def self.process_person_data(json)
     
       raise "First argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
-         
+      
+     unless json.length == 4
+       npid = json[:value]
+       if self.record_has_v4_id(json)
+         self.search_by_npid(npid)
+       else
+         self.search_by_npid(npid)
+       end
+     else
+       self.search_by_npid(npid)
+     end
+      
     end
    
 =begin
