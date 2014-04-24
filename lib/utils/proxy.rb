@@ -86,6 +86,8 @@ module Utils
       
       raise "Second argument cannot be blank" if site_code.blank?
     
+      return false  # Disabled as not being appropriate
+    
       result = RestClient.get("#{CONFIG["masterip"]}?site=#{site}&site_code={site_code}") rescue nil
       
       return (!result.nil?)
