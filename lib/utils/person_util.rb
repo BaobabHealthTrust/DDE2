@@ -21,11 +21,12 @@ module Utils
        end
      else
        #person national_id
-       found = self.get_person(npid)
-       unless found.blank?
+       person = self.get_person(npid)
+       unless person.blank?
          #record footprint
          Utils::FootprintUtil.log_application_and_site(json)
-         
+         #return found person 
+         return person
        else
          #inform user no match found
        end
