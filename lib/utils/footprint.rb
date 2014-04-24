@@ -11,8 +11,8 @@ module Utils
   
   
 =end
-    def self.log_application_and_site(npid, application, site)
-      footprint = FootPrint.create(npid: npid,application: application, site_code: site)
+    def self.log_application_and_site(json)
+      footprint = FootPrint.create(npid: json[:value],application: application[:application_name], site_code: Site.current_code)
       return footprint.to_json
     end
      
