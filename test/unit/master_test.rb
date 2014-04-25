@@ -156,7 +156,19 @@ class MasterTest < ActiveSupport::TestCase
   end
   
   test "check if assign_npids_to_region return result is a boolean" do
-    result = Utils::Master.assign_npids_to_region("Central", 1) rescue nil
+    result = Utils::Master.assign_npids_to_region("Central", 100) rescue nil
+    
+    assert_not_nil(result, "Return value expected to be a boolean")
+  end
+  
+  test "check if check_site_thresholds return result is a boolean" do
+    result = Utils::Master.check_site_thresholds() rescue nil
+    
+    assert_not_nil(result, "Return value expected to be a boolean")
+  end
+  
+  test "check if process_queued_sites return result is a boolean" do
+    result = Utils::Master.process_queued_sites() rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
@@ -185,7 +197,7 @@ class MasterTest < ActiveSupport::TestCase
     
     Site.find_by__id("TST").destroy rescue nil
     
-    Utils::Master.add_site(site, site_code, "Central", 100) rescue nil
+    Utils::Master.add_site(site, site_code, "Central", 50) rescue nil
     
     result = Site.find_by__id(site_code) # rescue nil
     

@@ -21,8 +21,8 @@ module Utils
     
       i = 0 
       
-      Npid.unassigned_to_region.each do |e| 
-        e.update_attributes(site_code:"TST") 
+      Npid.unassigned_at_region.each do |e| 
+        e.update_attributes(site_code: site) 
         
          i += 1
          
@@ -39,7 +39,7 @@ module Utils
   
     Given a site name and a site code, add a unique site.
 =end
-    def self.add_site(site, site_code, region, threshold)
+    def self.add_site(site, site_code, region, threshold, batchsize = 100)
     
       raise "First argument cannot be blank" if site.to_s.strip.match(/^$/)
       
@@ -49,7 +49,7 @@ module Utils
     
       raise "Fourth argument can only be a number" if !threshold.to_s.strip.match(/^\d+$/)
     
-      result = Site.create(name: site, site_code: site_code, region: region, threshold: threshold) # rescue nil
+      result = Site.create(name: site, site_code: site_code, region: region, threshold: threshold, batch_size: batchsize) # rescue nil
     
       return !result.nil?
     
@@ -99,7 +99,30 @@ module Utils
     Check all sites that have reached their thresholds for queueing.
 =end
     def self.check_site_thresholds()
+      sites = {} 
       
+      Npid.untaken_at_region.each do |e| 
+        if sites[e.site_code].nil? then 
+          sites[e.site_code] = 1 
+        else 
+          sites[e.site_code] += 1 
+        end
+      end
+      
+      sites.each do |key, value|
+        site = Site.find_by__id(key) rescue nil
+        
+        if !site.nil?
+          # Update npid count at site for use later
+          site.update_attributes(site_id_count: value.to_i)
+          
+          if value.to_i < site.threshold.to_i
+            RequestsQue.create(site_code: key, region: site.region, threshold: site.threshold)
+          end
+        end
+      end
+      
+      return true
     end
          
 =begin
@@ -108,7 +131,19 @@ module Utils
     Assign npids to all sites that have been queued.
 =end
     def self.process_queued_sites()
+      RequestsQue.pending.collect do |entry|
+        site = Site.find_by__id(entry.site_code) rescue nil
+        
+        if !site.nil?
+          if site.site_id_count < site.threshold
+            Utils::Master.assign_npids_to_site(site.site_code, site.batch_size)            
+          end
+        end
+        
+        entry.update_attributes(request_processed: true)
+      end
       
+      return true
     end
       
 =begin

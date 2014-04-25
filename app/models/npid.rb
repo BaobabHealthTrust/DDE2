@@ -63,7 +63,7 @@ class Npid < CouchRest::Model::Base
     view :unassigned_at_region,
          :map => "function(doc){
             if (doc['type'] == 'Npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] == '' || doc['site_code'] == null) ){
-              emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region});
+              emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region});
             }
           }"
     view :assigned_at_region,
@@ -78,6 +78,13 @@ class Npid < CouchRest::Model::Base
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region});
             }
           }"
+    view :untaken_at_region,
+         :map => "function(doc){
+            if (doc['type'] == 'Npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
+              emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region});
+            }
+          }"
+         
   end
   
   

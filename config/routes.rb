@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   root 'people#index'
   
+  get "check_thresholds" => "services#check_thresholds"
+  
+  get "process_queued_sites" => "services#process_queued_sites"
+  
   resources :people do
     collection do
       post :create, :update, :destroy
