@@ -1,10 +1,34 @@
 Rails.application.routes.draw do
-  root 'people#index'
+  root 'administration#index'
   
   get "check_thresholds" => "services#check_thresholds"
   
   get "process_queued_sites" => "services#process_queued_sites"
   
+  get 'administration/site_add'
+
+  get 'administration/site_edit'
+
+  get 'administration/site_show'
+
+  get 'administration/region_add'
+
+  get 'administration/region_edit'
+
+  get 'administration/region_show'
+
+  get 'administration/user_add'
+
+  get 'administration/user_edit'
+
+  get 'administration/user_show'
+
+  get 'administration/master_people'
+
+  get 'administration/proxy_people'
+
+  get 'administration/index'
+
   resources :people do
     collection do
       post :create, :update, :destroy

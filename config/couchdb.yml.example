@@ -9,6 +9,7 @@ development: &development
   sitecode: MLS
   region: Central  
   mode: master  # master/proxy
+  port: 3000  # Port where application is running from for background processes
 
 test:
   <<: *development
@@ -25,3 +26,4 @@ production:
   sitecode: MLS
   region: Central   
   mode: master  # master/proxy
+  port: 3000  # Port where application is running from for background processes
