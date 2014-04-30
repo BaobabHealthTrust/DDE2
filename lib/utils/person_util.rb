@@ -151,7 +151,48 @@ module Utils
   
 =end
     def self.update_person(json)
-    
+
+      person = Person.get(json[:value])
+
+      if person.blank?
+        create_person(json)
+      else
+        has_new_id = person_has_v4_id(json)
+
+        if !has_new_id
+          new_id = Proxy.assign_npid_to_person(json)
+          if person.national_id.first == "p"
+            person["patient"]["identifiers"]["legacy_npid"] = person.national_id
+          else
+            person["patient"]["identifiers"]["temporary_npid"] = person.national_id
+          end
+          person.national_id = new_id[:national_id]
+        end
+
+        if !compare_people(person, json)
+          person.gender = json[:gender] unless json[:gender].blank?
+          person.birthdate = json[:birthdate] unless json[:birthdate].blank?
+          person['names']['given_name'] = json[:names][:given_name ] unless json[:names][:given_name ].blank?
+          person['names']['family_name'] = json[:names][:family_name] unless json[:names][:family_name]
+          person['addresses']['current_residence'] = json['addresses']['current_residence'] unless json['addresses']['current_residence'].blank?
+          person['addresses']['current_village'] = json['addresses']['current_village'] unless json['addresses']['current_village'].blank?
+          person['addresses']['current_district'] = json['addresses']['current_district'] unless json['addresses']['current_district'].blank?
+          person['addresses']['current_ta'] = json['addresses']['current_ta'] unless json['addresses']['current_ta'].blank?
+          person['addresses']['home_district'] = json['addresses']['home_district'] unless json['addresses']['home_district'].blank?
+          person['addresses']['home_ta'] = json['addresses']['home_ta'] unless json['addresses']['home_ta'].blank?
+          person['addresses']['home_village'] = json['addresses']['home_village'] unless json['addresses']['home_village'].blank?
+          person['person_attributes']['citizenship'] = json['person_attributes']['citizenship'] unless json['person_attributes']['citizenship'].blank?
+          person['person_attributes']['occupation'] = json['person_attributes']['occupation'] unless json['person_attributes']['occupation'].blank?
+          person['person_attributes']['home_phone_number'] = json['person_attributes']['home_phone_number'] unless json['person_attributes']['home_phone_number'].blank?
+          person['person_attributes']['cell_phone_number'] = json['person_attributes']['cell_phone_number'] unless json['person_attributes']['cell_phone_number'].blank?
+          person['person_attributes']['race'] = json['person_attributes']['race'] unless json['person_attributes']['race'].blank?
+
+        end
+
+
+        person.save!
+      end
+
     end
     
 =begin
@@ -169,5 +210,36 @@ module Utils
     end
          
   end
-  
+
+=begin
+    + compare_people(person_a:JSON, person_b:JSON):BOOLEAN
+=end
+
+    def self.compare_people(personA,personB )
+
+      single_attributes = ['birthdate', 'gender']
+      addresses = ['current_residence','current_village','current_ta','current_district','home_village','home_ta','home_district',]
+      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number']
+
+      single_attributes.each do |metric|
+        if personA[metric] != personB[metric]
+          return false
+        end
+      end
+
+      attributes.each do |metric|
+        if personA['person_attributes'][metric] != personB['person_attributes'][metric]
+          return false
+        end
+      end
+
+      addresses.each do |metric|
+        if self['addresses'][metric] != person['addresses'][metric]
+          return false
+        end
+      end
+
+      return true
+
+    end
 end

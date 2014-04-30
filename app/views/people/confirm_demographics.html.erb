@@ -1,0 +1,385 @@
+<html>
+    <head>
+      <style>
+          div.header{
+              width:100%;
+              text-align:center;
+              font-size: 200%;
+              font-family: arial;
+              border:0.01em solid black;
+              border-radius: 10px;
+              height: 5vh;
+              padding-top:1vh;
+              padding-bottom:1vh;
+              background-color: #c0c0c0;
+          }
+          button {
+              font-size: 1em;
+              min-width: 250px;
+              cursor: pointer;
+              height: 8vh;
+              border-radius: 15px !important;
+              margin: 1vh 1vw;
+          }
+
+          button.green {
+              background-color: #4BA614 !important;
+          }
+          tr{
+              height: 7vh;
+          }
+          td{
+
+              background-color: #98F5FF;
+              font-family: arial;
+              padding-left: 0.5%;
+
+          }
+          td.attribute{
+              font-weight: bold;
+              background-color: #87ceeb;
+          }
+
+          div.option{
+              font-family: arial;
+              font-size: 130%;
+              border: 1px solid #000000;
+              margin: 8px auto 4px auto;
+              width: 99%;
+          }
+          div.option:active{
+              background-color: #87ceeb;
+          }
+
+      </style>
+      <script type="text/javascript">
+        <!--
+          var page = document.getElementById("main_content");
+          alert(page.innerHTML);
+          var data = {};
+          var index = 0;
+          <% (@matching_records || []).each do |record| %>
+              data[index] = {"person_attributes":{
+                  "citizenship": '<%=record['person_attributes']['citizenship'] %>',
+                  "occupation": '<%= record['person_attributes']['occupation'] %>',
+                  "home_phone_number": '<%= record['person_attributes']['home_phone_number'] %>',
+                  "cell_phone_number": '<%= record['person_attributes']['cell_phone_number'] %>',
+                  "race": '<%= record['person_attributes']['race'] %>'
+              },
+                  "gender": '<%= record['gender'] %>',
+                  "names": {
+                      "given_name": '<%= record['names']['given_name']%>',
+                      "family_name": '<%= record['names']['family_name'] %>'
+                  },
+                  "birthdate": '<%= record['birthdate'] %>',
+                  "addresses":{
+                      "current_residence": '<%= record['addresses']['current_residence'] %>',
+                      "current_village": '<%= record['addresses']['current_village'] %>',
+                      "current_ta": '<%= record['addresses']['current_ta'] %>',
+                      "current_district": '<%= record['addresses']['current_district'] %>',
+                      "home_village": '<%= record['addresses']['home_village'] %>',
+                      "home_ta": '<%= record['addresses']['home_ta'] %>',
+                      "home_district": '<%= record['addresses']['home_district'] %>'
+                  }
+              }
+              index +=1;
+            <% end %>
+
+            for( var i = 0; i < Object.keys(data).length; i ++)
+            {
+
+               var entry = document.createElement('DIV');
+               entry.setAttribute("class", "option");
+               entry.setAttribute("onClick", "post_details(data[i])");
+
+
+               var opt_table = document.createElement('TABLE');
+               opt_table.setAttribute("cellspacing", "0");
+               opt_table.setAttribute("width", "100%");
+
+               var row1 = document.createElement('tr');
+
+               var td1 = document.createElement("td");
+               td1.setAttribute("class", "attribute");
+               td1.setAttribute("width", "10%");
+               td1.innerHTML= "Name";
+               row1.appendChild(td1);
+
+               var td2 = document.createElement("td");
+               td2.innerHTML= data[i]["names"]["given_name"] + " " + data[i]["names"]["family_name"];
+               row1.appendChild(td2);
+
+               var td3 = document.createElement("td");
+               td3.setAttribute("class", "attribute");
+               td3.setAttribute("width", "12%");
+               td3.innerHTML= "Current District";
+               row1.appendChild(td3);
+
+               var td4 = document.createElement("td");
+               td4.setAttribute("width", "20%");
+               td4.innerHTML= data[i]['addresses']['current_district'];
+               row1.appendChild(td4);
+
+               var td5 = document.createElement("td");
+               td5.setAttribute("class", "attribute");
+               td5.setAttribute("width", "10%");
+               td5.innerHTML= "Home District";
+               row1.appendChild(td5);
+
+               var td6 = document.createElement("td");
+               td6.setAttribute("width", "20%");
+               td6.innerHTML= data[i]['addresses']['home_district'];
+               row1.appendChild(td1);
+
+               opt_table.appendChild(row1);
+
+                var row2 = document.createElement('tr');
+
+                var row2_td1 = document.createElement("td");
+                row2_td1.setAttribute("class", "attribute");
+                row2_td1.setAttribute("width", "10%");
+                row2_td1.innerHTML= "Gender";
+                row2.appendChild(row2_td1);
+
+                var row2_td2 = document.createElement("td");
+                row2_td2.innerHTML= data[i]["gender"];
+                row2.appendChild(row2_td2);
+
+                var row2_td3 = document.createElement("td");
+                row2_td3.setAttribute("class", "attribute");
+                row2_td3.setAttribute("width", "12%");
+                row2_td3.innerHTML= "Current Village";
+                row2.appendChild(row2_td3);
+
+                var row2_td4 = document.createElement("td");
+                row2_td4.setAttribute("width", "20%");
+                row2_td4.innerHTML= data[i]['addresses']['current_village'];
+                row2.appendChild(row2_td4);
+
+                var row2_td5 = document.createElement("td");
+                row2_td5.setAttribute("class", "attribute");
+                row2_td5.setAttribute("width", "10%");
+                row2_td5.innerHTML= "Home Village";
+                row2.appendChild(row2_td5);
+
+                var row2_td6 = document.createElement("td");
+                row2_td6.setAttribute("width", "20%");
+                row2_td6.innerHTML= data[i]['addresses']['home_village'];
+                row2.appendChild(row2_td1);
+
+                opt_table.appendChild(row2);
+
+                var row3 = document.createElement('tr');
+
+                var row3_td1 = document.createElement("td");
+                row3_td1.setAttribute("class", "attribute");
+                row3_td1.setAttribute("width", "10%");
+                row3_td1.innerHTML= "Date of Birth";
+                row3.appendChild(row3_td1);
+
+                var row3_td2 = document.createElement("td");
+                row3_td2.innerHTML= data[i]["birthdate"];
+                row3.appendChild(row3_td2);
+
+                var row3_td3 = document.createElement("td");
+                row3_td3.setAttribute("class", "attribute");
+                row3_td3.setAttribute("width", "12%");
+                row3_td3.innerHTML= "Current TA";
+                row3.appendChild(row3_td3);
+
+                var row3_td4 = document.createElement("td");
+                row3_td4.setAttribute("width", "20%");
+                row3_td4.innerHTML= data[i]['addresses']['current_ta'];
+                row3.appendChild(row3_td4);
+
+                var row3_td5 = document.createElement("td");
+                row3_td5.setAttribute("class", "attribute");
+                row3_td5.setAttribute("width", "10%");
+                row3_td5.innerHTML= "Home TA";
+                row3.appendChild(row3_td5);
+
+                var row3_td6 = document.createElement("td");
+                row3_td6.setAttribute("width", "20%");
+                row3_td6.innerHTML= data[i]['addresses']['home_ta'];
+                row3.appendChild(row3_td1);
+
+                opt_table.appendChild(row3);
+
+                var row4 = document.createElement('tr');
+
+                var row4_td1 = document.createElement("td");
+                row4_td1.setAttribute("class", "attribute");
+                row4_td1.setAttribute("width", "10%");
+                row4_td1.innerHTML= "Occupation";
+                row4.appendChild(row4_td1);
+
+                var row4_td2 = document.createElement("td");
+                row4_td2.innerHTML= data[i]["person_attributes"]["occupation"];
+                row4.appendChild(row4_td2);
+
+                var row4_td3 = document.createElement("td");
+                row4_td3.setAttribute("class", "attribute");
+                row4_td3.setAttribute("width", "12%");
+                row4_td3.innerHTML= "Current Residence";
+                row4.appendChild(row4_td3);
+
+                var row4_td4 = document.createElement("td");
+                row4_td4.setAttribute("width", "20%");
+                row4_td4.innerHTML= data[i]['addresses']['current_residence'];
+                row4.appendChild(row4_td4);
+
+                var row4_td5 = document.createElement("td");
+                row4_td5.setAttribute("class", "attribute");
+                row4_td5.setAttribute("width", "10%");
+                row4_td5.innerHTML= "Race";
+                row4.appendChild(row4_td5);
+
+                var row4_td1 = document.createElement("td");
+                row4_td1.setAttribute("width", "20%");
+                row4_td1.innerHTML= data[i]["person_attributes"]["race"]
+                row4.appendChild(row4_td1);
+
+                opt_table.appendChild(row4);
+
+                var row5 = document.createElement('tr');
+
+                var row5_td1 = document.createElement("td");
+                row5_td1.setAttribute("class", "attribute");
+                row5_td1.setAttribute("width", "10%");
+                row5_td1.innerHTML= "Nationality";
+                row5.appendChild(row5_td1);
+
+                var row5_td2 = document.createElement("td");
+                row5_td2.innerHTML= data[i]["person_attributes"]["citizenship"];
+                row5.appendChild(row5_td2);
+
+                var row5_td3 = document.createElement("td");
+                row5_td3.setAttribute("class", "attribute");
+                row5_td3.setAttribute("width", "12%");
+                row5_td3.innerHTML= "Cell Phone Number";
+                row5.appendChild(row5_td3);
+
+                var row5_td4 = document.createElement("td");
+                row5_td4.setAttribute("width", "20%");
+                row5_td4.innerHTML= data[i]['person_attributes']['cell_phone_number'];
+                row5.appendChild(row5_td4);
+
+                var row5_td5 = document.createElement("td");
+                row5_td5.setAttribute("class", "attribute");
+                row5_td5.setAttribute("width", "10%");
+                row5_td5.innerHTML= "Home Phone Number";
+                row5.appendChild(row5_td5);
+
+                var row5_td6 = document.createElement("td");
+                row5_td6.setAttribute("width", "20%");
+                row5_td6.innerHTML= data[i]['person_attributes']['home_phone_number'];
+                row5.appendChild(row5_td6);
+
+                opt_table.appendChild(row5);
+
+               entry.appendChild(opt_table)
+               content.appendChild(entry);
+
+            }
+         //-->
+      </script>
+
+    <script type="text/javascript">
+        function post_details(){
+            form=document.createElement('FORM');
+            form.name='demographics';
+            form.method='POST';
+            form.action='show';
+
+            my_tb=document.createElement('INPUT');
+            my_tb.type='TEXT';
+            my_tb.name='person[names][given_name]';
+            my_tb.value='Values of my Input';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[names][family_name]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[birthdate]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[attributes][occupation]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[attributes][citizenship]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[attributes][race]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[attributes][home_phone_number]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[attributes][cell_phone_number]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[addresses][current_residence]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[addresses][current_district]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[addresses][current_village]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[addresses][current_ta]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[addresses][home_district]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[names][home_ta]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            my_tb=document.createElement('INPUT');
+            my_tb.name= 'person[names][home_village]';
+            my_tb.value='Values of my hidden1';
+            form.appendChild(my_tb);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+    </head>
+    <body>
+        <div class="header">
+          Confirm Demographics
+        </div>
+
+        <div id = "main_content" style="border: 1px solid black; height: 90vh;overflow: auto; margin-top: 0.5vh;">
+         po,k
+
+        </div>
+    </body>
+</html>
