@@ -7,7 +7,11 @@ Rails.application.routes.draw do
   
   get 'administration/site_add'
 
+  post 'administration/create_site'
+
   get 'administration/site_edit'
+
+  post 'administration/update_site'
 
   get 'administration/site_show'
 
@@ -28,6 +32,18 @@ Rails.application.routes.draw do
   get 'administration/proxy_people'
 
   get 'administration/index'
+  
+  post 'check_site_code' => "services#check_site_code"
+
+  get '/map' => "administration#map"
+  
+  get '/national_map' => "administration#national_map"
+  
+  get '/region/:id' => "administration#regional_map"
+  
+  get "/search_by_site_code/:id" => "services#search_by_site_code"
+
+  post "/assign_npids_to_region" => "administration#assign_npids_to_region"
 
   resources :people do
     collection do

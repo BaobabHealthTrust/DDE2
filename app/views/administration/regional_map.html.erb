@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <title>SVG</title>
+  </head>
+  <body>
+    <div style="text-align: center; font-size: 18px; font-style: normal;"><%= @label rescue nil %></div>
+    <div id="controls" style="position: absolute; right: 10px; top: 10px; 
+        background-color: #eee; padding-top: 5px; padding-left: 5px; padding-right: 5px; border-radius: 5px;">
+      <img src="/images/zoomin.gif" alt="+" style="cursor: pointer; margin: 5px;" 
+          onclick="zoomlevel += 0.1; d3.select('#region').attr('transform','scale(' + zoomlevel + ')');" />
+      <img src="/images/zoomout.gif" alt="-" style="cursor: pointer; margin: 5px;" 
+          onclick="if(zoomlevel - 0.1 > 0) zoomlevel -= 0.1; d3.select('#region').attr('transform','scale(' + zoomlevel + ')');" />
+    </div>
+    <div id="main" style="padding: 20px; text-align: center;"></div>
+  
+    <script src="/javascripts/d3.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      
+      var zoomlevel = 1;
+      
+      var loader = d3.xml("/images/<%= @region.downcase %>.svg", function(xml) {
+       document.getElementById("main").appendChild(xml.documentElement);
+       
+         d3.select("#region");
+         
+         d3.select("#regionpath");
+                     
+        <% @sites.each do |site| %>
+          
+            d3.select("#region").append("circle")
+              .style("stroke", "white")
+              .style("stroke-width", "1px")
+              .style("fill", "red")
+              .attr("r", 6)
+              .attr("cx", "<%= (!site.x.nil? ? site.x : -10) %>")
+              .attr("cy", "<%= (!site.y.nil? ? site.y : -10) %>")
+              .attr("id", "<%= site.site_code.downcase %>")
+              .attr("tag", "<%= site.name %>")
+              .on("mouseover", function(){
+                  d3.select("#" + this.id).attr("r", 6).style("z-index", "100")
+                      .style("fill", "#537ee0"); 
+                  return tooltip.style("visibility", "visible");
+                })
+              .on("mousemove", function(){
+                  return tooltip.style("top", 
+                      (d3.event.pageY-10)+"px")
+                        .style("left", (d3.event.pageX+20)+"px")
+                        .text(getSiteInfo(this.id));
+                })
+              .on("mouseout", function(){
+                  d3.select("#" + this.id).attr("r", 6).style("z-index", "10")
+                      .style("fill", "red"); 
+                  return tooltip.style("visibility", "hidden");
+                });
+                        
+        <% end %>
+       });
+      
+      var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .style("background", "#f6f3d7")
+        .style("padding", "5px")
+        .style("border", "1px solid #000")
+        .style("border-radius", "5px")
+        .text("Tooltip");
+    
+      function getSiteInfo(id){
+        var result = id;
+        
+        if(document.getElementById(id)){
+          result = document.getElementById(id).getAttribute("tag");
+        } 
+        
+        return result;
+      }
+    
+    </script>
+    
+  </body>
+</html>
