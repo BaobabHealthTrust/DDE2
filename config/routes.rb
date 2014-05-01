@@ -45,6 +45,14 @@ Rails.application.routes.draw do
 
   post "/assign_npids_to_region" => "administration#assign_npids_to_region"
 
+  post "/assign_npids_to_site" => "administration#assign_npids_to_site"
+
+  get "/check_region_allocation" => "services#check_region_allocation"
+
+  get "/check_site_allocation" => "services#check_site_allocation"
+
+  get "/search_for_patients_by_site" => "services#search_for_patients_by_site"
+
   resources :people do
     collection do
       post :create, :update, :destroy

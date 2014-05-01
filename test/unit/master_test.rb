@@ -2,7 +2,7 @@ require 'test_helper'
 
 class MasterTest < ActiveSupport::TestCase    
   include Utils
-    
+
   # <!--------------------- Check for input parameters in this group ------------------------/>
    
   test "check if assign_npids_to_site first argument is not blank" do
@@ -218,5 +218,5 @@ class MasterTest < ActiveSupport::TestCase
   end
   
   # <!-------------------------- End of group ------------------------------/>
-  
+
 end

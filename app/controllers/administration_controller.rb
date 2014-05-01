@@ -7,7 +7,8 @@ class AdministrationController < ApplicationController
         assigned: Npid.assigned_at_central_region.count,
         available: Npid.available_at_central_region.count,
         unassigned: Npid.unassigned_at_central_region.count,
-        status: nil
+        status: nil,
+        national_untaken: Npid.unassigned_to_region.count
       },
       "North" => {
         data: [],
@@ -15,7 +16,8 @@ class AdministrationController < ApplicationController
         assigned: Npid.assigned_at_northern_region.count,
         available: Npid.available_at_northern_region.count,
         unassigned: Npid.unassigned_at_northern_region.count,
-        status: nil
+        status: nil,
+        national_untaken: Npid.unassigned_to_region.count
       },
       "South" => {
         data: [],
@@ -23,7 +25,8 @@ class AdministrationController < ApplicationController
         assigned: Npid.assigned_at_southern_region.count,
         available: Npid.available_at_southern_region.count,
         unassigned: Npid.unassigned_at_southern_region.count,
-        status: nil
+        status: nil,
+        national_untaken: Npid.unassigned_to_region.count
       }
     }
     
@@ -109,7 +112,7 @@ class AdministrationController < ApplicationController
         y: params["y"]
       )  
        
-      redirect_to "/" and return
+      redirect_to "/administration/site_add" and return
        
   end
 
@@ -145,6 +148,28 @@ class AdministrationController < ApplicationController
   end
 
   def site_show
+    @sites = {}
+    
+    Site.all.each{|s| 
+      
+        @sites[s.site_code] = {
+            sitecode: s.site_code,
+            name: s.name,
+            count: s.site_id_count,
+            threshold: s.threshold,
+            batchsize: s.batch_size,
+            region: s.region,
+            assigned: 0,
+            allocated: 0,
+            available: 0,
+            status: nil,
+            x: s.x,
+            y: s.y
+        }
+      
+    }
+    
+    # raise @sites.inspect
   end
 
   def regional_map
@@ -225,6 +250,14 @@ class AdministrationController < ApplicationController
     end
     
     redirect_to "/administration/region_show?region=#{params[:region]}" and return
+  end
+
+  def assign_npids_to_site
+    if !params[:site].nil? and !params[:quantity].nil?
+      Utils::Master.assign_npids_to_site(params[:site], params[:quantity])
+    end
+    
+    redirect_to "/administration/site_show?site=#{params[:site]}" and return
   end
 
   def user_add

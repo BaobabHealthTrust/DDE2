@@ -1,15 +1,18 @@
 <style type="text/css">
-  #status th {
+  .status th {
     padding: 2px !important;
     border: 1px solid #999 !important;
     text-align: center !important;
     color: #333 !important;
     background-color: #ccc !important;
   }
-  #status td {
+  .status td {
     padding: 2px !important;
     border: 1px solid #ccc !important;
-    text-align: center !important;
+    text-align: center;
+  }
+  .left td {
+    text-align: left !important;
   }
 </style>
 
@@ -21,9 +24,9 @@
       <div class="form-control-group" style="float: right; margin-top: -45px; margin-right: -55px; width: 300px;">
         <select id="region" name="region" class="form-control" placeholder="Region" required="" onchange="switchRegion(this.value)" style="width: 90%; float: left" >
           <option value="">[ - Select site region in Malawi - ]</option>
-          <option value="Centre">Central Region</option>
-          <option value="North">Northern Region</option>
-          <option value="South">Southern Region</option>
+          <option value="Centre" <%= (!params["region"].nil? and params["region"].downcase.strip == "centre" ? "selected" : "") %> >Central Region</option>
+          <option value="North" <%= (!params["region"].nil? and params["region"].downcase.strip == "north" ? "selected" : "") %> >Northern Region</option>
+          <option value="South" <%= (!params["region"].nil? and params["region"].downcase.strip == "south" ? "selected" : "") %> >Southern Region</option>
         </select>
       </div>
     </div>
@@ -43,13 +46,8 @@
             <div class="panel-heading">
               <h3 class="panel-title" id="section">&nbsp;</h3>
             </div>
-            <div class="panel-body" style="height: 425px; overflow: auto;">
-              <div class="row" style="width: 100%;">
-                <div class="col-sm-4" style="width: 100%;">
-                  <ul class="list-group" id="sites" style="width: 100%;">
-                  </ul>
-                </div>
-              </div>
+            <div class="panel-body" style="height: 425px; overflow: auto; padding: 1px !important;" id="sites">                
+              &nbsp;    
             </div>
           </div>
           <div class="panel panel-primary">
@@ -58,7 +56,7 @@
             </div>
             <div class="panel-body" style="height: 53px; overflow: hidden; padding: 1px !important;">
               
-              <table width="100%" id="status">
+              <table width="100%" class="status">
                 <tr>
                   <th>
                     Sites
@@ -173,7 +171,11 @@
           "batchsize":"<%= site[:batchsize] %>",
           "region":"<%= site[:region] %>",
           "x":"<%= site[:x] %>",
-          "y":"<%= site[:y] %>"
+          "y":"<%= site[:y] %>",
+          "allocated":"<%= site[:allocated] %>",
+          "assigned":"<%= site[:assigned] %>",
+          "available":"<%= site[:available] %>",
+          "status":"<%= site[:status] %>"
         }
       );
     
@@ -203,17 +205,16 @@
       
 		  $('#site-form').validate({		    
 	      rules: {
-          sitecode: {
+          quantity: {
             required: true,
             remote: {
-              url: "/check_site_code",
-              type: "post",
+              url: "/check_region_allocation",
+              type: "get",
               data: {
-                sitecode: function() {
-                  return $( "#sitecode" ).val();
+                quantity: function() {
+                  return $( "#quantity" ).val();
                 }
-              },
-              error: "Site code already taken"
+              }
             }
           }
         },
@@ -266,16 +267,60 @@
       
       $("#region_status")[0].innerHTML = sites[region.trim()]["status"];
       
+      var table = document.createElement("table");
+      table.setAttribute("width", "100%");
+      table.className = "status";
+      table.style.marginTop = "-20px";
+      
+      document.getElementById("sites").appendChild(table);
+      
+      var tbody = document.createElement("tbody");
+      
+      table.appendChild(tbody);
+      
+      var tr = document.createElement("tr");
+      
+      tbody.appendChild(tr);
+      
+      var fields = ["Site", "Allocated", "Assigned", "Available", "Status"];
+      
+      for(var i = 0; i < fields.length; i++){
+        var td = document.createElement("th");
+        td.innerHTML = fields[i];
+        
+        tr.appendChild(td);
+      }
+      
       for(var site in sites[region.trim()]["data"]){
+        var tr = document.createElement("tr");
       
-        var li = document.createElement("li");
-        li.className = "list-group-item";
-        li.innerHTML = '<h4 class="list-group-item-heading">' + sites[region.trim()]["data"][site]["name"] + 
-          '</h4><p class="list-group-item-text"><b>Available:</b> ' + sites[region.trim()]["data"][site]["count"] + 
-              "; <b>BatchSize:</b> " + sites[region.trim()]["data"][site]["batchsize"] + 
-              "; <b>Threshold:</b> " + sites[region.trim()]["data"][site]["threshold"] + ";";
+        tbody.appendChild(tr);
       
-        document.getElementById("sites").appendChild(li);
+        var td1 = document.createElement("td");
+        td1.innerHTML = sites[region.trim()]["data"][site]["name"];
+        
+        tr.appendChild(td1);  
+      
+        var td2 = document.createElement("td");
+        td2.innerHTML = sites[region.trim()]["data"][site]["allocated"];
+        
+        tr.appendChild(td2);  
+      
+        var td3 = document.createElement("td");
+        td3.innerHTML = sites[region.trim()]["data"][site]["assigned"];
+        
+        tr.appendChild(td3);  
+      
+        var td4 = document.createElement("td");
+        td4.innerHTML = sites[region.trim()]["data"][site]["available"];
+        
+        tr.appendChild(td4);  
+      
+        var td5 = document.createElement("td");
+        td5.innerHTML = sites[region.trim()]["data"][site]["status"];
+        
+        tr.appendChild(td5);  
+      
       }
     }
   }

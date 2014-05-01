@@ -1,13 +1,428 @@
-<div class="container theme-showcase" role="main">
-  <div class="jumbotron">
-    <h2>Site::View</h2>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Panel title</h3>
+<style type="text/css">
+  .status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  .status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center !important;
+  }
+</style>
+
+<form novalidate="novalidate" id="site-form" class="form-horizontal" role="form" method="post" action="/assign_npids_to_site" autocomplete="off">
+
+  <div class="container theme-showcase" role="main">
+    <div class="jumbotron head">
+      <h2>Site::View</h2>
+      <div class="form-control-group" style="float: right; margin-top: -45px; margin-right: -55px; width: 300px;">
+        <select id="site" name="site" class="form-control" placeholder="Region" required="" onchange="switchSite(this.value)" style="width: 90%; float: left" >
+          <option value="">[ - Select site site - ]</option>
+          
+          <% @sites.each do |site, values| %>
+            
+            <option value="<%= site %>" <%= (!params[:site].nil? and params[:site].upcase == site.upcase ? "selected" : "") %> ><%= "#{values[:name]} (#{site})" %></option>
+            
+          <% end %>
+          
+        </select>
+      </div>
     </div>
-    <div class="panel-body">
-      Panel content
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Site location
+        </h3>
+      </div>
+      <div class="panel-body">
+        <div style="float: left; width: 50%;">
+          <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 100%; overflow: hidden !important; height: 710px;" src="/map?cat=Site&region"></iframe>
+        </div>
+      
+        <div class="row" style="float: right; width: 48%; height: 710px; margin-right: 8px; oveflow: auto;">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title" id="section">NPIDs Allocation At </h3>
+            </div>
+            <div class="panel-body" style="height: 425px; overflow: auto; padding: 1px !important;" id="patients">
+        
+              <table width="100%" class="status">
+                <tr>
+                  <th>
+                    NPID
+                  </th>
+                  <th>
+                    Status
+                  </th>
+                  <th>
+                    Date Updated
+                  </th>
+                  <th>
+                    Patient
+                  </th>
+                </tr>
+              </table>
+              
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Site NPID Status</h3>
+            </div>
+            <div class="panel-body" style="height: 53px; overflow: hidden; padding: 1px !important;">
+              
+              <table width="100%" class="status">
+                <tr>
+                  <th>
+                    Allocated
+                  </th>
+                  <th>
+                    Assigned
+                  </th>
+                  <th>
+                    Available
+                  </th>
+                  <th>
+                    Status
+                  </th>
+                </tr>
+                <tr>
+                  <td id="site_allocated">
+                    &nbsp;
+                  </td>
+                  <td id="site_assigned">
+                    &nbsp;
+                  </td>
+                  <td id="site_available">
+                    &nbsp;
+                  </td>
+                  <td id="site_status">
+                    &nbsp;
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>   
+          <div class="panel panel-primary" style="">
+            <div class="panel-heading">
+              <h3 class="panel-title" id="npidassignments">Site NPIDs Assignment</h3>
+            </div>
+            <div class="panel-body" style="height: 70px; overflow: hidden; padding: 1px !important;">
+              
+                
+                <div class="form-control-group">
+                
+                  <table style="margin-top: 5px; margin-left: 10px; width: 95%;">
+                    <tr>
+                      <td style="text-align: right !important; vertical-align: top; padding-top: 6px;">
+                        NPIDs Quantity to Assign:&nbsp;
+                      </td>
+                      <td>
+                        <input type="text" id="quantity" name="quantity" value="" class="form-control" required="" digits=true />
+                      </td>
+                      <td style="vertical-align: top;">
+                        <button type="submit" class="btn btn-success btn-large" 
+                            style="font-size: 14px !important; float: right; vertical-align: top;">Assign NPIDs</button>
+                      </td>
+                    </tr>
+                  </table>
+                
+                </div>
+                
+            </div>
+          </div>           
+      </div>    
     </div>
   </div>
-</div>
+
+</form>
+
+<script type="text/javascript">
+  <!--
+      
+  var sites = {};
+  
+  var npids = [];
+  
+  var pageSize = 14;
+  
+  <% @sites.each do |site, values| %>
+    
+      sites["<%= site %>"] =
+        {
+          "sitecode":"<%= values[:sitecode] %>",
+          "name":"<%= values[:name] %>",
+          "count":"<%= values[:count] %>",
+          "threshold":"<%= values[:threshold] %>",
+          "batchsize":"<%= values[:batchsize] %>",
+          "region":"<%= values[:region] %>",
+          "x":"<%= values[:x] %>",
+          "y":"<%= values[:y] %>"
+        };
+    
+  <% end %>
+      
+  function prettyPrint(){
+    $(document).ready(function(){
+      
+		    $('#site-form').validate({		    
+	        rules: {},
+			    highlight: function(element) {
+				    $(element).closest('.control-group').removeClass('success').addClass('error');
+			    },
+			    success: function(element) {
+				    element
+				    .text('OK!').addClass('valid')
+				    .closest('.control-group').removeClass('error').addClass('success');
+			    }
+	      });
+
+    }); // end document.ready
+  }
+  
+  $(document).ready(function(){
+      
+		  $('#site-form').validate({		    
+	      rules: {
+          quantity: {
+            required: true,
+            remote: {
+              url: "/check_site_allocation",
+              type: "get",
+              data: {
+                quantity: function() {
+                  return $( "#quantity" ).val();
+                },
+                site: function() {
+                  return $( "#site" ).val();
+                }
+              }
+            }
+          }
+        },
+			  highlight: function(element) {
+				  $(element).closest('.control-group').removeClass('success').addClass('error');
+			  },
+			  success: function(element) {
+				  element
+				  .text('OK!').addClass('valid')
+				  .closest('.control-group').removeClass('error').addClass('success');
+			  }
+	    });
+
+  }); // end document.ready
+    
+  function ajaxSiteRequest(code, start){
+     var httpRequest = new XMLHttpRequest();
+      httpRequest.onreadystatechange = function() {
+          handleAjaxRequest(httpRequest, start);
+      };
+      try {
+          httpRequest.open('GET', "/search_for_patients_by_site?site=" + code + "&limit=" + pageSize + "&start=" + start, true);
+          httpRequest.send(null);
+      } catch(e){
+      }
+  }
+  
+  function handleAjaxRequest(aXMLHttpRequest, start) {
+    if (!aXMLHttpRequest) return;                    
+
+    document.getElementById("patients").innerHTML = "";
+      
+    var table = document.createElement("table");
+    table.className = "status";
+    table.setAttribute("width", "100%");
+    
+    document.getElementById("patients").appendChild(table);
+    
+    var tbody = document.createElement("tbody");
+    
+    table.appendChild(tbody);
+    
+    var fields = ["Pos.", "NPID", "Status", "Date Updated", "Patient"];
+    
+    var tr = document.createElement("tr");
+    
+    tbody.appendChild(tr);
+    
+    for(var i = 0; i < fields.length; i++){
+      var th = document.createElement("th");
+      th.innerHTML = fields[i];
+      
+      tr.appendChild(th);
+    }
+        
+    var rows = 0;
+    start = start;
+    var limit = 0;
+              
+    if (aXMLHttpRequest.readyState == 4 && aXMLHttpRequest.status == 200) {
+                  
+        var result = aXMLHttpRequest.responseText;
+        
+        var json = JSON.parse(result);
+        
+        rows = json[0].length;
+        start = parseInt(json[1]);
+        limit = parseInt(json[2]);
+        
+        for(var j = 0; j < json[0].length; j++){
+          var tr = document.createElement("tr");
+    
+          tbody.appendChild(tr);
+          
+          var td0 = document.createElement("td");
+          td0.innerHTML = json[0][j]["pos"];
+          
+          tr.appendChild(td0);
+          
+          var td1 = document.createElement("td");
+          td1.innerHTML = json[0][j]["npid"];
+          
+          tr.appendChild(td1);
+          
+          var td2 = document.createElement("td");
+          td2.innerHTML = (json[0][j]["aasigned"] ? "Assigned" : "Unassigned");
+          
+          tr.appendChild(td2);
+          
+          var td3 = document.createElement("td");
+          td3.innerHTML = json[0][j]["updated"];
+          
+          tr.appendChild(td3);
+          
+          var td4 = document.createElement("td");
+          td4.innerHTML = json[0][j]["name"];
+          
+          tr.appendChild(td4);
+          
+        }
+        
+    }
+  
+    var nav = document.createElement("div");
+    nav.style.position = "absolute !important";
+    nav.style.marginTop = "5px";
+    nav.style.bottom = "10px !important";
+    nav.style.width = "100% !important";
+    nav.style.height = "42px";
+    nav.style.borderTop = "1px solid #428BCA";
+    nav.style.textAlign = "center";
+    
+    document.getElementById("patients").appendChild(nav);    
+  
+    var first = document.createElement("button");
+    first.className = (rows == 0 || start == 0 ? "btn btn-default" : "btn btn-primary");
+    first.id = "btnFirst";
+    first.innerHTML = "|<";
+    first.style.margin = "3px";
+    first.setAttribute("type", "button");
+    
+    if(rows > 0 && start > 0){
+      first.onclick = function(){
+        var start = 0;
+        
+        if(document.getElementById("site").value.trim().length > 0)
+          ajaxSiteRequest(document.getElementById("site").value.trim(), start);
+      }
+    }
+    
+    nav.appendChild(first);
+    
+    var prev = document.createElement("button");
+    prev.className = (rows == 0 || start == 0 ? "btn btn-default" : "btn btn-primary");
+    prev.id = "btnPrev";
+    prev.innerHTML = "<<";
+    prev.style.margin = "3px";
+    prev.setAttribute("start", start);
+    prev.setAttribute("type", "button");
+    
+    if(rows > 0 && start > 0){
+      prev.onclick = function(){
+        var start = parseInt(this.getAttribute("start")) - (parseInt(this.getAttribute("start")) >= pageSize ? pageSize : 0);
+        
+        if(document.getElementById("site").value.trim().length > 0)
+          ajaxSiteRequest(document.getElementById("site").value.trim(), start);
+      }
+    }
+    
+    nav.appendChild(prev);
+    
+    var page = document.createElement("div");
+    page.style.border = "1px solid #428BCA";
+    page.style.padding = "5px";
+    page.style.textAlign = "center";
+    page.style.width = "200px";
+    page.style.margin = "3px";
+    page.style.display = "inline-block";
+    
+    page.innerHTML = (start + (rows > 0 ? 1 : 0)) + " to " + (start + rows) + " of " + limit;
+    
+    nav.appendChild(page);
+    
+    var next = document.createElement("button");
+    next.className = (rows == 0 || (start + pageSize >= limit - 1) ? "btn btn-default" : "btn btn-primary");
+    next.id = "btnNext";
+    next.innerHTML = ">>";
+    next.style.margin = "3px";
+    next.setAttribute("start", start);
+    next.setAttribute("type", "button");
+    
+    if(rows > 0 && (start + pageSize < limit)){
+      next.onclick = function(){
+        var start = parseInt(this.getAttribute("start")) + pageSize;
+        
+        if(document.getElementById("site").value.trim().length > 0)
+          ajaxSiteRequest(document.getElementById("site").value.trim(), start);
+      }
+    }
+    
+    nav.appendChild(next);
+  
+    var last = document.createElement("button");
+    last.className = (rows == 0 || (start + pageSize >= limit) ? "btn btn-default" : "btn btn-primary");
+    last.id = "btnLast";
+    last.innerHTML = ">|";
+    last.style.margin = "3px";
+    last.setAttribute("type", "button");
+    
+    if(rows > 0 && (start + pageSize < limit)){
+      last.onclick = function(){
+        var start = "last";
+        
+        if(document.getElementById("site").value.trim().length > 0)
+          ajaxSiteRequest(document.getElementById("site").value.trim(), start);
+      }
+    }
+    
+    nav.appendChild(last);
+    
+  }
+    
+  function switchSite(site){
+    document.getElementById("section").innerHTML = "&nbsp;";
+    document.getElementById("npidassignments").innerHTML = "&nbsp;";
+    document.getElementById("map").setAttribute("src", "/map?cat=Site");
+    
+    if(sites[site]){
+      document.getElementById("section").innerHTML = "NPIDs Allocation At " + sites[site]["name"];
+      document.getElementById("npidassignments").innerHTML = "Site NPID Assignment to " + sites[site]["name"];
+        
+      document.getElementById("map").setAttribute("src", "/map?cat=Site&region=" + sites[site]["region"] + "&x=" + sites[site]["x"] + "&y=" + sites[site]["y"]);
+      
+      ajaxSiteRequest(site, 0);
+    }
+  }
+   
+  addEventListener('load', prettyPrint, false);
+	$(document).ready(function(){
+	  $('pre').addClass('prettyprint linenums');
+	});
+	
+  switchSite(document.getElementById("site").value); 
+    
+  //-->
+</script>

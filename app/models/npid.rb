@@ -2,7 +2,7 @@ require 'couchrest_model'
 
 class Npid < CouchRest::Model::Base
 
-  
+=begin  
   def incremental_id
     self['_id']
   end
@@ -15,6 +15,7 @@ class Npid < CouchRest::Model::Base
   def incremental_id=(value) 
        self['_id'] = (value.to_i + 1).to_s
   end
+=end
   
   property :national_id, String  
   property :site_code, String
@@ -22,10 +23,84 @@ class Npid < CouchRest::Model::Base
   property :region, String
   
   timestamps!
+  
+  def self.where(params = {})
+    result = []
+    limit = 0
+    
+    if !params[:site].blank? and !params[:start].nil? and !params[:limit].nil? and params[:start].strip.downcase == "last"
+      
+      npids = Npid.assigned_to_region.collect{|e| e if (e.site_code.downcase.strip == params[:site].strip.downcase rescue false)}.compact.uniq
+      
+      limit = npids.length
+      
+      if npids.length > 0
+      
+        params[:start] = ((npids.length / params[:limit].to_i) * params[:limit].to_i)
+        
+        params[:start] = (params[:start].to_i - params[:limit].to_i) if (params[:start].to_i == npids.length)
+        
+        ((params[:start].to_i)..(npids.length - 1)).each do |i|
+           
+          person = Person.find_by__id(npids[i].national_id) rescue nil
+          
+          result << {
+            npid: npids[i].national_id,
+            assigned: npids[i].assigned,
+            region: npids[i].region,
+            sitecode: npids[i].site_code,
+            name: ("#{person.names.given_name} #{person.names.family_name}" rescue nil),
+            updated: (npids[i].updated_at.strftime("%Y-%m-%d %H:%M") rescue nil),
+            pos: npids[i].id
+          } 
+          
+        end
+      
+      else
+        params[:start] = 0
+      end
+      
+    elsif !params[:site].blank? and !params[:start].nil? and !params[:limit].nil?
+
+      npids = Npid.assigned_to_region.collect{|e| e if (e.site_code.downcase.strip == params[:site].strip.downcase rescue false)}.compact.uniq
+      
+      if npids.length > 0
+      
+        limit = npids.length
+      
+        params[:limit] = (npids.length - params[:start].to_i) if ((params[:start].to_i + params[:limit].to_i - 1) > npids.length)
+        
+        # raise "#{params[:limit]} : #{params[:start]} : #{npids.length}"
+        
+        ((params[:start].to_i)..(params[:start].to_i + params[:limit].to_i - 1)).each do |i|
+           
+          person = Person.find_by__id(npids[i].national_id) rescue nil
+          
+          result << {
+            npid: npids[i].national_id,
+            assigned: npids[i].assigned,
+            region: npids[i].region,
+            sitecode: npids[i].site_code,
+            name: ("#{person.names.given_name} #{person.names.family_name}" rescue nil),
+            updated: (npids[i].updated_at.strftime("%Y-%m-%d %H:%M") rescue nil),
+            pos: npids[i].id
+          } 
+          
+        end
+      
+      else
+        params[:start] = 0
+      end
+        
+    end
+    
+    [result, params[:start], limit]
+  end
 
   design do
     view :by__id
     view :by__national_id
+    view :by_site_code
     
     # Site views
     view :unassigned_to_site,
