@@ -58,4 +58,13 @@ class Person < CouchRest::Model::Base
     view :by__id
   end
 
+  design do
+    view :search,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit({first_name: doc.names.given_name ,last_name: doc.names.family_name, gender: doc.gender}, doc);
+            }
+          }"
+  end
+
 end
