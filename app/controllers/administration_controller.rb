@@ -39,9 +39,9 @@ class AdministrationController < ApplicationController
             threshold: s.threshold,
             batchsize: s.batch_size,
             region: s.region,
-            assigned: 0,
-            allocated: 0,
-            available: 0,
+            assigned: (Npid.assigned_at_region.keys([s.site_code]).rows.length rescue 0),
+            allocated: (Npid.assigned_to_region.keys([s.site_code]).rows.length rescue 0),
+            available: (Npid.untaken_at_region.keys([s.site_code]).rows.length rescue 0),
             status: nil
         }
       
@@ -159,9 +159,9 @@ class AdministrationController < ApplicationController
             threshold: s.threshold,
             batchsize: s.batch_size,
             region: s.region,
-            assigned: 0,
-            allocated: 0,
-            available: 0,
+            assigned: (Npid.assigned_at_region.keys([s.site_code]).rows.length rescue 0),
+            allocated: (Npid.assigned_to_region.keys([s.site_code]).rows.length rescue 0),
+            available: (Npid.untaken_at_region.keys([s.site_code]).rows.length rescue 0),
             status: nil,
             x: s.x,
             y: s.y
@@ -235,9 +235,9 @@ class AdministrationController < ApplicationController
             threshold: s.threshold,
             batchsize: s.batch_size,
             region: s.region,
-            assigned: 0,
-            allocated: 0,
-            available: 0,
+            assigned: (Npid.assigned_at_region.keys([s.site_code]).rows.length rescue 0),
+            allocated: (Npid.assigned_to_region.keys([s.site_code]).rows.length rescue 0),
+            available: (Npid.untaken_at_region.keys([s.site_code]).rows.length rescue 0),
             status: nil
         }
       
