@@ -13,22 +13,45 @@ module Utils
   An example would be given a site with code 'MLS' which has to be assigned 10 ids,
   given the last assigned id was 20, the new ids to be assigned are from 21 to 31.
 =end
-    def self.assign_npids_to_site(site, quantity)
+    def self.assign_npids_to_site(code, quantity)
     
-      raise "First argument cannot be blank" if site.to_s.strip.match(/^$/)
+      raise "First argument cannot be blank" if code.to_s.strip.match(/^$/)
       
       raise "Second argument is supposed to be an integer" if !quantity.to_s.match(/^\d+$/)
     
       i = 0 
       
-      Npid.unassigned_at_region.each do |e| 
-        e.update_attributes(site_code: site) 
-        
-         i += 1
-         
-        return true if i == quantity.to_i
+      site = Site.find_by__id(code) rescue nil
+      
+      if !site.nil?
+        case site.region.downcase
+          when "centre"            
+            Npid.unassigned_at_central_region.each do |e| 
+              e.update_attributes(site_code: code, region: site.region) rescue nil
+              
+               i += 1
+               
+              return true if i == quantity.to_i
+            end 
+          when "north"
+            Npid.unassigned_at_northern_region.each do |e| 
+              e.update_attributes(site_code: code, region: site.region) rescue nil
+              
+               i += 1
+               
+              return true if i == quantity.to_i
+            end  
+          when "south"
+            Npid.unassigned_at_southern_region.each do |e| 
+              e.update_attributes(site_code: code, region: site.region) rescue nil
+              
+               i += 1
+               
+              return true if i == quantity.to_i
+            end  
+          end   
       end
-    
+      
       return false
     end
    

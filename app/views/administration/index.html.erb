@@ -1,42 +1,168 @@
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" >Demographics Data Exchange</a>
+<style type="text/css">
+  #status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  #status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center !important;
+  }
+</style>
+<script src="/javascripts/d3.js" charset="utf-8"></script>
+<div class="container theme-showcase" role="main">
+  <div class="jumbotron head">
+    <h2>Home</h2>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        NPID Distribution By Site
+      </h3>
     </div>
-    
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li class="divider"></li>
-            <li class="dropdown-header">Nav header</li>
-            <li><a href="#">Separated link</a></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div><!--/.nav-collapse -->
+    <div class="panel-body">
+      <div style="float: left; width: 50%;">
+        <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 100%; overflow: hidden !important; height: 1080px;" src="/national_map"></iframe>
+      </div>
+      <div class="row" style="float: right; width: 48%; height: 580px; margin-right: 8px; oveflow: auto;">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">National NPID Status</h3>
+          </div>
+          <div class="panel-body" style="height: 103px; overflow: hidden; padding: 1px !important;">
+            <table width="100%" id="status">
+              <tr>
+                <th>
+                  Region
+                </th>
+                <th>
+                  Sites
+                </th>
+                <th>
+                  Allocated
+                </th>
+                <th>
+                  Assigned
+                </th>
+                <th>
+                  Available
+                </th>
+                <th>
+                  Status
+                </th>
+              </tr>
+                
+              <% @sites.each do |region, value| %>
+              
+                <tr>
+                  <td>
+                    <%= region %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:data].length %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:allocated] %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:assigned] %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:available] %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:status] %>
+                  </td>
+                </tr>
+              
+              <% end %>
+              
+            </table>
+          </div>
+        </div>
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title" id="section">Sites NPID Statuses</h3>
+          </div>
+          <div class="panel-body" style="height: 876px; overflow: auto; padding: 1px !important;">
+                <table width="100%" id="status">
+                  <tr>
+                    <th>
+                      Region
+                    </th>
+                    <th>
+                      Site
+                    </th>
+                    <th>
+                      Allocated
+                    </th>
+                    <th>
+                      Assigned
+                    </th>
+                    <th>
+                      Available
+                    </th>
+                    <th>
+                      Status
+                    </th>
+                  </tr>
+                                     
+                  <% @sites.each do |region, data| %>
+                  
+                    <tr style="background-color: #eee; font-weight: bold;">
+                      <td>
+                        <%= region %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:data].length %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:allocated] %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:assigned] %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:available] %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:status] %>
+                      </td>
+                    </tr>
+                    
+                    <% data[:data].each do |site| %>
+                    
+                      <tr name="<%= region.downcase %>">
+                        <td>
+                          &nbsp;
+                        </td>
+                        <td style="text-align: left !important;">
+                          <%= site[:name] %>
+                        </td>
+                        <td>
+                          <%= site[:allocated] %>
+                        </td>
+                        <td>
+                          <%= site[:assigned] %>
+                        </td>
+                        <td>
+                          <%= site[:available] %>
+                        </td>
+                        <td>
+                          <%= site[:status] %>
+                        </td>
+                      </tr>
+                    
+                    <% end %>
+                  
+                  <% end %>
+                                
+                </table>
+          </div>
+        </div>
+    </div>
   </div>
 </div>
-
-<div class="container">
-
-  <div class="starter-template">
-    <h1>Bootstrap starter template</h1>
-    <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-  </div>
-
-</div><!-- /.container -->

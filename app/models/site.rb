@@ -16,6 +16,8 @@ class Site < CouchRest::Model::Base
   property :threshold, Integer, :default => 10
   property :batch_size, Integer, :default => 100
   property :site_id_count, Integer, :default => 0
+  property :x, String
+  property :y, String
   
   timestamps!
 
@@ -49,6 +51,18 @@ class Site < CouchRest::Model::Base
 
     return settings["region"]
 
+  end
+
+  def self.where(params = {})
+    result = []
+    
+    if !params[:region].blank?
+      result = Site.all.collect { |site|
+        site if site.region.downcase.strip == params[:region].to_s.strip.downcase
+      }.compact.uniq
+    end
+    
+    result
   end
 
   design do

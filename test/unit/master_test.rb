@@ -2,7 +2,7 @@ require 'test_helper'
 
 class MasterTest < ActiveSupport::TestCase    
   include Utils
-    
+
   # <!--------------------- Check for input parameters in this group ------------------------/>
    
   test "check if assign_npids_to_site first argument is not blank" do
@@ -132,7 +132,7 @@ class MasterTest < ActiveSupport::TestCase
   test "check if add_site return result is a boolean" do    
     Site.find_by__id("TST").destroy rescue nil
     
-    result = Utils::Master.add_site("test", "TST", "Central", 10) rescue nil
+    result = Utils::Master.add_site("test", "TST", "Centre", 10) rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
@@ -150,13 +150,13 @@ class MasterTest < ActiveSupport::TestCase
   end
   
   test "check if que_site return result is a boolean" do
-    result = Utils::Master.que_site("test", "TST", 10, "Central") rescue nil
+    result = Utils::Master.que_site("test", "TST", 10, "Centre") rescue nil
     
     assert_kind_of(TrueClass, result, "Return value expected to be a boolean")
   end
   
   test "check if assign_npids_to_region return result is a boolean" do
-    result = Utils::Master.assign_npids_to_region("Central", 100) rescue nil
+    result = Utils::Master.assign_npids_to_region("Centre", 100) rescue nil
     
     assert_not_nil(result, "Return value expected to be a boolean")
   end
@@ -179,7 +179,7 @@ class MasterTest < ActiveSupport::TestCase
   # <!------------------------------ Check results of processing ---------------/>
   
   test "check the effect of assigning ids to a site with assign_npids_to_site" do
-    Utils::Master.assign_npids_to_region("Central", 20)
+    Utils::Master.assign_npids_to_region("Centre", 20)
     
     startcount = Npid.unassigned_to_site.count
     
@@ -197,7 +197,7 @@ class MasterTest < ActiveSupport::TestCase
     
     Site.find_by__id("TST").destroy rescue nil
     
-    Utils::Master.add_site(site, site_code, "Central", 50) rescue nil
+    Utils::Master.add_site(site, site_code, "Centre", 50) rescue nil
     
     result = Site.find_by__id(site_code) # rescue nil
     
@@ -209,7 +209,7 @@ class MasterTest < ActiveSupport::TestCase
     
     startcount = Npid.unassigned_to_region.count
     
-    result = Utils::Master.assign_npids_to_region("Central", 1)
+    result = Utils::Master.assign_npids_to_region("Centre", 1)
     
     endcount = Npid.unassigned_to_region.count
     
@@ -218,5 +218,5 @@ class MasterTest < ActiveSupport::TestCase
   end
   
   # <!-------------------------- End of group ------------------------------/>
-  
+
 end
