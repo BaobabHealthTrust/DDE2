@@ -177,6 +177,10 @@
   <script src="/javascripts/jquery.validate.js"></script>
   
   <%= yield %>
-
+  
+  <div class="navbar  navbar-inverse navbar-fixed-bottom" style="min-height: 30px !important; 
+      color: #ccc !important; text-align: center !important; padding-top: 5px !important;">
+        &copy; <%= Date.today.strftime("%Y") %> Baobab Health Trust with funding by Centres For Disease Control(CDC)
+  </div>
 </body>
 </html>
