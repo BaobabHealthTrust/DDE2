@@ -62,7 +62,51 @@ class Person < CouchRest::Model::Base
     view :search,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit({first_name: doc.names.given_name ,last_name: doc.names.family_name, gender: doc.gender}, doc);
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender], doc);
+            }
+          }"
+
+    view :advanced_search,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.birthdate,doc.addresses.home_ta ,doc.addresses.home_district], doc);
+            }
+          }"
+
+    view :search_with_dob,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.birthdate], doc);
+            }
+          }"
+    view :search_with_home_district,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.addresses.home_district], doc);
+            }
+          }"
+    view :search_with_home_ta,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.addresses.home_ta], doc);
+            }
+          }"
+    view :search_with_home_ta_district,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.addresses.home_ta, doc.addresses.home_district], doc);
+            }
+          }"
+    view :search_with_dob_home_ta,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender,doc.birthdate ,doc.addresses.home_ta], doc);
+            }
+          }"
+    view :search_with_dob_home_district,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' ){
+              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.birthdate,doc.addresses.home_district], doc);
             }
           }"
   end

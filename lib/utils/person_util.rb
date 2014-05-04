@@ -78,7 +78,25 @@ module Utils
   
 =end
     def self.search_for_person_by_params(first_name,last_name ,gender, date_of_birth=nil, home_t_a=nil, home_district=nil)
-    
+      people = []
+      if (date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
+        return Person.search.keys([[first_name,last_name ,gender]]).rows
+      elsif (!date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
+        return Person.search_with_dob.keys([[first_name,last_name ,gender, date_of_birth]]).rows
+      elsif (date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
+        return Person.search_with_home_district.keys([[first_name,last_name ,gender,home_district]]).rows
+      elsif (date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
+        return Person.search_with_home_ta.keys([[first_name,last_name ,gender,home_t_a]]).rows
+      elsif (date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
+        return Person.search_with_home_ta_district.keys([[first_name,last_name ,gender,home_t_a,home_district]]).rows
+      elsif (!date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
+        return Person.search_with_dob_home_ta.keys([[first_name,last_name ,gender,date_of_birth,home_t_a]]).rows
+      elsif (!date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
+        return Person.search_with_dob_home_district.keys([[first_name,last_name ,gender,date_of_birth, home_district]]).rows
+      elsif (!date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
+        return Person.advanced_search.keys([[first_name,last_name ,gender,date_of_birth, home_t_a, home_district]]).rows
+      end
+
     end
   
 =begin
