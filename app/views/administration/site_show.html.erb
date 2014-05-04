@@ -140,6 +140,8 @@
 
 </form>
 
+<input type="text" id="sitename" value="" />
+
 <script type="text/javascript">
   <!--
       
@@ -160,7 +162,10 @@
           "batchsize":"<%= values[:batchsize] %>",
           "region":"<%= values[:region] %>",
           "x":"<%= values[:x] %>",
-          "y":"<%= values[:y] %>"
+          "y":"<%= values[:y] %>",
+          "allocated":"<%= values[:allocated] %>",
+          "assigned":"<%= values[:assigned] %>",
+          "available":"<%= values[:available] %>"
         };
     
   <% end %>
@@ -407,12 +412,26 @@
     document.getElementById("npidassignments").innerHTML = "&nbsp;";
     document.getElementById("map").setAttribute("src", "/map?cat=Site");
     
+    document.getElementById("site_allocated").innerHTML = "&nbsp;";
+    document.getElementById("site_assigned").innerHTML = "&nbsp;";
+    document.getElementById("site_available").innerHTML = "&nbsp;";
+    document.getElementById("site_status").innerHTML = "&nbsp;";
+    
+    document.getElementById("sitename").value = "";
+    
     if(sites[site]){
       document.getElementById("section").innerHTML = "NPIDs Allocation At " + sites[site]["name"];
       document.getElementById("npidassignments").innerHTML = "Site NPID Assignment to " + sites[site]["name"];
         
       document.getElementById("map").setAttribute("src", "/map?cat=Site&region=" + sites[site]["region"] + "&x=" + sites[site]["x"] + "&y=" + sites[site]["y"]);
       
+      document.getElementById("site_allocated").innerHTML = sites[site]["allocated"];
+      document.getElementById("site_assigned").innerHTML = sites[site]["assigned"];
+      document.getElementById("site_available").innerHTML = sites[site]["available"];
+      document.getElementById("site_status").innerHTML = "&nbsp;";
+    
+      document.getElementById("sitename").value = sites[site]["name"];
+    
       ajaxSiteRequest(site, 0);
     }
   }
