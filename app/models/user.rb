@@ -17,6 +17,21 @@ class User < CouchRest::Model::Base
 
   cattr_accessor :current
 
+   design do
+    view :by_active
+
+    # active views
+    view :active_users,
+         :map => "function(doc){
+            if (doc['type'] == 'User' && doc['active'] == true){
+              emit(doc._id, {username: doc._id ,first_name: doc.first_name, 
+              last_name: doc.last_name, email: doc.email,role: doc.role, 
+              creator: doc.creator, notify: doc.notify, updated_at: doc.updated_at});
+            }
+          }"
+
+  end 
+
   design do
     view :by_username
   end
@@ -49,5 +64,9 @@ class User < CouchRest::Model::Base
     @password = BCrypt::Password.create(new_password)
     self.password_hash = @password
   end
- 
+
+  def admin?
+    self.role == 'admin'
+  end
+   
 end

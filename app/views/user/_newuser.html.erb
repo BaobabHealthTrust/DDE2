@@ -80,8 +80,7 @@ function validateForm(){
   <font id="flash_notice" style="color: green;"><%= flash[:notice] %></font><br />
 </div>
 
-<%#= form_tag :id =>'userdata', :action => 'create', :method => :post  do %>
-<form id = 'userdata', action = '/user/create' method = 'post'>
+<%= form_tag('/user/create', method: 'post', enctype: 'multipart/form-data', id: 'userdata') do %>
 
 <div class="box-body">
   <div class="form-group">
@@ -128,7 +127,6 @@ function validateForm(){
 
 </div>
                       
- <%#end%>
- </form>
+ <%end%>
 </div>                                                      
 

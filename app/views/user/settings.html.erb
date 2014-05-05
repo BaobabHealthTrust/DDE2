@@ -27,9 +27,16 @@ function openPage(pg) {
 
 </style>
 
+<br />
 
 <div class="span3">
   <div class="well sidebar-nav">
+    <%if User.current.admin?%>
+    <div class='contents'>
+      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('settings');">
+        <span class="glyphicon glyphicon-cog"></span> System settings
+      </button>
+    </div>
     <div class='contents'>
       <button type="button" class="btn btn-primary btn-lg" onclick="openPage('users');">
         <span class="glyphicon glyphicon-search"></span> Find user(s)
@@ -40,14 +47,10 @@ function openPage(pg) {
         <span class="glyphicon glyphicon-user"></span> Create user
       </button>
     </div>
+    <%end%>
     <div class='contents'>
       <button type="button" class="btn btn-primary btn-lg" onclick="openPage('editpassword');">
         <span class="glyphicon glyphicon-edit"></span> Edit password
-      </button>
-    </div>
-    <div class='contents'>
-      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('settings');">
-        <span class="glyphicon glyphicon-cog"></span> System settings
       </button>
     </div>
   </div>

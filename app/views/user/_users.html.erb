@@ -31,6 +31,7 @@ function confirmDelete(username) {
     <th>Username</th>
     <th>First name</th>
     <th>Last name</th>
+    <th>Email</th>
     <th>Role</th>
     <th>Date created</th>
     <th>&nbsp;</th>
@@ -41,6 +42,7 @@ function confirmDelete(username) {
     <td><%= user.username%></td>
     <td><%= user.first_name%></td>
     <td><%= user.last_name%></td>
+    <td><%= user.email%></td>
     <td><%= user.role%></td>
     <td><%= user.created_at.strftime('%A, %d %B %Y %H:%M')%></td>
     <td>

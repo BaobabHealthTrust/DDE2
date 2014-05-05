@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   post 'user/create'
 
+  post 'user/edit'
+
   get 'user/username_availability'
 
   get 'user/view'
