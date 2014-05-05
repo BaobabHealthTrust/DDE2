@@ -49,7 +49,6 @@ module Utils
        return  self.get_person(npid)       
     end
 
-
    private
 =begin
   + person_has_v4_id(JSON):BOOLEAN
@@ -78,8 +77,26 @@ module Utils
   
   
 =end
-    def self.search_for_person_by_params(first_name, gender, date_of_birth=nil, home_t_a=nil, home_district=nil)
-    
+    def self.search_for_person_by_params(first_name,last_name ,gender, date_of_birth=nil, home_t_a=nil, home_district=nil)
+      people = []
+      if (date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
+        return Person.search.keys([[first_name,last_name ,gender]]).rows
+      elsif (!date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
+        return Person.search_with_dob.keys([[first_name,last_name ,gender, date_of_birth]]).rows
+      elsif (date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
+        return Person.search_with_home_district.keys([[first_name,last_name ,gender,home_district]]).rows
+      elsif (date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
+        return Person.search_with_home_ta.keys([[first_name,last_name ,gender,home_t_a]]).rows
+      elsif (date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
+        return Person.search_with_home_ta_district.keys([[first_name,last_name ,gender,home_t_a,home_district]]).rows
+      elsif (!date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
+        return Person.search_with_dob_home_ta.keys([[first_name,last_name ,gender,date_of_birth,home_t_a]]).rows
+      elsif (!date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
+        return Person.search_with_dob_home_district.keys([[first_name,last_name ,gender,date_of_birth, home_district]]).rows
+      elsif (!date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
+        return Person.advanced_search.keys([[first_name,last_name ,gender,date_of_birth, home_t_a, home_district]]).rows
+      end
+
     end
   
 =begin
@@ -88,7 +105,15 @@ module Utils
   
 =end
     def self.confirm_person_to_update(json)
-    
+      person = Person.get(json[:value])
+      results = []
+      if !person.blank?
+        if compare_people(person, json)
+           results << json << person
+        end
+      end
+
+      return results
     end
    
 =begin
@@ -161,12 +186,14 @@ module Utils
 
         if !has_new_id
           new_id = Proxy.assign_npid_to_person(json)
-          if person.national_id.first == "p"
-            person["patient"]["identifiers"]["legacy_npid"] = person.national_id
-          else
-            person["patient"]["identifiers"]["temporary_npid"] = person.national_id
+          unless new_id.blank?
+            if person.national_id.first == "p"
+              person["patient"]["identifiers"]["legacy_npid"] = person.national_id
+            else
+              person["patient"]["identifiers"]["temporary_npid"] = person.national_id
+            end
+            person.national_id = new_id[:national_id]
           end
-          person.national_id = new_id[:national_id]
         end
 
         if !compare_people(person, json)
@@ -189,8 +216,7 @@ module Utils
 
         end
 
-
-        person.save!
+        person.save
       end
 
     end

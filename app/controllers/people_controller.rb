@@ -23,6 +23,7 @@ class PeopleController < ApplicationController
   end
 
   def confirm_demographics
-    @matching_records = [Person.first.attributes]
+    @matching_records = Person.all.collect{|x| x}
+
   end
 end
