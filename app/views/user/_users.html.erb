@@ -1,0 +1,56 @@
+<script>
+function confirmDelete(username) {
+  var message = "Are you sure you want to delete user:" + username + "?";
+  var answer = confirm(message);
+  if(answer) {
+    document.location = "/user/settings?username=" + username + "&id=delete";
+  }
+} 
+
+</script>
+
+<style type="text/css">
+  #status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  #status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center !important;
+  }
+</style>
+
+
+
+<table width="100%" id="status">
+  <tr>
+    <th>Username</th>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Role</th>
+    <th>Date created</th>
+    <th>&nbsp;</th>
+  </tr>
+
+  <%(@users || []).each do |user| %>
+  <tr>
+    <td><%= user.username%></td>
+    <td><%= user.first_name%></td>
+    <td><%= user.last_name%></td>
+    <td><%= user.role%></td>
+    <td><%= user.created_at.strftime('%A, %d %B %Y %H:%M')%></td>
+    <td>
+      <%if @users.length > 1%>
+        <a href="#" onclick = "confirmDelete('<%=user.username%>')">Delete</a>&nbsp;|&nbsp;
+        <a href="/user/settings?username=<%= user.username%>&id=edit">Edit</a>
+      <%else%>
+        <a href="/user/settings?username=<%= user.username%>&id=edit">Edit</a>
+      <%end%>
+    </td>
+  </tr>
+  <%end%>
+</table>

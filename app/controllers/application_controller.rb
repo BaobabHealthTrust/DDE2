@@ -9,12 +9,12 @@ class ApplicationController < ActionController::Base
   protected                                                                     
                                                                                 
   def perform_basic_auth                                                        
-    if session[:user_id].blank?                                                 
+    if session_data[:user_id].blank?                                                 
       respond_to do |format|                                                    
         format.html { redirect_to :controller => 'user',:action => 'logout' }   
       end                                                                       
     elsif not session[:user_id].blank?                                          
-      User.current = User.find session[:user_id]
+      User.current = User.find session_data[:user_id]
     end                                                                         
   end 
 

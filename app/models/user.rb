@@ -11,6 +11,7 @@ class User < CouchRest::Model::Base
   property :notify, TrueClass, :default => false
   property :role, String
   property :site_code, String
+  property :creator, String
   
   timestamps!
 
@@ -29,7 +30,8 @@ class User < CouchRest::Model::Base
   end
 
   before_save do |pass|
-    self.password_hash = BCrypt::Password.create(self.password_hash)
+    self.password_hash = BCrypt::Password.create(self.password_hash) if not self.password_hash.blank?
+    self.creator = self.current.username if self.creator.blank?
   end
  
   def password_matches?(plain_password)

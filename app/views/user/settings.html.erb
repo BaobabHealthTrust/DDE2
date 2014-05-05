@@ -1,2 +1,60 @@
-<h1>User#settings</h1>
-<p>Find me in app/views/user/settings.html.erb</p>
+<script>
+function openPage(pg) {
+  document.location = '/user/settings?id=' + pg;
+}
+
+</script>
+
+<style type="text/css">
+
+  .contents button {
+    width: 80%;
+    margin: 10px;
+  }
+
+  .span3 {
+    float: left;
+    width: 19%;
+    padding-left: 10px;
+    text-align: center;
+  }
+
+  .span9 {
+    float: right;
+    width: 79%;
+    padding-right: 10px;
+  }
+
+</style>
+
+
+<div class="span3">
+  <div class="well sidebar-nav">
+    <div class='contents'>
+      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('users');">
+        <span class="glyphicon glyphicon-search"></span> Find user(s)
+      </button>
+    </div>
+    <div class='contents'>
+      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('newuser');">
+        <span class="glyphicon glyphicon-user"></span> Create user
+      </button>
+    </div>
+    <div class='contents'>
+      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('editpassword');">
+        <span class="glyphicon glyphicon-edit"></span> Edit password
+      </button>
+    </div>
+    <div class='contents'>
+      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('settings');">
+        <span class="glyphicon glyphicon-cog"></span> System settings
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="span9">
+  <div class="well sidebar-nav">
+    <%= render(:partial => @partial) %>
+  </div>
+</div>

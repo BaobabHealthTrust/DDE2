@@ -1,0 +1,134 @@
+
+<script>
+
+function submitForm() {                                                         
+  if(validateForm())                                                            
+    document.getElementById('userdata').submit();                          
+                                                                                
+}                                                                               
+                                                                                
+function validateForm(){                                                        
+    username = document.getElementById('user_username');                      
+    first_name = document.getElementById('user_first_name');                      
+    last_name = document.getElementById('user_last_name');                      
+    user_role = document.getElementById('user_role');                      
+    password = document.getElementById('user_password');                      
+    password_confirm = document.getElementById('user_confirm_password');                      
+
+    if(username.value == '') {                                                     
+      alert("Please enter username ...");                                     
+      return false;                                                             
+    }else if(first_name.value == '') {                                                     
+      alert("Please enter user first name ...");                                     
+      return false;                                                             
+    }else if(last_name.value == '') {                                                     
+      alert("Please enter user last name ...");                                     
+      return false;                                                             
+    }else if(password.value == '') {                                                     
+      alert("Please password ...");                                     
+      return false;                                                             
+    }else if(password.value.length < 6) {                                                     
+      alert("Please password should be atleast six characters ....");                                     
+      return false;                                                             
+    }else if(password.value != password_confirm.value) {                                                     
+      alert("The two passwords you enter do not match ...");                                     
+      return false;                                                             
+    }else if(user_role.value == '') {                                                     
+      alert("Please select user role ...");                                     
+      return false;                                                             
+    }                               
+                                      
+    return true;                                                                  
+  }    
+
+  function checkUsername() {
+    username = document.getElementById('user_username').value;
+                                                                     
+    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
+        xmlhttp=new XMLHttpRequest();                                             
+      }else{// code for IE6, IE5                                                  
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
+      }                                                                           
+      xmlhttp.onreadystatechange=function() {                                     
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
+          var results = xmlhttp.responseText;                   
+          if(results == 'undefined' || results == '' || results == '"not validate"') {                           
+            return;                                                               
+          }else{                                                                  
+            if(results == 'available') {
+              document.getElementById('flash_notice').innerHTML = 'username ' + results;
+              document.getElementById('flash_notice').style.color = 'green';
+              document.getElementById('signup').disabled = false;
+            }else{
+              document.getElementById('flash_notice').innerHTML = 'username ' + results;
+              document.getElementById('flash_notice').style.color = 'red';
+              document.getElementById('signup').disabled = 'disabled';
+            }
+          }                                                                       
+        }                                                                         
+      }                                                                           
+      xmlhttp.open("GET","/user/username_availability?search_str="+username,true);           
+      xmlhttp.send();                                                             
+
+  }
+</script>
+
+
+
+<div class="content-details">
+<div>                                                                         
+  <font id="flash_notice" style="color: green;"><%= flash[:notice] %></font><br />
+</div>
+
+<%#= form_tag :id =>'userdata', :action => 'create', :method => :post  do %>
+<form id = 'userdata', action = '/user/create' method = 'post'>
+
+<div class="box-body">
+  <div class="form-group">
+    <label for="username">Username</label>
+    <%=text_field(:user, :username, :class =>'form-control', :placeholder => "Username",:onkeyup => "checkUsername();") %> 
+  </div>
+
+  <div class="form-group">
+    <label for="firstname">First name</label>
+    <%=text_field(:user, :first_name, :class =>'form-control', :placeholder => "First name") %> 
+  </div>
+
+  <div class="form-group">
+    <label for="lastname">Last name</label>
+    <%=text_field(:user, :last_name, :class =>'form-control', :placeholder => "Last name") %> 
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email</label>
+    <%=text_field(:user, :email, :class =>'form-control', :placeholder => "Email") %> 
+  </div>
+
+  <% @roles = ['', ['Standard','normal'], ['Administrator','admin']]%> 
+  <div class="form-group">
+    <label for="role">User role</label>
+    <%= select_tag "user[role]", options_for_select(@roles),:class =>'form-control', :placeholder => "Select user role" %>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Password</label>
+    <%=password_field(:user, :password, :class =>'form-control', :placeholder => "Password") %> 
+  </div>
+
+  <div class="form-group">
+    <label for="email">Confirm password</label>
+    <%=password_field(:user, :confirm_password, :class =>'form-control', :placeholder => "Confirm password") %> 
+  </div>
+
+  <div class="form-group">
+    <label for="email">&nbsp;</label>
+    <input onclick="submitForm();" type="button" id="signup" disabled='disabled' 
+      class="btn btn-primary signup_btn" value="Register" style="width:10%;" />
+  </div>
+
+</div>
+                      
+ <%#end%>
+ </form>
+</div>                                                      
+

@@ -10,7 +10,7 @@ module Utils
       user.last_name = params[:user]['last_name']
       user.role = params[:user]['role']
       user.site_code = 'XXXX'
-      user.email = 'XXXX@XXXX'
+      user.email = params[:user]['email']
       user.save
       return user
     end
