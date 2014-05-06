@@ -1,4 +1,22 @@
 Rails.application.routes.draw do
+  post 'user/create'
+
+  post 'user/edit'
+
+  get 'user/username_availability'
+
+  get 'user/view'
+
+  get 'user/new'
+
+  get 'user/settings'
+
+  get 'user/login'
+
+  post 'user/login'
+
+  get 'user/logout'
+
   root 'administration#index'
   
   get "check_thresholds" => "services#check_thresholds"

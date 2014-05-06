@@ -30,6 +30,8 @@ gem 'passenger'
 
 gem 'rb-readline'
 
+gem "bcrypt-ruby", :require => "bcrypt"
+
 #gem 'bootstrap-sass', '>= 3.0.0.0'
 
 # Use ActiveModel has_secure_password

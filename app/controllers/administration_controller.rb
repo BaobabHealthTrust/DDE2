@@ -43,7 +43,7 @@ class AdministrationController < ApplicationController
             allocated: (Npid.assigned_to_region.keys([s.site_code]).rows.length rescue 0),
             available: (Npid.untaken_at_region.keys([s.site_code]).rows.length rescue 0),
             status: nil
-        }
+        } rescue nil
       
     }
     

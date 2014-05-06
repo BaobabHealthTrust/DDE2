@@ -1,0 +1,199 @@
+<style type="text/css">
+  td {
+    padding: 10px !important;
+  }
+  select,
+  textarea,
+  input {
+    width: 70% !important;
+    float: left !important;
+  }
+  button {
+    margin: 10px !important;
+  }
+</style>
+
+<div class="container theme-showcase" role="main">
+  <div class="jumbotron head">
+    <h2>Site::Addition</h2>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Add DDE Site</h3>
+    </div>
+    <div class="panel-body">
+      
+      <form novalidate="novalidate" id="site-form" class="form-horizontal" role="form" method="post" action="/administration/create_site" autocomplete="off">
+        
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Site Code:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input type="text" id="sitecode" name="sitecode" value="" class="form-control" placeholder="Three character site code" required="" maxlength=3 minlength=3 sitecode=true />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Site Name:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input name="sitename" class="form-control" placeholder="Site name" id="sitename" required="" value="" type="text" minlength=4 />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%; vertical-align: top;">
+                  <label class="control-label">Description:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <textarea id="description" name="description" class="form-control" placeholder="Site description if available" ></textarea>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Region:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <select id="region" name="region" class="form-control" placeholder="Region" required="" onchange="switchRegion(this.value)" >
+                    <option value="">[ - Select site region in Malawi - ]</option>
+                    <option value="Centre">Central Region</option>
+                    <option value="North">Northern Region</option>
+                    <option value="South">Southern Region</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%; vertical-align: top;">
+                  <label class="control-label">Site location:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 70%; overflow: hidden !important; height: 550px;" src="/map?region"></iframe>
+                  <input name="x" class="form-control" id="x" required="" value="" type="hidden" />
+                  <input name="y" class="form-control" id="y" required="" value="" type="hidden" />
+                </td>
+              </tr>
+            </table>
+          </div>          
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Batch Size:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input type="text" id="batchsize" name="batchsize" value="" class="form-control" placeholder="Enter NPID assignment batch size" required="" digits=true />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Threshold:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input type="text" id="threshold" name="threshold" value="" class="form-control" placeholder="Enter NPID topup threshold" required="" digits=true />
+                </td>
+              </tr>
+            </table>
+          </div>
+          
+          <table style="width: 100%;">
+            <tr>
+              <td style="width: 20%;">
+                  <button type="button" class="btn btn-danger" style="font-size: 18px !important; float: left;" onclick="window.location = '/'">Cancel</button>
+              </td>
+              <td>
+                  <button type="submit" class="btn btn-success btn-large" style="font-size: 18px !important; float: right;">Save Site</button>
+              </td>
+            </tr>
+          </table>
+          
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<script defer="true">
+  
+  jQuery.validator.addMethod("sitecode", function(value, element) {
+    return this.optional(element) || /^[A-Z]{3}$/.test(value);
+  }, "Please 3 capital letters only.");
+  
+  function switchRegion(region){
+    document.getElementById("map").setAttribute("src", "/map?region=" + region.toLowerCase().trim());
+  }
+  
+  function prettyPrint(){
+    $(document).ready(function(){
+      
+		    $('#site-form').validate({		    
+	        rules: {},
+			    highlight: function(element) {
+				    $(element).closest('.control-group').removeClass('success').addClass('error');
+			    },
+			    success: function(element) {
+				    element
+				    .text('OK!').addClass('valid')
+				    .closest('.control-group').removeClass('error').addClass('success');
+			    }
+	      });
+
+    }); // end document.ready
+  }
+  
+  $(document).ready(function(){
+      
+		  $('#site-form').validate({		    
+	      rules: {
+          sitecode: {
+            required: true,
+            remote: {
+              url: "/check_site_code",
+              type: "post",
+              data: {
+                sitecode: function() {
+                  return $( "#sitecode" ).val();
+                }
+              },
+              error: "Site code already taken"
+            }
+          }
+        },
+			  highlight: function(element) {
+				  $(element).closest('.control-group').removeClass('success').addClass('error');
+			  },
+			  success: function(element) {
+				  element
+				  .text('OK!').addClass('valid')
+				  .closest('.control-group').removeClass('error').addClass('success');
+			  }
+	    });
+
+  }); // end document.ready
+  
+  addEventListener('load', prettyPrint, false);
+	$(document).ready(function(){
+	  $('pre').addClass('prettyprint linenums');
+	});
+</script>
