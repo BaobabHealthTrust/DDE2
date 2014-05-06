@@ -96,9 +96,17 @@
               </ul>
             </li>
             <%end%>
-           <li><a href="/"><b>Hi, <%= User.current.first_name %></b></a></li>
-           <li><a href="/user/logout">Signout</a></li>
+           
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login as:&nbsp;<b><%= User.current.username[0..9] %></b> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/user/logout">Signout</a></li>
+              </ul>
+            </li>
+
            </ul>
+
+
           <%end%>
         </div><!--/.nav-collapse -->
       </div>
