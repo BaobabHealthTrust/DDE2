@@ -1,8 +1,15 @@
 require 'couchrest_model'
 
 class User < CouchRest::Model::Base
+  
+  def username
+   self['_id']
+  end
 
-  #property :username, String
+  def username=(value)
+   self['_id'] = value
+  end
+ 
   property :first_name, String
   property :last_name, String
   property :password_hash, String
@@ -36,17 +43,9 @@ class User < CouchRest::Model::Base
     view :by_username
   end
 
-  def username
-   self['_id']
-  end
-
-  def username=(value)
-   self['_id'] = value
-  end
-
   before_save do |pass|
     self.password_hash = BCrypt::Password.create(self.password_hash) if not self.password_hash.blank?
-    self.creator = self.current.username if self.creator.blank?
+    self.creator = 'admin' if self.creator.blank?
   end
  
   def password_matches?(plain_password)
