@@ -59,6 +59,8 @@ class UserController < ApplicationController
       elsif params[:id] == 'edit'
         @partial = 'edit'
         @user = Utils::UserUtil.get_active_user(params[:username])
+      elsif params[:id] == 'add_site'
+        @partial = 'add_site'
       else
         @partial = 'users'
         @users = User.active_users
