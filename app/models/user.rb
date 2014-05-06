@@ -2,6 +2,8 @@ require 'couchrest_model'
 
 class User < CouchRest::Model::Base
 
+  use_database "local"
+    
   property :name, String
   property :password_hash, String
   property :email, String

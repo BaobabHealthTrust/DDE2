@@ -2,6 +2,8 @@ require 'couchrest_model'
 
 class Site < CouchRest::Model::Base
 
+  use_database "local"
+ 
   def site_code=(value)
     self['_id']=value
   end
@@ -18,6 +20,10 @@ class Site < CouchRest::Model::Base
   property :site_id_count, Integer, :default => 0
   property :x, String
   property :y, String
+  property :site_type, String, :default => "proxy"  # Either master/proxy
+  property :ip_address, String, :default => "127.0.0.1"
+  property :username, String, :default => "admin"
+  property :password, String, :default => "test"
   
   timestamps!
 
@@ -67,6 +73,16 @@ class Site < CouchRest::Model::Base
 
   design do
     view :by__id
+    
+    view :list,
+          :map => "function(doc){
+            if (doc['type'] == 'Site'){
+              emit(doc._id, {site_code: doc._id, name: doc.name, region: doc.region, x: doc.x, 
+                y: doc.y, description: doc.description, threshold: doc.threshold,
+                batch_size: doc.batch_size, site_type: doc.site_type, ip_address: doc.ip_address,
+                site_id_count: doc.site_id_count});
+            }
+          }"
   end
 
 end

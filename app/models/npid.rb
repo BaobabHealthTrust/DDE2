@@ -112,25 +112,25 @@ class Npid < CouchRest::Model::Base
     # Site views
     view :unassigned_to_site,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['site_code'] == ''){
+            if (doc['type'].toLowerCase() == 'npid' && doc['site_code'] == ''){
                   emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, updated_at: doc.updated_at});
             }
           }"
     view :unassigned_at_site,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.current_code}' && !doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['site_code'] == '#{Site.current_code}' && !doc.assigned ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, updated_at: doc.updated_at});
             }
           }"
     view :assigned_at_site,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.current_code}' && doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['site_code'] == '#{Site.current_code}' && doc.assigned ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, updated_at: doc.updated_at});
             }
           }"
     view :assigned_to_site,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.current_code}' ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['site_code'] == '#{Site.current_code}' ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, updated_at: doc.updated_at});
             }
           }"
@@ -138,56 +138,56 @@ class Npid < CouchRest::Model::Base
     # Current Region views    
     view :unassigned_to_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && (doc['region'] == '' || doc['region'] == null)){
+            if (doc['type'].toLowerCase() == 'npid' && (doc['region'] == '' || doc['region'] == null)){
                   emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :unassigned_at_this_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] == '' || doc['site_code'] == null) ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] == '' || doc['site_code'] == null) ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :assigned_at_this_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :assigned_to_this_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == '#{Site.current_region}' ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == '#{Site.current_region}' ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :untaken_at_this_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     # General views
     view :unassigned_at_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && (doc['site_code'] == '' || doc['site_code'] == null) ){
+            if (doc['type'].toLowerCase() == 'npid' && (doc['site_code'] == '' || doc['site_code'] == null) ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :assigned_at_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
               emit(doc.site_code, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :assigned_to_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] != '' && doc['region'] != null ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] != '' && doc['region'] != null ){
               emit(doc.site_code, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :untaken_at_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] != '' && doc['region'] != null && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] != '' && doc['region'] != null && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
               emit(doc.site_code, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
@@ -195,25 +195,25 @@ class Npid < CouchRest::Model::Base
     # Central Region views 
     view :unassigned_at_central_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'Centre' && (doc['site_code'] == '' || doc['site_code'] == null) ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'Centre' && (doc['site_code'] == '' || doc['site_code'] == null) ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :assigned_at_central_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'Centre' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'Centre' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :allocated_to_central_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'Centre' ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'Centre' ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :available_at_central_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'Centre' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'Centre' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
@@ -221,25 +221,25 @@ class Npid < CouchRest::Model::Base
     # Northern Region views 
     view :unassigned_at_northern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'North' && (doc['site_code'] == '' || doc['site_code'] == null) ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'North' && (doc['site_code'] == '' || doc['site_code'] == null) ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :assigned_at_northern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'North' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'North' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :allocated_to_northern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'North' ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'North' ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :available_at_northern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'North' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'North' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
@@ -247,25 +247,25 @@ class Npid < CouchRest::Model::Base
     # Southern Region views 
     view :unassigned_at_southern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'South' && (doc['site_code'] == '' || doc['site_code'] == null) ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'South' && (doc['site_code'] == '' || doc['site_code'] == null) ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :assigned_at_southern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'South' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'South' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :allocated_to_southern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'South' ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'South' ){
               emit(doc.national_id, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"
     view :available_at_southern_region,
          :map => "function(doc){
-            if (doc['type'] == 'Npid' && doc['region'] == 'South' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
+            if (doc['type'].toLowerCase() == 'npid' && doc['region'] == 'South' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
               emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
             }
           }"         

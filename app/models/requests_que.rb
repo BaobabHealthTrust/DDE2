@@ -1,5 +1,7 @@
 class RequestsQue < CouchRest::Model::Base
 
+  use_database "local"
+    
   property :site_code, String
   property :region, String
   property :threshold, Integer
