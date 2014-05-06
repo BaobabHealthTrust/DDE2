@@ -4,6 +4,7 @@ class UserController < ApplicationController
       user = Utils::UserUtil.get_active_user(params[:user]["username"])
       if user and user.password_matches?(params[:user]["password"])
         session[:user_id] = user.username
+        flash[:error] = nil
         redirect_to "/" and return
       else
         flash[:error] = 'That username and/or password was not valid.'
