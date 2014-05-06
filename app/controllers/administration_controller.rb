@@ -104,6 +104,10 @@ class AdministrationController < ApplicationController
     Site.create(
         site_code: params["sitecode"],
         name: params["sitename"],
+        site_type: params["site_type"],
+        ip_address: params["ip_address"],
+        ip_address: params["username"],
+        ip_address: params["password"],
         description: params["description"],
         region: params["region"],
         batchsize: params["batchsize"],
@@ -117,7 +121,7 @@ class AdministrationController < ApplicationController
   end
 
   def site_edit
-    @sitecodes = Site.all.collect{|s| s.site_code}
+    @sitecodes = Site.all.collect{|s| [s.site_code, s.name]}
   end
 
   def update_site
@@ -127,6 +131,10 @@ class AdministrationController < ApplicationController
       result = site.update_attributes(
           site_code: params["sitecode"],
           name: params["sitename"],
+          site_type: params["site_type"],
+          ip_address: params["ip_address"],
+          ip_address: params["username"],
+          ip_address: params["password"],
           description: params["description"],
           region: params["region"],
           batchsize: params["batchsize"],
@@ -144,7 +152,7 @@ class AdministrationController < ApplicationController
       flash[:error] = "Sorry! Site update failed!"
     end
     
-    redirect_to "/" and return
+    redirect_to "/administration/site_edit" and return
   end
 
   def site_show
@@ -274,4 +282,174 @@ class AdministrationController < ApplicationController
 
   def proxy_people
   end
+
+  def connection_add
+    @sitecodes = Site.all.collect{|s| [s.site_code, s.name]}
+  end
+
+  def connection_edit
+    @sitecodes = Site.all.collect{|s| [s.site_code, s.name]}
+    
+    @connections = Connection.all.collect{|s| [s.src_sink, "#{Site.find_by__id(s.source).name rescue nil} -> #{Site.find_by__id(s.sink).name rescue nil}"]}
+  end
+
+  def connection_show
+    @sitecodes = Site.all.collect{|s| [s.site_code, s.name]}
+    
+    @connections = Connection.all.collect{|s| [s.src_sink, "#{Site.find_by__id(s.source).name rescue nil} -> #{Site.find_by__id(s.sink).name rescue nil}"]}
+  end
+
+  def connection_create
+    if !params[:source].nil? and !params[:sink].nil?          
+      source = Site.find_by__id(params[:source]) rescue nil      
+      sink = Site.find_by__id(params[:sink]) rescue nil
+              
+      if !source.nil? and !sink.nil? 
+               
+        if Rails.env.downcase == "development" or Rails.env.downcase == "test"          
+          result = RestClient.get("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/dde_#{source.site_code.downcase}") rescue nil          
+          if result.nil?         
+            result = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/dde_#{source.site_code.downcase}", {}.to_json) # rescue nil            
+          end
+          result = RestClient.get("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}") rescue nil 
+          if result.nil?          
+            result = RestClient.put("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}", {}.to_json) # rescue nil
+          end       
+        end
+        
+        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+            source: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
+            target: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
+            connection_timeout: 60000,
+            retries_per_request: 20,
+            http_connections: 30,
+            continuous: true
+          }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+          
+        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+            source: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
+            target: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
+            connection_timeout: 60000,
+            retries_per_request: 20,
+            http_connections: 30,
+            continuous: true
+          }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
+                
+        Connection.create(src_sink: "#{params[:source]}-#{params[:sink]}", source: params[:source], sink: params[:sink]) 
+             
+      end      
+    end    
+    redirect_to "/administration/connection_add" and return
+  end
+
+  def connection_update
+    src = params[:connection].split("-") rescue []
+    
+    source = Site.find_by__id(src[0]) rescue nil      
+    sink = Site.find_by__id(src[1]) rescue nil
+            
+    if !source.nil? and !sink.nil? 
+      result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+          source: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
+          target: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
+          connection_timeout: 60000,
+          retries_per_request: 20,
+          cancel: true
+        }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+        
+      result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+          source: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
+          target: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
+          connection_timeout: 60000,
+          retries_per_request: 20,
+          http_connections: 30,
+          cancel: true
+        }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
+                  
+      Connection.find_by__id(params[:connection]).destroy rescue nil
+    end
+    
+    redirect_to "/administration/connection_edit" and return
+  end
+
+  def sync_map
+    @sites = []
+    
+    if !params[:src].blank?
+      src = params[:src].split("-")
+    
+      if src.length > 1
+        
+        source = Site.find_by__id(src[0]) rescue nil
+        target = Site.find_by__id(src[1]) rescue nil
+        
+        if !source.nil? and !target.nil?
+          site = {
+            source: {
+              sitecode: source.site_code,
+              region: source.region,
+              x: source.x,
+              y: source.y,
+              name: source.name,
+              type: source.site_type,
+              ip_address: source.ip_address
+            },
+            target: {
+              sitecode: target.site_code,
+              region: target.region,
+              x: target.x,
+              y: target.y,
+              name: target.name,
+              type: target.site_type,
+              ip_address: target.ip_address
+            },
+            label: (params[:src] rescue nil)
+          } 
+          
+          @sites << site 
+        end
+      end
+    else 
+      Connection.all.rows.each do |row|
+        src = row["key"].split("-") rescue []
+      
+        if src.length > 1
+          
+          source = Site.find_by__id(src[0]) rescue nil
+          target = Site.find_by__id(src[1]) rescue nil
+          
+          if !source.nil? and !target.nil?
+            site = {
+              source: {
+                sitecode: source.site_code,
+                region: source.region,
+                x: source.x,
+                y: source.y,
+                name: source.name,
+                type: source.site_type,
+                ip_address: source.ip_address
+              },
+              target: {
+                sitecode: target.site_code,
+                region: target.region,
+                x: target.x,
+                y: target.y,
+                name: target.name,
+                type: target.site_type,
+                ip_address: target.ip_address
+              },
+              label: (row["key"] rescue nil)
+            } 
+            
+            @sites << site 
+          end
+        end
+      end
+    end
+    
+    # raise @sites.inspect
+    
+    render :layout => false
+  end
+  
 end

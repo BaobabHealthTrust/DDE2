@@ -2,6 +2,8 @@ require 'couchrest_model'
 
 class User < CouchRest::Model::Base
   
+  use_database "local"
+    
   def username
    self['_id']
   end
