@@ -66,39 +66,29 @@
         
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
+            <%unless session[:user_id].blank? %>
             <li><a href="/">Home</a></li>
             <li class="dropdown">
               <a href="/administration/region_show" class="dropdown-toggle">Regions Management</b></a>
             </li>
+            <li><a href="/administration/site_show">View site(s)</a></li>
+            <%if User.current.admin?%> 
+              <li><a href="/user/settings">Administration</a></li>
+            <%else%>
             <li class="dropdown">
-              <a href="/administration/site_show" class="dropdown-toggle" data-toggle="dropdown">Sites Management <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Management <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="/administration/site_add">Add Site</a></li>
-                <li><a href="/administration/site_edit">Edit Site</a></li>
-                <li><a href="/administration/site_show">View By Site</a></li>
+                <li><a href="/user/settings?id=editpassword">Change password</a></li>
               </ul>
             </li>
-            <li class="dropdown">
-              <a href="/administration/user_show" class="dropdown-toggle" data-toggle="dropdown">User Management <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="/administration/user_add">Add User</a></li>
-                <li><a href="/administration/user_edit">Edit User</a></li>
-                <li><a href="/administration/user_show">View By User</a></li>
-              </ul>
-            </li>
+            <%end%>
           </ul>
+          <%end%>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 
-    <!--div class="container">
-
-      <div class="starter-template">
-        <h1>Master Mode</h1>
-        <p class="lead">Operating in Master Mode.</p>
-      </div>
-
-    </div><!-- /.container -->
+    <!-- /.container -->
 
   <% else %>
 

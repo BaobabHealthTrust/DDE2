@@ -29,4 +29,5 @@ module DDE2
     
     config.autoload_paths += %W(#{config.root}/lib)
   end
+  #DDE2::Application.config.session_store :cookie_store, key: '_dde_session'
 end
