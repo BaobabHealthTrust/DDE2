@@ -1,12 +1,12 @@
 <html>
     <head>
-
+      <script language="javascript" type="text/javascript" src="/javascripts/jquery.js"></script>
       <style type="text/css">
         div.footer{
-            width: 100%;
+            width: 99%;
             position: absolute;
             bottom: 0vh;
-            height: 14vh;
+            height: 13vh;
             background-color: #585858;
         }
 
@@ -59,12 +59,30 @@
         }
       </style>
 
+      <script type="text/javascript">
+            function send(){
+                jQuery.ajax({
+                    url:  "/people/update",
+                    data: data[indexed],
+                    dataType: 'json',
+                    type:"POST",
+                    success: function(msg){
+
+                    },
+                    error: function(){
+                        alert("Could not create site", "Unsuccessful!");
+                    }
+
+                });
+
+            }
+      </script>
     </head>
 
-    <body style="padding: 0px;">
+    <body style="padding: 0px;width: 98%;">
         <div class="content_with_footer">
            <span style="font-size: 250%;">Select Patient From The Following List<br></span>
-           <div class="grouping" style="float: left;width: 40%;padding-left: 1%;">
+           <div class="grouping" style="float: left;width: 39%;padding-left: 1%;">
              First Name:<span id="first_name"></span> <br>
              Last Name :<span id="last_name"></span> <br>
              DOB:<span id="age"></span> <br>
@@ -80,14 +98,14 @@
              Home T/A : <span id="h_ta"></span> <br>
              Home District : <span id=h_district></span> <br>
            </div>
-          <div id="options" class="grouping" style="float: right;width: 59%;">
+          <div id="options" class="grouping" style="float: right;width: 58%;">
 
           </div>
         </div>
 
         <div class="footer">
-          <button style="float: left; width: 10vw;" onclick="test()">Cancel</button>
-          <button style="float: right;width: 15vw;">Select Patient</button>
+          <button style="float: left; width: 10vw;" >Cancel</button>
+          <button style="float: right;width: 15vw;" onclick="send()">Select Patient</button>
         </div>
     </body>
 

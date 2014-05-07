@@ -16,7 +16,7 @@ class PeopleController < ApplicationController
   end
 
   def update
-
+      raise params.inspect
   end
 
   def destroy
@@ -24,6 +24,6 @@ class PeopleController < ApplicationController
 
   def confirm_demographics
     @matching_records = Person.all.collect{|x| x}
-
+    render :layout => false
   end
 end
