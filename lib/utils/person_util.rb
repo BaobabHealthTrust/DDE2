@@ -11,9 +11,10 @@ module Utils
     
       raise "First argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
      #check if json object is whole person data or just person national id 
-
+      #raise json.inspect
       person = nil
-		  if json[:value].blank?
+      values = JSON.parse(json)
+		  if values[:value].blank?
           #create person
           person = self.create_person(json)
           return person
