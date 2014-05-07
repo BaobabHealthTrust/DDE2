@@ -1,9 +1,12 @@
 class PeopleController < ApplicationController
 
   def find
-   Utils::PersonUtil.process_person_data(params)
+   Utils::PersonUtil.process_person_data(params.to_json)
+    respond_to do |format|
+        format.json { render :json   => {}.to_json }
+      end
   end
-
+  
   def index
   end
 
