@@ -13,6 +13,11 @@
   }
 </style>
 
+<%= form_tag('/assign_npids_to_site', method: 'post', enctype: 'multipart/form-data', 
+    id: 'site-form', class: "form-horizontal", autocomplete: "off", role: "form", novalidate: "novalidate") do %>
+
+<!--form novalidate="novalidate" id="site-form" class="form-horizontal" role="form" method="post" action="/assign_npids_to_site" autocomplete="off"-->
+
   <div class="container theme-showcase" role="main">
     <div class="jumbotron head">
       <h2>Site::View</h2>
@@ -45,7 +50,7 @@
             <div class="panel-heading">
               <h3 class="panel-title" id="section">NPIDs Allocation At </h3>
             </div>
-            <div class="panel-body" style="height: 555px; overflow: auto; padding: 1px !important;" id="patients">
+            <div class="panel-body" style="height: 425px; overflow: auto; padding: 1px !important;" id="patients">
         
               <table width="100%" class="status">
                 <tr>
@@ -103,10 +108,42 @@
                 </tr>
               </table>
             </div>
-          </div>       
+          </div>   
+          <div class="panel panel-primary" style="">
+            <div class="panel-heading">
+              <h3 class="panel-title" id="npidassignments">Site NPIDs Assignment</h3>
+            </div>
+            <div class="panel-body" style="height: 70px; overflow: hidden; padding: 1px !important;">
+              
+                
+                <div class="form-control-group">
+                
+                  <table style="margin-top: 5px; margin-left: 10px; width: 95%;">
+                    <tr>
+                      <td style="text-align: right !important; vertical-align: top; padding-top: 6px;">
+                        NPIDs Quantity to Assign:&nbsp;
+                      </td>
+                      <td>
+                        <input type="text" id="quantity" name="quantity" value="" class="form-control" required="" digits=true />
+                      </td>
+                      <td style="vertical-align: top;">
+                        <button type="submit" class="btn btn-success btn-large" 
+                            style="font-size: 14px !important; float: right; vertical-align: top;">Assign NPIDs</button>
+                      </td>
+                    </tr>
+                  </table>
+                
+                </div>
+                
+            </div>
+          </div>           
       </div>    
     </div>
   </div>
+
+<!--/form-->
+
+<% end %>
 
 <input type="text" id="sitename" value="" />
 
@@ -137,7 +174,57 @@
         };
     
   <% end %>
-     
+      
+  function prettyPrint(){
+    $(document).ready(function(){
+      
+		    $('#site-form').validate({		    
+	        rules: {},
+			    highlight: function(element) {
+				    $(element).closest('.control-group').removeClass('success').addClass('error');
+			    },
+			    success: function(element) {
+				    element
+				    .text('OK!').addClass('valid')
+				    .closest('.control-group').removeClass('error').addClass('success');
+			    }
+	      });
+
+    }); // end document.ready
+  }
+  
+  $(document).ready(function(){
+      
+		  $('#site-form').validate({		    
+	      rules: {
+          quantity: {
+            required: true,
+            remote: {
+              url: "/check_site_allocation",
+              type: "get",
+              data: {
+                quantity: function() {
+                  return $( "#quantity" ).val();
+                },
+                site: function() {
+                  return $( "#site" ).val();
+                }
+              }
+            }
+          }
+        },
+			  highlight: function(element) {
+				  $(element).closest('.control-group').removeClass('success').addClass('error');
+			  },
+			  success: function(element) {
+				  element
+				  .text('OK!').addClass('valid')
+				  .closest('.control-group').removeClass('error').addClass('success');
+			  }
+	    });
+
+  }); // end document.ready
+    
   function ajaxSiteRequest(code, start){
      var httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = function() {
@@ -327,6 +414,7 @@
     
   function switchSite(site){
     document.getElementById("section").innerHTML = "&nbsp;";
+    document.getElementById("npidassignments").innerHTML = "&nbsp;";
     document.getElementById("map").setAttribute("src", "/map?cat=Site");
     
     document.getElementById("site_allocated").innerHTML = "&nbsp;";
@@ -338,6 +426,7 @@
     
     if(sites[site]){
       document.getElementById("section").innerHTML = "NPIDs Allocation At " + sites[site]["name"];
+      document.getElementById("npidassignments").innerHTML = "Site NPID Assignment to " + sites[site]["name"];
         
       document.getElementById("map").setAttribute("src", "/map?cat=Site&region=" + sites[site]["region"] + "&x=" + sites[site]["x"] + "&y=" + sites[site]["y"]);
       
@@ -351,7 +440,12 @@
       ajaxSiteRequest(site, 0);
     }
   }
-  
+   
+  addEventListener('load', prettyPrint, false);
+	$(document).ready(function(){
+	  $('pre').addClass('prettyprint linenums');
+	});
+	
   switchSite(document.getElementById("site").value); 
     
   //-->

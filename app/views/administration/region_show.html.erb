@@ -16,8 +16,6 @@
   }
 </style>
 
-<form novalidate="novalidate" id="site-form" class="form-horizontal" role="form" method="post" action="/assign_npids_to_region" autocomplete="off">
-
   <div class="container theme-showcase" role="main">
     <div class="jumbotron head">
       <h2>Region::View</h2>
@@ -46,7 +44,7 @@
             <div class="panel-heading">
               <h3 class="panel-title" id="section">&nbsp;</h3>
             </div>
-            <div class="panel-body" style="height: 425px; overflow: auto; padding: 1px !important;" id="sites">                
+            <div class="panel-body" style="height: 555px; overflow: auto; padding: 1px !important;" id="sites">                
               &nbsp;    
             </div>
           </div>
@@ -93,40 +91,10 @@
                 </tr>
               </table>
             </div>
-          </div>   
-          <div class="panel panel-primary" style="">
-            <div class="panel-heading">
-              <h3 class="panel-title" id="npidassignments">Region NPIDs Assignment</h3>
-            </div>
-            <div class="panel-body" style="height: 70px; overflow: hidden; padding: 1px !important;">
-              
-                
-                <div class="form-control-group">
-                
-                  <table style="margin-top: 5px; margin-left: 10px; width: 95%;">
-                    <tr>
-                      <td style="text-align: right !important; vertical-align: top; padding-top: 6px;">
-                        NPIDs Quantity to Assign:&nbsp;
-                      </td>
-                      <td>
-                        <input type="text" id="quantity" name="quantity" value="" class="form-control" required="" digits=true />
-                      </td>
-                      <td style="vertical-align: top;">
-                        <button type="submit" class="btn btn-success btn-large" 
-                            style="font-size: 14px !important; float: right; vertical-align: top;">Assign NPIDs</button>
-                      </td>
-                    </tr>
-                  </table>
-                
-                </div>
-                
-            </div>
-          </div>           
+          </div>         
       </div>    
     </div>
   </div>
-
-</form>
 
 <script type="text/javascript">
   <!--
@@ -182,59 +150,11 @@
     <% end %>
     
   <% end %>
-      
-  function prettyPrint(){
-    $(document).ready(function(){
-      
-		    $('#site-form').validate({		    
-	        rules: {},
-			    highlight: function(element) {
-				    $(element).closest('.control-group').removeClass('success').addClass('error');
-			    },
-			    success: function(element) {
-				    element
-				    .text('OK!').addClass('valid')
-				    .closest('.control-group').removeClass('error').addClass('success');
-			    }
-	      });
-
-    }); // end document.ready
-  }
-  
-  $(document).ready(function(){
-      
-		  $('#site-form').validate({		    
-	      rules: {
-          quantity: {
-            required: true,
-            remote: {
-              url: "/check_region_allocation",
-              type: "get",
-              data: {
-                quantity: function() {
-                  return $( "#quantity" ).val();
-                }
-              }
-            }
-          }
-        },
-			  highlight: function(element) {
-				  $(element).closest('.control-group').removeClass('success').addClass('error');
-			  },
-			  success: function(element) {
-				  element
-				  .text('OK!').addClass('valid')
-				  .closest('.control-group').removeClass('error').addClass('success');
-			  }
-	    });
-
-  }); // end document.ready
-  
+   
   function switchRegion(region){
     document.getElementById("section").innerHTML = "&nbsp;";
     document.getElementById("sites").innerHTML = "&nbsp;";
     $("#region_sites")[0].innerHTML = "";
-    document.getElementById("npidassignments").innerHTML = "&nbsp;";
     
     if(region.trim().length == 0){
       document.getElementById("map").setAttribute("src", "/map?region");
@@ -245,15 +165,12 @@
       switch(region.trim().toLowerCase()){
         case "centre":
           document.getElementById("section").innerHTML = "Central Region Sites Summaries (" + sites["Centre"]["data"].length + ")";
-          document.getElementById("npidassignments").innerHTML = "Assign NPIDs to Central Region";
           break;
         case "north":
           document.getElementById("section").innerHTML = "Northern Region Sites Summaries (" + sites["North"]["data"].length + ")";
-          document.getElementById("npidassignments").innerHTML = "Assign NPIDs to Northern Region";
           break;
         case "south":
           document.getElementById("section").innerHTML = "Southern Region Sites Summaries (" + sites["South"]["data"].length + ")";
-          document.getElementById("npidassignments").innerHTML = "Assign NPIDs to Southern Region";
           break;
       }
       
@@ -325,11 +242,6 @@
     }
   }
    
-  addEventListener('load', prettyPrint, false);
-	$(document).ready(function(){
-	  $('pre').addClass('prettyprint linenums');
-	});
-	
   switchRegion(document.getElementById("region").value); 
     
   //-->

@@ -33,21 +33,11 @@ Rails.application.routes.draw do
 
   get 'administration/site_show'
 
-  get 'administration/region_add'
+  get 'administration/site_assign'
 
   get 'administration/region_edit'
 
   get 'administration/region_show'
-
-  get 'administration/user_add'
-
-  get 'administration/user_edit'
-
-  get 'administration/user_show'
-
-  get 'administration/master_people'
-
-  get 'administration/proxy_people'
 
   get 'administration/index'
   
