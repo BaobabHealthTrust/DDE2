@@ -91,7 +91,8 @@
       </table>
           
       <input type='hidden' name='edit_action' value = 'edit' />
-      <input type='hidden' name='username' value = "<%=params[:username]%>" />
+      <input type='hidden' name='username' value = "<%= params[:username] %>" />
+      <input type='hidden' name='selfedit' value = "<%= params[:selfedit] rescue nil %>" />
                
      <% end %>
     </div>                                                      

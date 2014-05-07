@@ -54,7 +54,11 @@ class UserController < ApplicationController
       flash[:notice] = "Password change successiful"
     end
     
-    redirect_to '/user/settings'
+    if params[:selfedit].blank?
+      redirect_to '/user/settings' and return
+    else
+      redirect_to '/' and return
+    end
   end
 
   def settings
