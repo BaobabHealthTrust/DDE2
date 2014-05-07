@@ -30,6 +30,10 @@ class ServicesController < ApplicationController
     if !result.nil?
       hash = {
         name: result.name,
+        site_type: result.site_type,
+        ip_address: result.ip_address,
+        username: result.username,
+        password: result.password,
         description: result.description,
         region: result.region,
         threshold: result.threshold,
@@ -105,6 +109,16 @@ class ServicesController < ApplicationController
     
     render :json => hash.to_json
     
+  end
+
+  def check_duplicate_connections
+    if !params[:source].nil? and !params[:sink].nil?
+    
+      result = Connection.exists.keys([[params[:source], params[:sink]]]).rows.length
+    
+      render :text => (result <= 0) and return
+    end
+    render :text => false and return
   end
 
 end

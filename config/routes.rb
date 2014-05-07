@@ -39,6 +39,8 @@ Rails.application.routes.draw do
   
   get '/national_map' => "administration#national_map"
   
+  get '/sync_map' => "administration#sync_map"
+  
   get '/region/:id' => "administration#regional_map"
   
   get "/search_by_site_code/:id" => "services#search_by_site_code"
@@ -52,6 +54,18 @@ Rails.application.routes.draw do
   get "/check_site_allocation" => "services#check_site_allocation"
 
   get "/search_for_patients_by_site" => "services#search_for_patients_by_site"
+
+  get 'administration/connection_add'
+
+  get 'administration/connection_edit'
+
+  get 'administration/connection_show'
+  
+  post 'administration/connection_create'
+
+  post 'administration/connection_update'
+
+  get '/check_duplicate_connections' => "services#check_duplicate_connections"
 
   resources :people do
     collection do

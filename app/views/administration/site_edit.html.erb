@@ -37,7 +37,7 @@
                     
                     <% @sitecodes.each do |code| %>
                     
-                      <option value="<%= code %>"><%= code %></option>
+                      <option value="<%= code[0] %>"><%= "#{code[0]} (#{code[1]})" %></option>
                     
                     <% end %>
                     
@@ -54,6 +54,58 @@
                 </td>
                 <td>
                   <input name="sitename" class="form-control" placeholder="Site name" id="sitename" required="" value="" type="text" minlength=4 />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Site Type:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <select name="site_type" class="form-control" placeholder="Site Type" id="site_type" required="" >
+                    <option value="">[- Select site type -]</option>
+                    <option value="proxy">Proxy</option>
+                    <option value="master">Master</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">IP Address:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input name="ip_address" class="form-control" placeholder="Site Node IP Address" id="ip_address" required="" value="" type="text" minlength=7 ipaddress=true />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Node Admin Username:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input name="username" class="form-control" placeholder="Site Node Username" id="username" required="" value="" type="text" />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Node Admin Password:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input name="password" class="form-control" placeholder="Site Node Password" id="password" required="" value="" type="password" />
                 </td>
               </tr>
             </table>
@@ -94,7 +146,7 @@
                   <label class="control-label">Site location:</label>&nbsp;&nbsp;&nbsp;
                 </td>
                 <td>
-                  <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 70%; overflow: hidden !important; height: 550px;" src="/map?region"></iframe>
+                  <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 70%; overflow: hidden !important; height: 600px;" src="/map?region"></iframe>
                   <input name="x" class="form-control" id="x" required="" value="" type="hidden" />
                   <input name="y" class="form-control" id="y" required="" value="" type="hidden" />
                 </td>
@@ -149,6 +201,10 @@
     return this.optional(element) || /^[A-Z]{3}$/.test(value);
   }, "Please 3 capital letters only.");
   
+  jQuery.validator.addMethod("ipaddress", function(value, element) {
+    return this.optional(element) || /^\d+\.\d+\.\d+\.\d+$/.test(value);
+  }, "Not a valid IP address.");
+  
   function switchRegion(region){
     document.getElementById("map").setAttribute("src", "/map?region=" + region.toLowerCase().trim());
   }
@@ -186,6 +242,10 @@
         var json = JSON.parse(result);
         
         document.getElementById("sitename").value = json["name"];
+        document.getElementById("site_type").value = json["site_type"];
+        document.getElementById("ip_address").value = json["ip_address"];
+        document.getElementById("username").value = json["username"];
+        document.getElementById("password").value = json["password"];
         document.getElementById("description").value = json["description"];
         document.getElementById("region").value = json["region"];
         document.getElementById("map").setAttribute("src", "/map?region=" + json["region"] + "&x=" + json["x"] + "&y=" + json["y"]);
