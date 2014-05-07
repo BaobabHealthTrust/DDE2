@@ -1,4 +1,4 @@
-class ServicesController < ApplicationController
+class ServicesController  < ActionController::Base  # < ApplicationController
 
   def check_thresholds
     result = Utils::Master.check_site_thresholds()
