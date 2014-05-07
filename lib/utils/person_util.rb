@@ -227,7 +227,7 @@ module Utils
   
 =end
     def self.get_person(npid)
-       person = Person.get(npid) rescue nil
+       person = Person.find(npid) rescue nil
        unless person.blank?
           return person.to_json
        else
