@@ -75,6 +75,8 @@ Rails.application.routes.draw do
 
   get '/check_duplicate_connections' => "services#check_duplicate_connections"
 
+  get '/username_available' => "services#username_available"
+
   resources :people do
     collection do
       post :create, :update, :destroy

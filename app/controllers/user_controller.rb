@@ -20,11 +20,13 @@ class UserController < ApplicationController
   end
 
   def create
-    user = Utils::UserUtil.create(params)
+    user = Utils::UserUtil.create(params) rescue nil?
     if not user.blank?
       redirect_to '/user/settings'
     else
-      redirect_to '/user/view' 
+      flash[:error] = "Failed to create user"
+      
+      redirect_to '/user/settings?id=newuser' 
     end
   end
 
@@ -36,8 +38,22 @@ class UserController < ApplicationController
     render :text => user = user.blank? ? 'available' : 'not available' and return
   end
 
-  def edit
-    Utils::UserUtil.edit(params)
+  def edit    
+    user = Utils::UserUtil.get_active_user(params[:user]["username"])
+    if user and user.password_matches?(params[:user]["password"])
+      flash[:error] = "Wrong old password!"
+      
+      redirect_to '/' and return
+    end
+        
+    result = Utils::UserUtil.edit(params) rescue nil
+    
+    if result.nil?
+      flash[:error] = "Failed to change password!"
+    else
+      flash[:notice] = "Password change successiful"
+    end
+    
     redirect_to '/user/settings'
   end
 

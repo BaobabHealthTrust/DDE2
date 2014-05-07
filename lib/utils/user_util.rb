@@ -28,6 +28,8 @@ module Utils
         cur_user.email = params[:user]['email']
         cur_user.save
       end
+      
+      true
     end
 
     def self.get_active_user(username)
