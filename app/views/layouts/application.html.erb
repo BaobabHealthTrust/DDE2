@@ -193,7 +193,7 @@
             <%end%>
            
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login as:&nbsp;<b><%= User.current.username[0..9] %></b> <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as:&nbsp;<b><%= User.current.username[0..9] %></b> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="/user/logout">Signout</a></li>
                 <li><a href="/user/settings?id=editpassword">Change Password</a></li>
