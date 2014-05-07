@@ -1,4 +1,9 @@
 class PeopleController < ApplicationController
+
+  def find
+   Utils::PersonUtil.process_person_data(params)
+  end
+
   def index
   end
 
