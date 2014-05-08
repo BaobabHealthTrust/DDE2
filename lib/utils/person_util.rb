@@ -123,50 +123,52 @@ module Utils
   
 =end
     def self.create_person(json)
-
        js = Proxy.assign_npid_to_person(json)
+       person_js = JSON.parse(js)
+       
+       if person_js.blank?
+         person_js = Proxy.assign_temporary_npid(json)
+         person = JSON(person_js)
+       else
+         person = person_js
+       end
+       
 
-       unless js.blank?
+       unless person.blank?
 
+       national_id = person["identifiers"]["temporary_id"] if person["national_id"].blank?
        @person = Person.new(
-      				 :national_id => js[:national_id],
+      				 :national_id => national_id,
 							 :assigned_site =>  Site.current_code,
 							 :patient_assigned => true,
-
-               :npid => {
-                        	:value => js[:national_id]
-               				  },
-
-							 :person_attributes => { :citizenship => js[:person]["data"]["attributes"]["citizenship"] || nil,
-																			 :occupation => js[:person]["data"]["attributes"]["occupation"] || nil,
-																			 :home_phone_number => js[:person]["data"]["attributes"]["home_phone_number"] || nil,
-																			 :cell_phone_number => js[:person]["data"]["attributes"]["cell_phone_number"] || nil,
-																			 :race => js[:person]["data"]["attributes"]["race"] || nil
+							 :person_attributes => { :citizenship => person["person"]["data"]["attributes"]["citizenship"] || nil,
+																			 :occupation => person["person"]["data"]["attributes"]["occupation"] || nil,
+																			 :home_phone_number => person["person"]["data"]["attributes"]["home_phone_number"] || nil,
+																			 :cell_phone_number => person["person"]["data"]["attributes"]["cell_phone_number"] || nil,
+																			 :race => person["person"]["data"]["attributes"]["race"] || nil
 										                  },
 
-								:gender => js[:person]["data"]["gender"],
+								:gender => person["person"]["data"]["gender"],
 
-								:names => { :given_name => js[:person]["data"]["names"]["given_name"],
-							 					    :family_name => js[:person]["data"]["names"]["family_name"]
+								:names => { :given_name => person["person"]["data"]["names"]["given_name"],
+							 					    :family_name => person["person"]["data"]["names"]["family_name"]
 										      },
 
-								:birthdate => js[:person]["data"]["birthdate"] || nil,
-								:birthdate_estimated => js[:person]["data"]["birthdate_estimated"] || nil,
+								:birthdate => person["person"]["data"]["birthdate"] || nil,
+								:birthdate_estimated => person["person"]["data"]["birthdate_estimated"] || nil,
 
-								:addresses => {:current_residence => js[:person]["data"]["addresses"]["city_village"] || nil,
-												       :current_village => js[:person]["data"]["addresses"]["city_village"] || nil,
-												       :current_ta => js[:person]["data"]["addresses"]["state_province"] || nil,
-												       :current_district => js[:person]["data"]["addresses"]["state_province"] || nil,
-												       :home_village => js[:person]["data"]["addresses"]["neighbourhood_cell"] || nil,
-												       :home_ta => js[:person]["data"]["addresses"]["county_district"] || nil,
-												       :home_district => js[:person]["data"]["addresses"]["address2"] || nil
+								:addresses => {:current_residence => person["person"]["data"]["addresses"]["city_village"] || nil,
+												       :current_village => person["person"]["data"]["addresses"]["city_village"] || nil,
+												       :current_ta => person["person"]["data"]["addresses"]["state_province"] || nil,
+												       :current_district => person["person"]["data"]["addresses"]["state_province"] || nil,
+												       :home_village => person["person"]["data"]["addresses"]["neighbourhood_cell"] || nil,
+												       :home_ta => person["person"]["data"]["addresses"]["county_district"] || nil,
+												       :home_district => person["person"]["data"]["addresses"]["address2"] || nil
                               }
 		 )
       
      person = @person.save 
-   
      return person
-
      end
 
    end
