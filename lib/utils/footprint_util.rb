@@ -12,8 +12,8 @@ module Utils
   
 =end
     def self.log_application_and_site(json)
-      footprint = FootPrint.create(npid: json[:value],application: application[:application_name], site_code: Site.current_code)
-      return footprint.to_json
+      footprint = Footprint.create(npid: json[:value], application: json[:application_name], site_code: Site.current_code)
+      footprint ? true : false
     end
      
   end
