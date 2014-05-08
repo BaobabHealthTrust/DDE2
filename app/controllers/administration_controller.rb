@@ -101,6 +101,14 @@ class AdministrationController < ApplicationController
 
   def create_site
     
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     Site.create(
         site_code: params["sitecode"],
         name: params["sitename"],
@@ -121,10 +129,28 @@ class AdministrationController < ApplicationController
   end
 
   def site_edit
+    
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     @sitecodes = Site.all.collect{|s| [s.site_code, s.name]}
   end
 
   def update_site
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     site = Site.find_by__id(params["sitecode"]) rescue nil
     
     if !site.nil?
@@ -204,6 +230,15 @@ class AdministrationController < ApplicationController
   end
 
   def region_edit
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     @sites = {
       "Centre" => {
         data: [],
@@ -296,6 +331,15 @@ class AdministrationController < ApplicationController
   end
 
   def assign_npids_to_region
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     if !params[:region].nil? and !params[:quantity].nil?
       Utils::Master.assign_npids_to_region(params[:region], params[:quantity])
     end
@@ -304,6 +348,15 @@ class AdministrationController < ApplicationController
   end
 
   def assign_npids_to_site
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     if !params[:site].nil? and !params[:quantity].nil?
       Utils::Master.assign_npids_to_site(params[:site], params[:quantity])
     end
@@ -312,10 +365,28 @@ class AdministrationController < ApplicationController
   end
 
   def connection_add
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     @sitecodes = Site.all.collect{|s| [s.site_code, s.name]}
   end
 
   def connection_edit
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     @sitecodes = Site.all.collect{|s| [s.site_code, s.name]}
     
     @connections = Connection.all.collect{|s| [s.src_sink, "#{Site.find_by__id(s.source).name rescue nil} -> #{Site.find_by__id(s.sink).name rescue nil}"]}
@@ -328,6 +399,15 @@ class AdministrationController < ApplicationController
   end
 
   def connection_create
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     if !params[:source].nil? and !params[:sink].nil?          
       source = Site.find_by__id(params[:source]) rescue nil      
       sink = Site.find_by__id(params[:sink]) rescue nil
@@ -371,6 +451,15 @@ class AdministrationController < ApplicationController
   end
 
   def connection_update
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     src = params[:connection].split("-") rescue []
     
     source = Site.find_by__id(src[0]) rescue nil      
@@ -481,6 +570,15 @@ class AdministrationController < ApplicationController
   end
   
   def site_assign
+  
+    if CONFIG["master-master"].nil? 
+      redirect_to "/" and return
+    end
+    
+    if !CONFIG["master-master"].nil? and !CONFIG["master-master"]
+      redirect_to "/" and return
+    end
+    
     @sites = {}
     
     Site.all.each{|s| 
