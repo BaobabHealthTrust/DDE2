@@ -1,5 +1,7 @@
 module Utils
 
+  require "bantu_soundex"
+
   class PersonUtil
   
 =begin
@@ -12,9 +14,14 @@ module Utils
       raise "First argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
       js = JSON.parse(json)
       old_national_id = js["person"]["data"]["patient"]["identifiers"]["old_identification_number"] rescue nil
-   
-      if js["value"].blank? and js.length > 2 and old_national_id.blank? and js["action"] != "create"
-        people = search_for_person_by_params(js["given_name"],js["family_name"] ,js["gender"])
+
+      if js["value"].blank? and js.length > 2 and js["action"] == "check_similarities"
+        people = search_for_person_by_params(js["person"]["names"]["given_name"].soundex,
+                                             js["person"]["names"]["family_name"].soundex ,
+                                             js["person"]["gender"],"",js["person"]["addresses"]["county_district"],
+                                             js["person"]["addresses"]["address2"])
+      elsif js["value"].blank? and js.length > 2 and old_national_id.blank? and js["action"] != "create"
+        people = search_for_person_by_params(js["given_name"].soundex,js["family_name"].soundex ,js["gender"])
       elsif js["value"] and js.length <=2
         person = search_by_npid(js)
       elsif js["value"] and js.length > 2 and js["action"] == "find"
@@ -108,21 +115,21 @@ module Utils
 
       people = []
       if (date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
-        return Person.search.keys([[first_name,last_name ,gender]]).rows
+        return Person.search.keys([[first_name.soundex,last_name.soundex ,gender]]).rows
       elsif (!date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
-        return Person.search_with_dob.keys([[first_name,last_name ,gender, date_of_birth]]).rows
+        return Person.search_with_dob.keys([[first_name.soundex,last_name.soundex ,gender, date_of_birth]]).rows
       elsif (date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
-        return Person.search_with_home_district.keys([[first_name,last_name ,gender,home_district]]).rows
+        return Person.search_with_home_district.keys([[first_name.soundex,last_name.soundex ,gender,home_district]]).rows
       elsif (date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
-        return Person.search_with_home_ta.keys([[first_name,last_name ,gender,home_t_a]]).rows
+        return Person.search_with_home_ta.keys([[first_name.soundex,last_name.soundex ,gender,home_t_a]]).rows
       elsif (date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
-        return Person.search_with_home_ta_district.keys([[first_name,last_name ,gender,home_t_a,home_district]]).rows
+        return Person.search_with_home_ta_district.keys([[first_name.soundex,last_name.soundex ,gender,home_t_a,home_district]]).rows
       elsif (!date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
-        return Person.search_with_dob_home_ta.keys([[first_name,last_name ,gender,date_of_birth,home_t_a]]).rows
+        return Person.search_with_dob_home_ta.keys([[first_name.soundex,last_name.soundex ,gender,date_of_birth,home_t_a]]).rows
       elsif (!date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
-        return Person.search_with_dob_home_district.keys([[first_name,last_name ,gender,date_of_birth, home_district]]).rows
+        return Person.search_with_dob_home_district.keys([[first_name.soundex,last_name.soundex ,gender,date_of_birth, home_district]]).rows
       elsif (!date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
-        return Person.advanced_search.keys([[first_name,last_name ,gender,date_of_birth, home_t_a, home_district]]).rows
+        return Person.advanced_search.keys([[first_name.soundex,last_name.soundex ,gender,date_of_birth, home_t_a, home_district]]).rows
       end
       return people
     end
@@ -155,6 +162,7 @@ module Utils
   
 =end
     def self.create_person(json)
+
        js = Proxy.assign_npid_to_person(json)
        person_js = JSON.parse(js)
        
@@ -182,7 +190,7 @@ module Utils
 									:gender => person["person"]["data"]["gender"],
 
 									:names => { :given_name => person["person"]["data"]["names"]["given_name"],
-								 					    :family_name => person["person"]["data"]["names"]["family_name"]
+								 					    :family_name => person["person"]["data"]["names"]["family_name"],
 												    },
 
 									:birthdate => person["person"]["data"]["birthdate"] || nil,
