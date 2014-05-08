@@ -122,7 +122,6 @@ module Utils
   
 =end
     def self.create_person(json)
-<<<<<<< HEAD
        js = Proxy.assign_npid_to_person(json)
        person_js = JSON.parse(js)
        
@@ -133,7 +132,6 @@ module Utils
          person = person_js
        end
        
-
        unless person.blank?
 		     legacy_national_id = person["person"]["data"]["patient"]["identifiers"]["old_identification_number"]
 		     national_id = person["identifiers"]["temporary_id"] if person["national_id"].blank?
@@ -172,61 +170,6 @@ module Utils
 		   person = @person.save 
 		   return person
 		   end
-=======
-
-      raise "Argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
-
-       js = JSON.parse(Proxy.assign_npid_to_person(json))
-
-       js = JSON.parse(Proxy.assign_temporary_npid(json)) if js.blank?
-
-       unless js.blank?
-
-       @person = Person.new(
-							 :assigned_site =>  Site.current_code,
-							 :patient_assigned => true,
-
-							 :person_attributes => { :citizenship => js["person"]["data"]["attributes"]["citizenship"] || nil,
-																			 :occupation => js['person']["data"]["attributes"]["occupation"] || nil,
-																			 :home_phone_number => js['person']["data"]["attributes"]["home_phone_number"] || nil,
-																			 :cell_phone_number => js['person']["data"]["attributes"]["cell_phone_number"] || nil,
-																			 :race => js['person']["data"]["attributes"]["race"] || nil
-										                  },
-
-								:gender => js["person"]["data"]["gender"],
-
-								:names => { :given_name => js["person"]["data"]["names"]["given_name"],
-							 					    :family_name => js["person"]["data"]["names"]["family_name"]
-										      },
-
-								:birthdate => js["person"]["data"]["birthdate"] || nil,
-								:birthdate_estimated => js["person"]["data"]["birthdate_estimated"] || nil,
-
-								:addresses => {:current_residence => js["person"]["data"]["addresses"]["city_village"] || nil,
-												       :current_village => js["person"]["data"]["addresses"]["city_village"] || nil,
-												       :current_ta => js["person"]["data"]["addresses"]["state_province"] || nil,
-												       :current_district => js["person"]["data"]["addresses"]["state_province"] || nil,
-												       :home_village => js["person"]["data"]["addresses"]["neighbourhood_cell"] || nil,
-												       :home_ta => js["person"]["data"]["addresses"]["county_district"] || nil,
-												       :home_district => js["person"]["data"]["addresses"]["address2"] || nil
-                              }
-		 )
-
-
-      if js["national_id"].blank?
-        @person.national_id = js["identifiers"]["temporary_id"]
-      else
-        @person["npid"] =  {:value => js["national_id"]}
-        @person.national_id = js["national_id"]
-      end
-
-     person = @person.save 
-
-     return person
-
-     end
->>>>>>> 115a895e610cfed63cdebb6a4b170a8d3d7d22b1
-
    end
          
 =begin
