@@ -75,10 +75,13 @@ Rails.application.routes.draw do
 
   get '/check_duplicate_connections' => "services#check_duplicate_connections"
 
+  get '/username_available' => "services#username_available"
+
   resources :people do
     collection do
-      post :find,:create, :update,:create_footprint
+      post :find,:create, :update,:create_footprint, :update_person
       get :index, :new, :find, :edit, :confirm_demographics
+     
     end
   end
 

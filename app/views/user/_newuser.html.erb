@@ -1,132 +1,204 @@
 
+<div class="jumbotron head">
+  <h2>Users::Addition</h2>      
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      Add New User
+    </h3>
+  </div>
+  <div class="panel-body">
+        
+    <div class="content-details">
+
+      <%= form_tag('/user/create', method: 'post', enctype: 'multipart/form-data', 
+                id: 'site-form', class: "form-horizontal", autocomplete: "off", 
+                role: "form", novalidate: "novalidate") do %>
+
+      
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">First name:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=text_field(:user, :first_name, :class =>'form-control', :placeholder => "First name", :required=>true) %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+          
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">Last name:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=text_field(:user, :last_name, :class =>'form-control', :placeholder => "Last name", :required=>true) %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+            
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">Username:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=text_field(:user, :username, :class =>'form-control', :textCase => "lower", :placeholder => "Username", :required=>true, :minlength => 5, :id => 'username') %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+            
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">Email:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=text_field(:user, :email, :class =>'form-control', :placeholder => "Email", :required=>true, :email => true) %>  
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+      <% @roles = [['[- Select User Role -]', ''], ['Standard','normal'], ['Administrator','admin']].uniq %> 
+      
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">User role:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%= select_tag "user[role]", options_for_select(@roles),:class =>'form-control', :placeholder => "Select user role", :required=>true %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+          
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">Password:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=password_field(:user, :password, :class =>'form-control', :placeholder => "Password", :required=>true, :minlength => 6) %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+            
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">Confirm password:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=password_field(:user, :confirm_password, :class =>'form-control', :placeholder => "Confirm password", :required=>true, :passcheck => true) %>
+            </td>
+          </tr>
+        </table>
+      </div>
+            
+      <table style="width: 100%;">
+        <tr>
+          <td style="width: 20%;">
+              <button type="button" class="btn btn-danger" style="font-size: 18px !important; float: left;" onclick="window.location = '/user/settings?id=users'">Cancel</button>
+          </td>
+          <td>
+              <button type="submit" class="btn btn-success btn-large" style="font-size: 18px !important; float: right;">Create</button>
+          </td>
+        </tr>
+      </table>
+                    
+     <%end%>
+     
+    </div>                                                      
+
+  </div>    
+</div>
+
+
 <script>
 
-function submitForm() {                                                         
-  if(validateForm())                                                            
-    document.getElementById('userdata').submit();                          
-                                                                                
-}                                                                               
-                                                                                
-function validateForm(){                                                        
-    username = document.getElementById('user_username');                      
-    first_name = document.getElementById('user_first_name');                      
-    last_name = document.getElementById('user_last_name');                      
-    user_role = document.getElementById('user_role');                      
-    password = document.getElementById('user_password');                      
-    password_confirm = document.getElementById('user_confirm_password');                      
-
-    if(username.value == '') {                                                     
-      alert("Please enter username ...");                                     
-      return false;                                                             
-    }else if(first_name.value == '') {                                                     
-      alert("Please enter user first name ...");                                     
-      return false;                                                             
-    }else if(last_name.value == '') {                                                     
-      alert("Please enter user last name ...");                                     
-      return false;                                                             
-    }else if(password.value == '') {                                                     
-      alert("Please password ...");                                     
-      return false;                                                             
-    }else if(password.value.length < 6) {                                                     
-      alert("Please password should be atleast six characters ....");                                     
-      return false;                                                             
-    }else if(password.value != password_confirm.value) {                                                     
-      alert("The two passwords you enter do not match ...");                                     
-      return false;                                                             
-    }else if(user_role.value == '') {                                                     
-      alert("Please select user role ...");                                     
-      return false;                                                             
-    }                               
-                                      
-    return true;                                                                  
-  }    
-
-  function checkUsername() {
-    username = document.getElementById('user_username').value;
-                                                                     
-    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
-        xmlhttp=new XMLHttpRequest();                                             
-      }else{// code for IE6, IE5                                                  
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
-      }                                                                           
-      xmlhttp.onreadystatechange=function() {                                     
-        if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
-          var results = xmlhttp.responseText;                   
-          if(results == 'undefined' || results == '' || results == '"not validate"') {                           
-            return;                                                               
-          }else{                                                                  
-            if(results == 'available') {
-              document.getElementById('flash_notice').innerHTML = 'username ' + results;
-              document.getElementById('flash_notice').style.color = 'green';
-              document.getElementById('signup').disabled = false;
-            }else{
-              document.getElementById('flash_notice').innerHTML = 'username ' + results;
-              document.getElementById('flash_notice').style.color = 'red';
-              document.getElementById('signup').disabled = 'disabled';
+  jQuery.validator.addMethod("passcheck", function(value, element) {
+    return this.optional(element) || document.getElementById('user_password').value == value;
+  }, "Password mismatch!");
+  
+  function prettyPrint(){
+    $(document).ready(function(){
+      
+		    $('#site-form').validate({		    
+	        rules: {
+            username: {
+              required: true,
+              remote: {
+                url: "/username_available",
+                type: "get",
+                data: {
+                  username: function() {
+                    return $( "#username" ).val();
+                  }
+                }
+              }
             }
-          }                                                                       
-        }                                                                         
-      }                                                                           
-      xmlhttp.open("GET","/user/username_availability?search_str="+username,true);           
-      xmlhttp.send();                                                             
+          },
+			    highlight: function(element) {
+				    $(element).closest('.control-group').removeClass('success').addClass('error');
+			    },
+			    success: function(element) {
+				    element
+				    .text('OK!').addClass('valid')
+				    .closest('.control-group').removeClass('error').addClass('success');
+			    }
+	      });
 
+    }); // end document.ready
   }
-</script>
+  
+  $(document).ready(function(){
+      
+		  $('#site-form').validate({	    
+        rules: {
+          username: {
+            required: true,
+            remote: {
+              url: "/username_available",
+              type: "get",
+              data: {
+                username: function() {
+                  return $( "#username" ).val();
+                }
+              }
+            }
+          }
+        },
+			  highlight: function(element) {
+				  $(element).closest('.control-group').removeClass('success').addClass('error');
+			  },
+			  success: function(element) {
+				  element
+				  .text('OK!').addClass('valid')
+				  .closest('.control-group').removeClass('error').addClass('success');
+			  }
+	    });
 
-
-
-<div class="content-details">
-<div>                                                                         
-  <font id="flash_notice" style="color: green;"><%= flash[:notice] %></font><br />
-</div>
-
-<%= form_tag('/user/create', method: 'post', enctype: 'multipart/form-data', id: 'userdata') do %>
-
-<div class="box-body">
-  <div class="form-group">
-    <label for="username">Username</label>
-    <%=text_field(:user, :username, :class =>'form-control', :placeholder => "Username",:onkeyup => "checkUsername();") %> 
-  </div>
-
-  <div class="form-group">
-    <label for="firstname">First name</label>
-    <%=text_field(:user, :first_name, :class =>'form-control', :placeholder => "First name") %> 
-  </div>
-
-  <div class="form-group">
-    <label for="lastname">Last name</label>
-    <%=text_field(:user, :last_name, :class =>'form-control', :placeholder => "Last name") %> 
-  </div>
-
-  <div class="form-group">
-    <label for="email">Email</label>
-    <%=text_field(:user, :email, :class =>'form-control', :placeholder => "Email") %> 
-  </div>
-
-  <% @roles = ['', ['Standard','normal'], ['Administrator','admin']]%> 
-  <div class="form-group">
-    <label for="role">User role</label>
-    <%= select_tag "user[role]", options_for_select(@roles),:class =>'form-control', :placeholder => "Select user role" %>
-  </div>
-
-  <div class="form-group">
-    <label for="email">Password</label>
-    <%=password_field(:user, :password, :class =>'form-control', :placeholder => "Password") %> 
-  </div>
-
-  <div class="form-group">
-    <label for="email">Confirm password</label>
-    <%=password_field(:user, :confirm_password, :class =>'form-control', :placeholder => "Confirm password") %> 
-  </div>
-
-  <div class="form-group">
-    <label for="email">&nbsp;</label>
-    <input onclick="submitForm();" type="button" id="signup" disabled='disabled' 
-      class="btn btn-primary signup_btn" value="Register" style="width:10%;" />
-  </div>
-
-</div>
-                      
- <%end%>
-</div>                                                      
+  }); // end document.ready
+  
+  addEventListener('load', prettyPrint, false);
+	$(document).ready(function(){
+	  $('pre').addClass('prettyprint linenums');
+	});
+	
+</script>                                                     
 

@@ -24,35 +24,47 @@ function confirmDelete(username) {
   }
 </style>
 
+<div class="jumbotron head">
+  <h2>Users::View</h2>      
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      Existing Users List
+    </h3>
+  </div>
+  <div class="panel-body">
+            
+    <table width="100%" id="status">
+      <tr>
+        <th>Username</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Date created</th>
+        <th>&nbsp;</th>
+      </tr>
 
-
-<table width="100%" id="status">
-  <tr>
-    <th>Username</th>
-    <th>First name</th>
-    <th>Last name</th>
-    <th>Email</th>
-    <th>Role</th>
-    <th>Date created</th>
-    <th>&nbsp;</th>
-  </tr>
-
-  <%(@users || []).each do |user| %>
-  <tr>
-    <td><%= user.username%></td>
-    <td><%= user.first_name%></td>
-    <td><%= user.last_name%></td>
-    <td><%= user.email%></td>
-    <td><%= user.role%></td>
-    <td><%= user.created_at.strftime('%A, %d %B %Y %H:%M')%></td>
-    <td>
-      <%if @users.length > 1%>
-        <a href="#" onclick = "confirmDelete('<%=user.username%>')">Delete</a>&nbsp;|&nbsp;
-        <a href="/user/settings?username=<%= user.username%>&id=edit">Edit</a>
-      <%else%>
-        <a href="/user/settings?username=<%= user.username%>&id=edit">Edit</a>
+      <%(@users || []).each do |user| %>
+      <tr>
+        <td><%= user.username%></td>
+        <td><%= user.first_name%></td>
+        <td><%= user.last_name%></td>
+        <td><%= user.email%></td>
+        <td><%= user.role%></td>
+        <td><%= user.created_at.strftime('%A, %d %B %Y %H:%M')%></td>
+        <td>
+          <%if @users.length > 1%>
+            <a href="#" onclick = "confirmDelete('<%=user.username%>')">Delete</a>&nbsp;|&nbsp;
+            <a href="/user/settings?username=<%= user.username%>&id=edit">Edit</a>
+          <%else%>
+            <a href="/user/settings?username=<%= user.username%>&id=edit">Edit</a>
+          <%end%>
+        </td>
+      </tr>
       <%end%>
-    </td>
-  </tr>
-  <%end%>
-</table>
+    </table>
+
+  </div>    
+</div>

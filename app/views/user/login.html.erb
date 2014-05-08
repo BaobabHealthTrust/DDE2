@@ -15,9 +15,8 @@ body
 }
 .form-control:focus
 {
-    background-color: rgb(50, 118, 177);
-    border-color: rgb(40, 94, 142);
-    color: rgb(255, 255, 255);
+    background-color: #eee;
+    color: #000;
 }
 
 .form-signup input  { border: 1px solid rgb(50, 118, 177); }
@@ -37,7 +36,7 @@ body
       <div class="panel panel-default">
         <div class="panel-body">
           <h5 class="text-center">DDE 2</h5>
-          <%= form_tag('/user/login', method: 'post', enctype: 'multipart/form-data', class: 'form form-signup') do %>
+          <%= form_tag('/user/login', method: 'post', enctype: 'multipart/form-data', class: 'form form-signup', autocomplete: "off") do %>
             <div class="form-group">
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
@@ -51,7 +50,9 @@ body
               </div>
             </div>
           </div>
-          <%= submit_tag "Login" ,:class => "btn btn-sm btn-primary btn-block" , :role => "button"%>
+          <%= submit_tag "Login" ,:class => "btn btn-primary btn-block" , 
+              :role => "button", :style => "margin: auto !important; width: 40% !important; 
+              margin-bottom: 20px !important; height: 40px !important;" %>
         <%end%>
       </div>
     </div>

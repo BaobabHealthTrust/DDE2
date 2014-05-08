@@ -1,79 +1,143 @@
 
+<div class="jumbotron head">
+  <h2>Users::Editing</h2>      
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      Edit Existing User
+    </h3>
+  </div>
+  <div class="panel-body">
+        
+    <div class="content-details">
+
+    <%= form_tag('/user/edit', method: 'post', enctype: 'multipart/form-data', 
+          id: 'site-form', class: "form-horizontal", autocomplete: "off", 
+          role: "form", novalidate: "novalidate") do %>
+
+
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">First name:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=text_field(:user, :first_name, :class =>'form-control', :placeholder => "First name",:value => @user.first_name, :required=>"") %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+          
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">Last name:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=text_field(:user, :last_name, :class =>'form-control', :placeholder => "Last name",:value => @user.last_name, :required=>"") %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+            
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">Email:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%=text_field(:user, :email, :class =>'form-control', :placeholder => "Email",:value => @user.email, :required=>"", :email => true) %>  
+            </td>
+          </tr>
+        </table>
+      </div>
+            
+      <%
+        if @user.role == 'admin'
+          role = ['Administrator','admin']
+        else
+          role = ['Standard','normal']
+        end
+      %>
+      
+      <% @roles = [role, ['Standard','normal'], ['Administrator','admin']].uniq %> 
+      
+      <div class="form-control-group">
+        <table style="width: 100%;">
+          <tr>
+            <td align="right" style="width: 20%">
+              <label class="control-label">User role:</label>&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+              <%= select_tag "user[role]", options_for_select(@roles),:class =>'form-control', :placeholder => "Select user role", :required=>"" %> 
+            </td>
+          </tr>
+        </table>
+      </div>
+          
+      <table style="width: 100%;">
+        <tr>
+          <td style="width: 20%;">
+              <button type="button" class="btn btn-danger" style="font-size: 18px !important; float: left;" onclick="window.location = '/user/settings?id=users'">Cancel</button>
+          </td>
+          <td>
+              <button type="submit" class="btn btn-success btn-large" style="font-size: 18px !important; float: right;">Update</button>
+          </td>
+        </tr>
+      </table>
+          
+      <input type='hidden' name='edit_action' value = 'edit' />
+      <input type='hidden' name='username' value = "<%= params[:username] %>" />
+      <input type='hidden' name='selfedit' value = "<%= params[:selfedit] rescue nil %>" />
+               
+     <% end %>
+    </div>                                                      
+
+  </div>    
+</div>
+
 <script>
 
-function submitForm() {                                                         
-  if(validateForm())                                                            
-    document.getElementById('userdata').submit();                          
-                                                                                
-}                                                                               
-                                                                                
-function validateForm(){                                                        
-    first_name = document.getElementById('user_first_name');                      
-    last_name = document.getElementById('user_last_name');                      
-    user_role = document.getElementById('user_role');                      
+  function prettyPrint(){
+    $(document).ready(function(){
+      
+		    $('#site-form').validate({		    
+	        rules: {},
+			    highlight: function(element) {
+				    $(element).closest('.control-group').removeClass('success').addClass('error');
+			    },
+			    success: function(element) {
+				    element
+				    .text('OK!').addClass('valid')
+				    .closest('.control-group').removeClass('error').addClass('success');
+			    }
+	      });
 
-    if(first_name.value == '') {                                                     
-      alert("Please enter user first name ...");                                     
-      return false;                                                             
-    }else if(last_name.value == '') {                                                     
-      alert("Please enter user last name ...");                                     
-      return false;                                                             
-    }else if(user_role.value == '') {                                                     
-      alert("Please select user role ...");                                     
-      return false;                                                             
-    }                               
-                                      
-    return true;                                                                  
-  }    
+    }); // end document.ready
+  }
+  
+  $(document).ready(function(){
+      
+		  $('#site-form').validate({
+			  highlight: function(element) {
+				  $(element).closest('.control-group').removeClass('success').addClass('error');
+			  },
+			  success: function(element) {
+				  element
+				  .text('OK!').addClass('valid')
+				  .closest('.control-group').removeClass('error').addClass('success');
+			  }
+	    });
 
+  }); // end document.ready
+  
+  addEventListener('load', prettyPrint, false);
+	$(document).ready(function(){
+	  $('pre').addClass('prettyprint linenums');
+	});
+	
 </script>
-
-
-
-<div class="content-details">
-
-<%= form_tag('/user/edit', method: 'post', enctype: 'multipart/form-data', id: 'userdata') do %>
-
-<div class="box-body">
-
-  <div class="form-group">
-    <label for="firstname">First name</label>
-    <%=text_field(:user, :first_name, :class =>'form-control', :placeholder => "First name",:value => @user.first_name) %> 
-  </div>
-
-  <div class="form-group">
-    <label for="lastname">Last name</label>
-    <%=text_field(:user, :last_name, :class =>'form-control', :placeholder => "Last name",:value => @user.last_name) %> 
-  </div>
-
-  <div class="form-group">
-    <label for="email">Email</label>
-    <%=text_field(:user, :email, :class =>'form-control', :placeholder => "Email",:value => @user.email) %> 
-  </div>
-  <%
-    if @user.role == 'admin'
-      role = ['Administrator','admin']
-    else
-      role = ['Standard','normal']
-    end
-  %>
-  <% @roles = [role, ['Standard','normal'], ['Administrator','admin']]%> 
-  <div class="form-group">
-    <label for="role">User role</label>
-    <%= select_tag "user[role]", options_for_select(@roles),:class =>'form-control', :placeholder => "Select user role" %>
-  </div>
-
-  <input type='hidden' name='edit_action' value = 'edit' />
-  <input type='hidden' name='username' value = "<%=params[:username]%>" />
-
-  <div class="form-group">
-    <label for="email">&nbsp;</label>
-    <input onclick="submitForm();" type="button" id="signup" 
-      class="btn btn-primary signup_btn" value="Update" style="width:10%;" />
-  </div>
-
-</div>
-                      
- <%end%>
-</div>                                                      
-

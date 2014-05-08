@@ -58,7 +58,11 @@ class PeopleController < ApplicationController
   end
 
   def confirm_demographics
-    @matching_records = Person.all.collect{|x| x}
+    @matching_records = Utils::PersonUtil.confirm_person_to_update(params)
+    render :layout => false
+  end
 
+  def update_person
+    Utils::PersonUtil.process_person_data(params)
   end
 end

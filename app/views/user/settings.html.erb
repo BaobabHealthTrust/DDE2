@@ -6,7 +6,18 @@ function openPage(pg) {
 </script>
 
 <style type="text/css">
-
+  td {
+    padding: 10px !important;
+  }
+  select,
+  textarea,
+  input {
+    width: 70% !important;
+    float: left !important;
+  }
+  button {
+    margin: 10px !important;
+  }
   .contents button {
     width: 80%;
     margin: 10px;
@@ -26,43 +37,25 @@ function openPage(pg) {
   }
 
 </style>
+<style type="text/css">
+  .status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  .status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center;
+  }
+  .left td {
+    text-align: left !important;
+  }
+</style>
 
-<br />
-
-<div class="span3">
-  <div class="well sidebar-nav">
-    <%if User.current.admin?%>
-    <div class='contents'>
-      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('settings');">
-        <span class="glyphicon glyphicon-cog"></span> System settings
-      </button>
-    </div>
-    <div class='contents'>
-      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('add_site');">
-        <span class="glyphicon glyphicon-cog"></span> Add site
-      </button>
-    </div>
-    <div class='contents'>
-      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('users');">
-        <span class="glyphicon glyphicon-search"></span> Find user(s)
-      </button>
-    </div>
-    <div class='contents'>
-      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('newuser');">
-        <span class="glyphicon glyphicon-user"></span> Create user
-      </button>
-    </div>
-    <%end%>
-    <div class='contents'>
-      <button type="button" class="btn btn-primary btn-lg" onclick="openPage('editpassword');">
-        <span class="glyphicon glyphicon-edit"></span> Edit password
-      </button>
-    </div>
-  </div>
+<div class="container theme-showcase" role="main">
+  <%= render(:partial => @partial) %>
 </div>
 
-<div class="span9">
-  <div class="well sidebar-nav">
-    <%= render(:partial => @partial) %>
-  </div>
-</div>

@@ -121,4 +121,9 @@ class ServicesController  < ActionController::Base  # < ApplicationController
     render :text => false and return
   end
 
+  def username_available  
+    user = Utils::UserUtil.get_active_user(params[:search_str]) rescue nil
+    render :text => user = user.blank? ? true : false and return
+  end
+
 end

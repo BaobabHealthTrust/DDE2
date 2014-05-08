@@ -111,6 +111,7 @@
               <ul class="dropdown-menu">
                 <li><a href="/administration/region_show">Regions</a></li>
                 <li><a href="/administration/site_show">Sites</a></li>
+                <li><hr/></li>
                 <li><a href="/administration/connection_show">Connections</a></li>
               </ul>
             </li>
@@ -128,11 +129,13 @@
                             <li>
                                 <a href="/administration/site_edit">Edit Site</a>
                             </li>
+                            <li><hr/></li>
                             <li>
                                 <a href="/administration/site_assign">Site NPIDs Assignment</a>
                             </li>
                         </ul>
                     </li>
+                    <li><hr/></li>
                     <li class="dropdown submenu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Connections Management</a>
                         <ul class="dropdown-menu submenu-show submenu-hide">
@@ -144,6 +147,7 @@
                             </li>
                         </ul>
                     </li>
+                    <li><hr/></li>
                     <li class="dropdown submenu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">NPIDs Management</a>
                         <ul class="dropdown-menu submenu-show submenu-hide">
@@ -155,6 +159,7 @@
                             </li>
                         </ul>
                     </li>
+                    <li><hr/></li>
                     <li class="dropdown submenu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Management</a>
                         <ul class="dropdown-menu submenu-show submenu-hide">
@@ -169,34 +174,15 @@
                 </ul>
               </li>
             
-            <%else%>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Management <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="/administration/site_add">Add Site</a></li>
-                <li><a href="/administration/site_edit">Edit Site</a></li>
-                <li><a href="/administration/site_show">View By Site</a></li>
-                <li><a href="/administration/connection_add">Add Connection</a></li>
-                <li><a href="/administration/connection_edit">Edit Connection</a></li>
-                <li><a href="/administration/connection_show">View Connections</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="/administration/user_show" class="dropdown-toggle" data-toggle="dropdown">User Management <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="/administration/user_add">Add User</a></li>
-                <li><a href="/administration/user_edit">Edit User</a></li>
-                <li><a href="/administration/user_show">View By User</a></li>
-                <li><a href="/user/settings?id=editpassword">Change password</a></li>
-              </ul>
-            </li>
             <%end%>
            
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as:&nbsp;<b><%= User.current.username[0..9] %></b> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="/user/logout">Signout</a></li>
                 <li><a href="/user/settings?id=editpassword">Change Password</a></li>
+                <li><a href="/user/settings?username=<%= User.current.username %>&id=edit&selfedit=true">Edit Demographics</a></li>
+                <li><hr/></li>
+                <li><a href="/user/logout">Signout</a></li>
               </ul>
             </li>
 
