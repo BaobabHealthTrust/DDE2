@@ -65,4 +65,23 @@ class PeopleController < ApplicationController
   def update_person
     Utils::PersonUtil.process_person_data(params)
   end
+
+  def find_demographics
+
+    params["action"] = "check_similarities"
+    people = Utils::PersonUtil.process_person_data(params.to_json)
+    case people.size
+      when 0
+        result = {}.to_json
+      when 1
+        person = Person.find(people.first.id)
+        result = person
+      else
+        result = people.collect{|x| Person.find(x.id)}
+    end
+    respond_to do |format|
+      format.json { render :json => result}
+      format.xml  { render :xml  => result }
+    end
+  end
 end

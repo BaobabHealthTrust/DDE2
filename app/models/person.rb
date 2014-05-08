@@ -3,7 +3,9 @@ require 'couchrest_model'
 class Person < CouchRest::Model::Base
 
   use_database "person"
- 
+
+  before_save :set_name_codes
+
   def national_id
     self['_id']
   end
@@ -26,8 +28,10 @@ class Person < CouchRest::Model::Base
   property :gender, String
 
   property :names do
-     property :given_name, String
-     property :family_name, String 
+    property :given_name, String
+    property :family_name, String
+    property :given_name_code, String
+    property :family_name_code, String
   end
 
   property :patient do
@@ -60,53 +64,59 @@ class Person < CouchRest::Model::Base
     view :search,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender], doc);
             }
           }"
 
     view :advanced_search,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.birthdate,doc.addresses.home_ta ,doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code,doc.names.family_name_code, doc.gender, doc.birthdate,doc.addresses.home_ta ,doc.addresses.home_district], doc);
             }
           }"
 
     view :search_with_dob,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.birthdate], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.birthdate], doc);
             }
           }"
     view :search_with_home_district,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_district], doc);
             }
           }"
     view :search_with_home_ta,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.addresses.home_ta], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta], doc);
             }
           }"
     view :search_with_home_ta_district,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.addresses.home_ta, doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta, doc.addresses.home_district], doc);
             }
           }"
     view :search_with_dob_home_ta,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender,doc.birthdate ,doc.addresses.home_ta], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender,doc.birthdate ,doc.addresses.home_ta], doc);
             }
           }"
     view :search_with_dob_home_district,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name ,doc.names.family_name, doc.gender, doc.birthdate,doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.birthdate,doc.addresses.home_district], doc);
             }
           }"
   end
+
+  def set_name_codes
+    self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
+    self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?
+  end
+
 
 end

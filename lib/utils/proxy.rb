@@ -100,6 +100,11 @@ module Utils
     def self.transpose_params(json)
      #Method to handle json of old format
        js = JSON.parse(json)
+
+       if js["person"]["data"]["birthdate"].blank?
+         js["person"]["data"]["birthdate"] = (js["person"]["data"]["birth_year"] +"-"+ js["person"]["data"]["birth_month"] + "-"+js["person"]["data"]["birth_day"] ).to_date rescue ""
+       end
+
       result = {
         "npid" => js["npid"].blank? ? nil : js["npid"]["value"],
         "application" => "",
