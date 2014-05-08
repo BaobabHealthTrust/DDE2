@@ -14,21 +14,16 @@ module Utils
       old_national_id = js["person"]["data"]["patient"]["identifiers"]["old_identification_number"] rescue nil
    
       if js["value"].blank? and js.length > 2 and old_national_id.blank? and js["action"] != "create"
-        raise "hit"
         people = search_for_person_by_params(js["given_name"],js["family_name"] ,js["gender"])
       elsif js["value"] and js.length <=2
-         raise "hit1"
         person = search_by_npid(js)
       elsif js["value"] and js.length > 2 and js["action"] == "find"
         person = search_by_npid(js)
       elsif js["value"].blank? and !old_national_id.blank? and js["action"] != "create"
-         raise "hit3"
         person = create_person(json)
       elsif js["value"].blank? and old_national_id.blank? and js.length > 2 and js["action"] == "create"
-         raise "hit4"
         person = create_person(json)
       else
-         raise "hit5"
         return nil
       end
   end
