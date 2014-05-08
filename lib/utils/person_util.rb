@@ -122,7 +122,7 @@ module Utils
   
 =end
     def self.create_person(json)
-<<<<<<< HEAD
+
        js = Proxy.assign_npid_to_person(json)
        person_js = JSON.parse(js)
        
@@ -172,60 +172,6 @@ module Utils
 		   person = @person.save 
 		   return person
 		   end
-=======
-
-      raise "Argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
-
-       js = JSON.parse(Proxy.assign_npid_to_person(json))
-
-       js = JSON.parse(Proxy.assign_temporary_npid(json)) if js.blank?
-
-       unless js.blank?
-
-       @person = Person.new(
-							 :assigned_site =>  Site.current_code,
-							 :patient_assigned => true,
-							 :person_attributes => { :citizenship => js["attributes"]["citizenship"] || nil,
-																			 :occupation => js["attributes"]["occupation"] || nil,
-																			 :home_phone_number => js["attributes"]["home_phone_number"] || nil,
-																			 :cell_phone_number => js["attributes"]["cell_phone_number"] || nil,
-																			 :race => js["attributes"]["race"] || nil
-										                  },
-
-								:gender => js["gender"],
-
-								:names => { :given_name => js["names"]["given_name"],
-							 					    :family_name => js["names"]["family_name"]
-										      },
-
-								:birthdate => js["birthdate"] || nil,
-								:birthdate_estimated => js["birthdate_estimated"] || nil,
-
-								:addresses => {:current_residence => js["addresses"]["city_village"] || nil,
-												       :current_village => js["addresses"]["city_village"] || nil,
-												       :current_ta => js["addresses"]["state_province"] || nil,
-												       :current_district => js["addresses"]["state_province"] || nil,
-												       :home_village => js["addresses"]["neighbourhood_cell"] || nil,
-												       :home_ta => js["addresses"]["county_district"] || nil,
-												       :home_district => js["addresses"]["address2"] || nil
-                              }
-		 )
-
-
-      if js["national_id"].blank?
-        @person.national_id = js["identifiers"]["temporary_id"]
-      else
-        @person["npid"] =  {:value => js["national_id"]}
-        @person.national_id = js["national_id"]
-      end
-
-     person = @person.save 
-
-     return person
-
-     end
->>>>>>> 115a895e610cfed63cdebb6a4b170a8d3d7d22b1
-
    end
          
 =begin
