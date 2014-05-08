@@ -34,6 +34,8 @@ class ServicesController  < ActionController::Base  # < ApplicationController
         ip_address: result.ip_address,
         username: result.username,
         password: result.password,
+        site_db1: result.site_db1,
+        site_db2: result.site_db2,
         description: result.description,
         region: result.region,
         threshold: result.threshold,

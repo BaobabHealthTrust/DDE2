@@ -2,7 +2,7 @@ require 'couchrest_model'
 
 class Site < CouchRest::Model::Base
 
-  use_database "local"
+  use_database "person"
  
   def site_code=(value)
     self['_id']=value
@@ -24,6 +24,8 @@ class Site < CouchRest::Model::Base
   property :ip_address, String, :default => "127.0.0.1"
   property :username, String, :default => "admin"
   property :password, String, :default => "test"
+  property :site_db1, String
+  property :site_db2, String
   
   timestamps!
 
