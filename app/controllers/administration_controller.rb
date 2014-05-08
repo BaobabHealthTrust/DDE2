@@ -114,8 +114,10 @@ class AdministrationController < ApplicationController
         name: params["sitename"],
         site_type: params["site_type"],
         ip_address: params["ip_address"],
-        ip_address: params["username"],
-        ip_address: params["password"],
+        username: params["username"],
+        password: params["password"],
+        site_db1: params["site_db1"],
+        site_db2: params["site_db2"],
         description: params["description"],
         region: params["region"],
         batchsize: params["batchsize"],
@@ -155,18 +157,20 @@ class AdministrationController < ApplicationController
     
     if !site.nil?
       result = site.update_attributes(
-          site_code: params["sitecode"],
-          name: params["sitename"],
-          site_type: params["site_type"],
-          ip_address: params["ip_address"],
-          ip_address: params["username"],
-          ip_address: params["password"],
-          description: params["description"],
-          region: params["region"],
-          batchsize: params["batchsize"],
-          threshold: params["threshold"],
-          x: params["x"],
-          y: params["y"]
+        site_code: params["sitecode"],
+        name: params["sitename"],
+        site_type: params["site_type"],
+        ip_address: params["ip_address"],
+        username: params["username"],
+        password: params["password"],
+        site_db1: params["site_db1"],
+        site_db2: params["site_db2"],
+        description: params["description"],
+        region: params["region"],
+        batchsize: params["batchsize"],
+        threshold: params["threshold"],
+        x: params["x"],
+        y: params["y"]
         ) rescue nil
         
       if !result.nil?
