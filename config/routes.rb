@@ -78,7 +78,7 @@ Rails.application.routes.draw do
   resources :people do
     collection do
       post :find,:create, :update,:create_footprint
-      get :index, :new, :show, :edit, :confirm_demographics
+      get :index, :new, :find, :edit, :confirm_demographics
     end
   end
 
