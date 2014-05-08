@@ -7,8 +7,14 @@ class ApplicationController < ActionController::Base
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
                                                                                 
   #before_filter :perform_basic_auth, :except => ['login','logout','find','create']                         
-  
+  before_filter :perform_basic 
   protected                                                                     
+                              
+  def perform_basic
+    if not session[:user_id].blank?                                          
+      User.current = User.find session[:user_id]
+    end                                                                         
+  end
                                                                                 
   def perform_basic_auth                                                        
     if session[:user_id].blank?                                                 
