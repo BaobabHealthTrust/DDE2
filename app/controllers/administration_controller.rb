@@ -43,7 +43,7 @@ class AdministrationController < ApplicationController
             allocated: (Npid.assigned_to_region.keys([s.site_code]).rows.length rescue 0),
             available: (Npid.untaken_at_region.keys([s.site_code]).rows.length rescue 0),
             status: nil
-        }
+        } rescue nil
       
     }
     
@@ -204,6 +204,49 @@ class AdministrationController < ApplicationController
   end
 
   def region_edit
+    @sites = {
+      "Centre" => {
+        data: [],
+        allocated: Npid.allocated_to_central_region.count,
+        assigned: Npid.assigned_at_central_region.count,
+        available: Npid.available_at_central_region.count,
+        unassigned: Npid.unassigned_at_central_region.count,
+        status: nil
+      },
+      "North" => {
+        data: [],
+        allocated: Npid.allocated_to_northern_region.count,
+        assigned: Npid.assigned_at_northern_region.count,
+        available: Npid.available_at_northern_region.count,
+        unassigned: Npid.unassigned_at_northern_region.count,
+        status: nil
+      },
+      "South" => {
+        data: [],
+        allocated: Npid.allocated_to_southern_region.count,
+        assigned: Npid.assigned_at_southern_region.count,
+        available: Npid.available_at_southern_region.count,
+        unassigned: Npid.unassigned_at_southern_region.count,
+        status: nil
+      }
+    }
+    
+    Site.all.each{|s| 
+      
+        @sites[s.region][:data] << {
+            sitecode: s.site_code,
+            name: s.name,
+            count: s.site_id_count,
+            threshold: s.threshold,
+            batchsize: s.batch_size,
+            region: s.region,
+            assigned: (Npid.assigned_at_region.keys([s.site_code]).rows.length rescue 0),
+            allocated: (Npid.assigned_to_region.keys([s.site_code]).rows.length rescue 0),
+            available: (Npid.untaken_at_region.keys([s.site_code]).rows.length rescue 0),
+            status: nil
+        }
+      
+    }
   end
 
   def region_show
@@ -266,21 +309,6 @@ class AdministrationController < ApplicationController
     end
     
     redirect_to "/administration/site_show?site=#{params[:site]}" and return
-  end
-
-  def user_add
-  end
-
-  def user_edit
-  end
-
-  def user_show
-  end
-
-  def master_people
-  end
-
-  def proxy_people
   end
 
   def connection_add
@@ -452,4 +480,29 @@ class AdministrationController < ApplicationController
     render :layout => false
   end
   
+  def site_assign
+    @sites = {}
+    
+    Site.all.each{|s| 
+      
+        @sites[s.site_code] = {
+            sitecode: s.site_code,
+            name: s.name,
+            count: s.site_id_count,
+            threshold: s.threshold,
+            batchsize: s.batch_size,
+            region: s.region,
+            assigned: (Npid.assigned_at_region.keys([s.site_code]).rows.length rescue 0),
+            allocated: (Npid.assigned_to_region.keys([s.site_code]).rows.length rescue 0),
+            available: (Npid.untaken_at_region.keys([s.site_code]).rows.length rescue 0),
+            status: nil,
+            x: s.x,
+            y: s.y
+        }
+      
+    }
+    
+    # raise @sites.inspect
+  end
+
 end

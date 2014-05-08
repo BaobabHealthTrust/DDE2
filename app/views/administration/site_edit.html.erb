@@ -23,8 +23,9 @@
     </div>
     <div class="panel-body">
       
-      <form novalidate="novalidate" id="site-form" class="form-horizontal" role="form" method="post" action="/administration/update_site" autocomplete="off">
-        
+      <%= form_tag('/administration/update_site', method: 'post', enctype: 'multipart/form-data', 
+          id: 'site-form', class: "form-horizontal", autocomplete: "off", role: "form", novalidate: "novalidate") do %>
+      
           <div class="form-control-group">
             <table style="width: 100%;">
               <tr>
@@ -189,7 +190,7 @@
             </tr>
           </table>
           
-      </form>
+      <% end %>
       
     </div>
   </div>

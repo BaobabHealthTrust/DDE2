@@ -1,4 +1,22 @@
 Rails.application.routes.draw do
+  post 'user/create'
+
+  post 'user/edit'
+
+  get 'user/username_availability'
+
+  get 'user/view'
+
+  get 'user/new'
+
+  get 'user/settings'
+
+  get 'user/login'
+
+  post 'user/login'
+
+  get 'user/logout'
+
   root 'administration#index'
   
   get "check_thresholds" => "services#check_thresholds"
@@ -15,21 +33,11 @@ Rails.application.routes.draw do
 
   get 'administration/site_show'
 
-  get 'administration/region_add'
+  get 'administration/site_assign'
 
   get 'administration/region_edit'
 
   get 'administration/region_show'
-
-  get 'administration/user_add'
-
-  get 'administration/user_edit'
-
-  get 'administration/user_show'
-
-  get 'administration/master_people'
-
-  get 'administration/proxy_people'
 
   get 'administration/index'
   
@@ -66,6 +74,8 @@ Rails.application.routes.draw do
   post 'administration/connection_update'
 
   get '/check_duplicate_connections' => "services#check_duplicate_connections"
+
+  get '/username_available' => "services#username_available"
 
   resources :people do
     collection do
