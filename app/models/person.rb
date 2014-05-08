@@ -15,10 +15,6 @@ class Person < CouchRest::Model::Base
   property :assigned_site, String
   property :patient_assigned, TrueClass, :default => false
 
-  property :npid do
-     property :value, String
-  end
-
   property :person_attributes  do
     property :citizenship, String
     property :occupation, String
@@ -50,6 +46,8 @@ class Person < CouchRest::Model::Base
     property :home_ta, String
     property :home_district, String
   end
+   
+  property :old_identification_number, [String]
 
   timestamps!
 
