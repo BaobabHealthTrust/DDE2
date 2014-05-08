@@ -152,30 +152,29 @@ module Utils
        @person = Person.new(
 							 :assigned_site =>  Site.current_code,
 							 :patient_assigned => true,
-
-							 :person_attributes => { :citizenship => js["person"]["data"]["attributes"]["citizenship"] || nil,
-																			 :occupation => js['person']["data"]["attributes"]["occupation"] || nil,
-																			 :home_phone_number => js['person']["data"]["attributes"]["home_phone_number"] || nil,
-																			 :cell_phone_number => js['person']["data"]["attributes"]["cell_phone_number"] || nil,
-																			 :race => js['person']["data"]["attributes"]["race"] || nil
+							 :person_attributes => { :citizenship => js["attributes"]["citizenship"] || nil,
+																			 :occupation => js["attributes"]["occupation"] || nil,
+																			 :home_phone_number => js["attributes"]["home_phone_number"] || nil,
+																			 :cell_phone_number => js["attributes"]["cell_phone_number"] || nil,
+																			 :race => js["attributes"]["race"] || nil
 										                  },
 
-								:gender => js["person"]["data"]["gender"],
+								:gender => js["gender"],
 
-								:names => { :given_name => js["person"]["data"]["names"]["given_name"],
-							 					    :family_name => js["person"]["data"]["names"]["family_name"]
+								:names => { :given_name => js["names"]["given_name"],
+							 					    :family_name => js["names"]["family_name"]
 										      },
 
-								:birthdate => js["person"]["data"]["birthdate"] || nil,
-								:birthdate_estimated => js["person"]["data"]["birthdate_estimated"] || nil,
+								:birthdate => js["birthdate"] || nil,
+								:birthdate_estimated => js["birthdate_estimated"] || nil,
 
-								:addresses => {:current_residence => js["person"]["data"]["addresses"]["city_village"] || nil,
-												       :current_village => js["person"]["data"]["addresses"]["city_village"] || nil,
-												       :current_ta => js["person"]["data"]["addresses"]["state_province"] || nil,
-												       :current_district => js["person"]["data"]["addresses"]["state_province"] || nil,
-												       :home_village => js["person"]["data"]["addresses"]["neighbourhood_cell"] || nil,
-												       :home_ta => js["person"]["data"]["addresses"]["county_district"] || nil,
-												       :home_district => js["person"]["data"]["addresses"]["address2"] || nil
+								:addresses => {:current_residence => js["addresses"]["city_village"] || nil,
+												       :current_village => js["addresses"]["city_village"] || nil,
+												       :current_ta => js["addresses"]["state_province"] || nil,
+												       :current_district => js["addresses"]["state_province"] || nil,
+												       :home_village => js["addresses"]["neighbourhood_cell"] || nil,
+												       :home_ta => js["addresses"]["county_district"] || nil,
+												       :home_district => js["addresses"]["address2"] || nil
                               }
 		 )
 
