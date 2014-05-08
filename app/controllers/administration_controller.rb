@@ -348,7 +348,7 @@ class AdministrationController < ApplicationController
       Utils::Master.assign_npids_to_region(params[:region], params[:quantity])
     end
     
-    redirect_to "/administration/region_show?region=#{params[:region]}" and return
+    redirect_to "/administration/region_edit?region=#{params[:region]}" and return
   end
 
   def assign_npids_to_site
@@ -365,7 +365,7 @@ class AdministrationController < ApplicationController
       Utils::Master.assign_npids_to_site(params[:site], params[:quantity])
     end
     
-    redirect_to "/administration/site_show?site=#{params[:site]}" and return
+    redirect_to "/administration/site_assign?site=#{params[:site]}" and return
   end
 
   def connection_add
@@ -419,35 +419,71 @@ class AdministrationController < ApplicationController
       if !source.nil? and !sink.nil? 
                
         if Rails.env.downcase == "development" or Rails.env.downcase == "test"          
-          result = RestClient.get("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/dde_#{source.site_code.downcase}") rescue nil          
+          result = RestClient.get("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db1}") rescue nil          
           if result.nil?         
-            result = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/dde_#{source.site_code.downcase}", {}.to_json) # rescue nil            
+            result = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db1}", {}.to_json) # rescue nil            
           end
-          result = RestClient.get("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}") rescue nil 
+          result = RestClient.get("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db1}") rescue nil 
           if result.nil?          
-            result = RestClient.put("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}", {}.to_json) # rescue nil
+            result = RestClient.put("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db1}", {}.to_json) # rescue nil
+          end                
+          result = RestClient.get("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}") rescue nil          
+          if result.nil?         
+            result = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}", {}.to_json) # rescue nil            
+          end
+          result = RestClient.get("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db2}") rescue nil 
+          if result.nil?          
+            result = RestClient.put("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db2}", {}.to_json) # rescue nil
           end       
         end
         
-        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-            source: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
-            target: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
-            connection_timeout: 60000,
-            retries_per_request: 20,
-            http_connections: 30,
-            continuous: true
-          }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+        at_least_one_db_to_sync = false
+        
+        if !source.site_db1.blank? and !sink.site_db1.blank?
+          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+              source: "http://#{source.ip_address}:5984/#{source.site_db1}",
+              target: "http://#{sink.ip_address}:5984/#{sink.site_db1}",
+              connection_timeout: 60000,
+              retries_per_request: 20,
+              http_connections: 30,
+              continuous: true
+            }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+            
+          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+              source: "http://#{sink.ip_address}:5984/#{sink.site_db1}",
+              target: "http://#{source.ip_address}:5984/#{source.site_db1}",
+              connection_timeout: 60000,
+              retries_per_request: 20,
+              http_connections: 30,
+              continuous: true
+            }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
+            
+          at_least_one_db_to_sync = true
+        end
           
-        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-            source: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
-            target: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
-            connection_timeout: 60000,
-            retries_per_request: 20,
-            http_connections: 30,
-            continuous: true
-          }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
-                
-        Connection.create(src_sink: "#{params[:source]}-#{params[:sink]}", source: params[:source], sink: params[:sink]) 
+        if !source.site_db2.blank? and !sink.site_db2.blank?
+          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+              source: "http://#{source.ip_address}:5984/#{source.site_db2}",
+              target: "http://#{sink.ip_address}:5984/#{sink.site_db2}",
+              connection_timeout: 60000,
+              retries_per_request: 20,
+              http_connections: 30,
+              continuous: true
+            }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+            
+          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+              source: "http://#{sink.ip_address}:5984/#{sink.site_db2}",
+              target: "http://#{source.ip_address}:5984/#{source.site_db2}",
+              connection_timeout: 60000,
+              retries_per_request: 20,
+              http_connections: 30,
+              continuous: true
+            }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
+            
+          at_least_one_db_to_sync = true
+        end
+          
+        Connection.create(src_sink: "#{params[:source]}-#{params[:sink]}", source: params[:source], sink: params[:sink]) if at_least_one_db_to_sync
              
       end      
     end    
