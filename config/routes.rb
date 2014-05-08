@@ -69,7 +69,7 @@ Rails.application.routes.draw do
 
   resources :people do
     collection do
-      post :create, :update, :destroy
+      post :create, :update, :destroy, :update_person
       get :index, :new, :show, :edit, :confirm_demographics
     end
   end
