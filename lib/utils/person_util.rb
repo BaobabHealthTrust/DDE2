@@ -133,7 +133,6 @@ module Utils
          person = person_js
        end
        
-
        unless person.blank?
 		     legacy_national_id = person["person"]["data"]["patient"]["identifiers"]["old_identification_number"]
 		     national_id = person["identifiers"]["temporary_id"] if person["national_id"].blank?
