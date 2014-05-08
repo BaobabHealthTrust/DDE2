@@ -72,15 +72,16 @@ class PeopleController < ApplicationController
     people = Utils::PersonUtil.process_person_data(params.to_json)
     case people.size
       when 0
-        result = {}.to_json
+        result = {}
       when 1
         person = Person.find(people.first.id)
         result = person
       else
         result = people.collect{|x| Person.find(x.id)}
     end
+
     respond_to do |format|
-      format.json { render :json => result}
+      format.json { render :json => result.to_json}
       format.xml  { render :xml  => result }
     end
   end
