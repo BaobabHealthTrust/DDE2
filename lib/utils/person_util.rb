@@ -29,32 +29,6 @@ module Utils
       else
         return nil
       end
-=begin  
-      person = nil
-		  if json["value"].blank?
-          #create person
-          person = self.create_person(json)
-          return person
-		  else
-       	if json.length == 4
-         #json object is only a npid
-         person = self.get_person(npid)
-         Utils::FootprintUtil.log_application_and_site(json) if person
-		     return person
-        else
-         #json object is person data
-          if self.person_has_v4_id(json)
-           #json object has valid version 4 id
-		       person = self.get_person(npid)
-           return person
-		     	else
-           #json object has no valid version 4 id therefore create person and keep id
-		       person = self.create_person(json)
-           return person
-		     	end
-        end  
-		  end          
-=end   
   end
    
    
