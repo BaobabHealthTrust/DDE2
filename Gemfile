@@ -32,6 +32,8 @@ gem 'rb-readline'
 
 gem "bcrypt-ruby", :require => "bcrypt"
 
+gem "cancancan", "~> 1.8"
+
 #gem 'bootstrap-sass', '>= 3.0.0.0'
 
 # Use ActiveModel has_secure_password
