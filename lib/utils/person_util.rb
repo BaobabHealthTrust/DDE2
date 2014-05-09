@@ -79,7 +79,7 @@ module Utils
     
   end
 
-   private
+    private
 =begin
   + person_has_v4_id(JSON):BOOLEAN
   
@@ -205,7 +205,7 @@ module Utils
 														     :home_district => person["person"]["data"]["addresses"]["address2"] || nil
 		                            },
 
-                 :old_identification_number => [legacy_national_id]
+                 :old_identification_number => legacy_national_id
 			 )
 		    
 		   person = @person.save 
@@ -293,9 +293,19 @@ module Utils
        unless person.blank?
           return person
        else
+          self.get_person_by_old_national_id(npid)
+       end
+    end
+
+    def self.get_person_by_old_national_id(npid)
+       person = Person.by_old_identification_number.key(npid) rescue nil
+       unless person.blank?
+          return person
+       else
           return nil
        end
     end
+ 
 =begin
     + compare_people(person_a:JSON, person_b:JSON):BOOLEAN
 =end
@@ -328,8 +338,5 @@ module Utils
 
     end
   end
-
-  
-
 
 end
