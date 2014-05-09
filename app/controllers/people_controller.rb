@@ -70,19 +70,30 @@ class PeopleController < ApplicationController
 
     params["action"] = "check_similarities"
     people = Utils::PersonUtil.process_person_data(params.to_json)
+    birthdate = (params["person"]["data"]["birth_year"] +"-"+ params["person"]["data"]["birth_month"] +
+                  "-"+params["person"]["data"]["birth_day"] ).to_date rescue ""
     case people.size
       when 0
         result = {}
       when 1
         person = Person.find(people.first.id)
-        result = person
+        result = person unless !((person.birthdate >=  (birthdate - 5.years)) && (person.birthdate <=  (birthdate + 5.years))) rescue false
       else
-        result = people.collect{|x| Person.find(x.id)}
+        result = []
+        (people || []).each do |person_hash|
+          person_obj =  Person.find(person_hash.id)
+          result << person_obj unless !((person_obj.birthdate >=  (birthdate - 5.years)) && (person_obj.birthdate <=  (birthdate + 5.years))) rescue false
+        end
     end
 
     respond_to do |format|
       format.json { render :json => result.to_json}
       format.xml  { render :xml  => result }
     end
+  end
+
+  def update_demographics
+    @matching_records = Utils::PersonUtil.confirm_person_to_update(params.to_json)
+    render :action =>"confirm_demographics" , :layout => false
   end
 end
