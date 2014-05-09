@@ -1,7 +1,5 @@
 module Utils
 
-  require "bantu_soundex"
-
   class PersonUtil
   
 =begin
