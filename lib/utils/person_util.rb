@@ -173,7 +173,8 @@ module Utils
        
        unless person.blank?
 		     legacy_national_id = person["person"]["data"]["patient"]["identifiers"]["old_identification_number"]
-		     national_id = person["identifiers"]["temporary_id"] if person["national_id"].blank?
+         national_id = person["national_id"]
+		     national_id = person["identifiers"]["temporary_id"] if national_id.blank?
 		     @person = Person.new(
 		    				 :national_id => national_id,
 								 :assigned_site =>  Site.current_code,
