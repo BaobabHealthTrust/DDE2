@@ -51,13 +51,14 @@ class Person < CouchRest::Model::Base
     property :home_district, String
   end
    
-  property :old_identification_number, [String]
+  property :old_identification_number, String
 
   timestamps!
 
 
   design do
     view :by__id
+    view :by_old_identification_number
   end
 
   design do
@@ -111,6 +112,7 @@ class Person < CouchRest::Model::Base
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.birthdate,doc.addresses.home_district], doc);
             }
           }"
+    
   end
 
   def set_name_codes
