@@ -3,15 +3,14 @@ class PeopleController < ApplicationController
   def find
    json = JSON.parse(params.to_json)
    json = json.delete_if { |k, v| v.empty? }
-   @people = Utils::PersonUtil.process_person_data(json.to_json)
-   
+   @people = Utils::PersonUtil.process_person_data(json.to_json)  
    if @people.blank?
     respond_to do |format|
         format.json { render :json => {}.to_json }
     end
    else
      respond_to do |format|
-        format.json { render :json => @people }
+        format.json { render :json => @people}
       end
    end
 

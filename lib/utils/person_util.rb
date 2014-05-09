@@ -24,7 +24,6 @@ module Utils
         person = search_by_npid(js)
       elsif js["value"] and js.length > 2 and js["action"] == "find"
         person = search_by_npid(js)
-      
       elsif js["value"].blank? and !old_national_id.blank? and js["action"] != "create"
         person = create_person(json)
       elsif js["value"].blank? and old_national_id.blank? and js.length > 2 and js["action"] == "create"
@@ -41,8 +40,42 @@ module Utils
 =end
     def self.search_by_npid(json)
        npid = json["value"]
-       return  self.get_person(npid)       
+       person = self.get_person(npid)
+       unless person.blank?
+         person = convert_person(person)
+       end
+       return person   
     end
+
+   def self.convert_person(person)
+    person_hash = {:person => {:birthdate_estimated => person.birthdate_estimated}}
+    birthdate = { :birthdate => person.birthdate}
+    gender = {:gender => person.gender}
+    given_name = {:given_name => person.names.given_name}
+    family_name = {:family_name => person.names.family_name}
+    data_hash = {:data => {:addresses => {:address1 => person.addresses.current_residence,
+																					:address2 => person.addresses.current_village, 
+																					:address1 => person.addresses.current_ta,
+																					:city_village => person.addresses.current_district,
+																					:state_province => person.addresses.home_village,
+																					:county_district => person.addresses.home_ta,
+																					:neighborhood_cell => person.addresses.home_district},
+                           :attributes => {:home_phone_number => person.person_attributes.home_phone_number,
+																						:cell_phone_number => person.person_attributes.cell_phone_number,
+																						:occupation => person.person_attributes.occupation,
+																						:citizenship => person.person_attributes.citizenship,
+																						:race => person.person_attributes.race
+                                      }}} 
+
+    person_hash[:person].merge! birthdate
+    person_hash[:person].merge! gender
+    person_hash[:person].merge! given_name
+    person_hash[:person].merge! family_name
+    person_hash[:person].merge! data_hash
+
+    return person_hash 
+    
+  end
 
    private
 =begin
@@ -293,6 +326,8 @@ module Utils
 
     end
   end
+
+  
 
 
 end
