@@ -1,8 +1,5 @@
 class LoginsController < ApplicationController
-  skip_before_filter :perform_basic_auth,
-      :only => :logout
-
-  layout 'login'
+  skip_before_filter :perform_basic_auth, :only => :logout
 
   def show
     # render
@@ -30,7 +27,7 @@ class LoginsController < ApplicationController
   protected
 
   def default_path
-    people_path
+    '/administration'
   end
 
   def perform_basic_auth
@@ -40,4 +37,5 @@ class LoginsController < ApplicationController
   def access_denied
     redirect_to default_path
   end
+
 end
