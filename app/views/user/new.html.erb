@@ -123,7 +123,7 @@ function validateForm(){
       <td><hr /></td>   
     </tr>                                                                       
     <tr><td>           
-      <% @roles = ['', ['Standard','normal'], ['Administrator','admin']]%> 
+      <% @roles = ['', ['Standard','standard'], ['Administrator','admin']]%> 
       <%= select_tag "user[role]", options_for_select(@roles), 
                 :placeholder => "Select user role" %></td>
     </tr>                                                                       
