@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DDE2</title>
+  <%#= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%#= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+  <!-- Bootstrap core CSS -->
+  <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+  <link href="/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+    body {
+      padding-top: 50px;
+      -moz-user-select: none;
+    }
+    .starter-template {
+      padding: 40px 15px;
+      text-align: center;
+    }
+    form .alert,
+	  form .process
+	  {
+	      display: none;
+	  }
+	 
+    /*@import url('/bootstrap/css/bootstrap.min.css');
+    @import url('/bootstrap/css/bootstrap.css');*/
+    /* New styles */
+
+    label.valid {
+	    width: 24px;
+	    height: 24px;
+	    background: url(/images/valid.png) center center no-repeat;
+	    display: inline-block;
+	    text-indent: -9999px;
+    }
+    label.error {
+	    font-weight: bold;
+	    color: red;
+	    padding: 2px 8px;
+	    margin-top: 2px;
+    }
+    
+    .head {
+      padding-top: 15px !important;
+      padding-bottom: 18px !important;
+    }
+    
+    .submenu-show
+    {
+        border-radius: 3px;
+        display: block;
+        left: 100%;
+        margin-top: -25px !important;
+        moz-border-radius: 3px;
+        position: absolute;
+        webkit-border-radius: 3px;
+    }
+    .submenu-hide
+    {
+        display: none !important;
+        float: right;
+        position: relative;
+        top: auto;
+    }
+    .navbar .submenu-show:before
+    {
+        border-bottom: 7px solid transparent;
+        border-left: none;
+        border-right: 7px solid rgba(0, 0, 0, 0.2);
+        border-top: 7px solid transparent;
+        left: -7px;
+        top: 10px;
+    }
+
+    .navbar .submenu-show:after
+    {
+        border-bottom: 6px solid transparent;
+        border-left: none;
+        border-right: 6px solid #fff;
+        border-top: 6px solid transparent;
+        left: 10px;
+        left: -6px;
+        top: 11px;
+    }
+  </style>
+</head>
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" >Demographics Data Exchange</a>
+        </div>
+        
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <%unless session[:user_id].blank? %>
+            <li><a href="/">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/administration/region_show">Regions</a></li>
+                <li><a href="/administration/site_show">Sites</a></li>
+                <li><hr/></li>
+                <li><a href="/administration/connection_show">Connections</a></li>
+              </ul>
+            </li>
+            <%if User.current.admin?%> 
+              
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration</b> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                
+                  <% if !CONFIG["master-master"].nil? and CONFIG["master-master"] %>
+                
+                    <li class="dropdown submenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sites Management</a>
+                        <ul class="dropdown-menu submenu-show submenu-hide">
+                            <li>
+                                <a href="/administration/site_add">Add Site</a>
+                            </li>
+                            <li>
+                                <a href="/administration/site_edit">Edit Site</a>
+                            </li>
+                            <li><hr/></li>
+                            <li>
+                                <a href="/administration/site_assign">Site NPIDs Assignment</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><hr/></li>
+                    <li class="dropdown submenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Connections Management</a>
+                        <ul class="dropdown-menu submenu-show submenu-hide">
+                            <li>
+                                <a href="/administration/connection_add">Add Connection</a>
+                            </li>
+                            <li>
+                                <a href="/administration/connection_edit">Edit Connection</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><hr/></li>
+                    <li class="dropdown submenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">NPIDs Management</a>
+                        <ul class="dropdown-menu submenu-show submenu-hide">
+                            <li>
+                                <a href="/administration/region_edit">Region Assignments</a>
+                            </li>
+                            <li>
+                                <a href="/administration/site_assign">Site Assignments</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><hr/></li>
+                    
+                  <% end %>
+                    
+                    <li class="dropdown submenu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Management</a>
+                        <ul class="dropdown-menu submenu-show submenu-hide">
+                            <li>
+                                <a href="/user/settings?id=newuser">Add User</a>
+                            </li>
+                            <li>
+                                <a href="/user/settings?id=users">Find User</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+              </li>
+            
+            <%end%>
+           
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as:&nbsp;<b><%= User.current.username[0..9] %></b> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/user/settings?id=editpassword">Change Password</a></li>
+                <li><a href="/user/settings?username=<%= User.current.username %>&id=edit&selfedit=true">Edit Demographics</a></li>
+                <li><hr/></li>
+                <li><a href="/user/logout">Signout</a></li>
+              </ul>
+            </li>
+
+           </ul>
+
+
+          <%end%>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <!-- /.container -->
+
+  <% if !flash[:notice].nil? %>
+    
+    <script type="text/javascript">
+      <!--
+      
+      setTimeout("alert('<%= flash[:notice] %>')", 500);
+      
+      //-->
+    </script>
+    
+  <% elsif !flash[:error].nil? %>
+    
+    <script type="text/javascript">
+      <!--
+      
+      setTimeout("alert('<%= flash[:error] %>')", 10);
+      
+      //-->
+    </script>
+    
+  <% end %>
+  
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="/javascripts/jquery.js"></script>
+  <script src="/bootstrap/js/bootstrap.js"></script>
+  <script src="/javascripts/jquery.validate.js"></script>
+  
+  <%= yield %>
+  
+  <div class="navbar  navbar-inverse navbar-fixed-bottom" style="min-height: 30px !important; 
+      color: #ccc !important; text-align: center !important; padding-top: 5px !important;">
+        &copy; <%= Date.today.strftime("%Y") %> <a href="http://www.baobabhealth.org" target="_blank">
+          Baobab Health Trust</a> with funding from Centres For Disease Control(CDC)
+  </div>
+  
+        <script>
+ 
+            /* bootstrap-dropdown.js v2.0.2
+ 
+             * http://twitter.github.com/bootstrap/javascript.html#dropdowns
+             * ============================================================
+             * Copyright 2012 Twitter, Inc.
+             *
+             * Licensed under the Apache License, Version 2.0 (the "License");
+             * you may not use this file except in compliance with the License.
+             * You may obtain a copy of the License at
+             *
+             * http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+           */
+     !function( $ ){
+       "use strict"
+      /* DROPDOWN CLASS DEFINITION
+             * ========================= */
+            var toggle = '[data-toggle="dropdown"]'
+            , Dropdown = function ( element ) {
+                var $el = $(element).on('click.dropdown.data-api', this.toggle)
+                $('html').on('click.dropdown.data-api', function () {
+                    $el.parent().removeClass('open')
+                })
+            }
+            Dropdown.prototype = {
+                constructor: Dropdown
+                , toggle: function ( e ) {
+                    var $this = $(this)
+                    , selector = $this.attr('data-target')
+                    , $parent
+                    , isActive
+ 
+                    if (!selector) {
+                        selector = $this.attr('href')
+                        selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
+                    }
+ 
+                    $parent = $(selector)
+                    $parent.length || ($parent = $this.parent())
+                    isActive = $parent.hasClass('open')
+                    clearMenus()
+                        !isActive && $parent.toggleClass('open')
+                    return false
+                }
+            }
+ 
+            function clearMenus() {
+                $(toggle).parent().removeClass('open')
+            }
+            /* DROPDOWN PLUGIN DEFINITION
+             * ========================== */
+            $.fn.dropdown = function ( option ) {
+                return this.each(function () {
+                    var $this = $(this)
+                    , data = $this.data('dropdown')
+                    if (!data) $this.data('dropdown', (data = new Dropdown(this)))
+                    if (typeof option == 'string') data[option].call($this)
+                })
+            }
+            $.fn.dropdown.Constructor = Dropdown
+            /* APPLY TO STANDARD DROPDOWN ELEMENTS
+             * =================================== */
+            $(function () {
+                $('html').on('click.dropdown.data-api', clearMenus)
+                $('body').on('click.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+            })
+        }( window.jQuery );
+        </script>
+         
+        <script type='text/javascript'>//<![CDATA[
+        $(window).load(function(){
+            jQuery('.submenu').hover(function () {
+                jQuery(this).children('ul').removeClass('submenu-hide').addClass('submenu-show');
+            }, function () {
+                jQuery(this).children('ul').removeClass('.submenu-show').addClass('submenu-hide');
+            }).find("a:first").append(" &raquo; ");
+        });//]]>
+        </script>
+         
+</body>
+</html>
