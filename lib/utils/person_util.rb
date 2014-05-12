@@ -85,8 +85,9 @@ module Utils
 =end
     def self.person_has_v4_id(json)
 
-       unless json[:value].blank?
-           return true if json[:value].length == 6
+       unless json["value"].blank?
+            person = self.get_person(json["value"])
+        person.blank? ? false : true
 			 end
 
        return false
