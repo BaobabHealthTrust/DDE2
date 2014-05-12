@@ -28,5 +28,14 @@ class Ability
     #
     # See the wiki for details:
     # https://github.com/bryanrite/cancancan/wiki/Defining-Abilities
+
+    if user
+      #can :access, :anything
+      if user.has_role? :admin
+        can :manage, Administration
+      end
+    else
+      can :access, :login
+    end
   end
 end
