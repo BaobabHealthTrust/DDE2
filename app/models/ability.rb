@@ -30,7 +30,7 @@ class Ability
     # https://github.com/bryanrite/cancancan/wiki/Defining-Abilities
 
     if user
-      #can :access, :anything
+      can :access, :anything
       if user.has_role? :admin
         can :manage, Administration
       end

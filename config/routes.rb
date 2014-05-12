@@ -87,8 +87,8 @@ Rails.application.routes.draw do
 
   resources :people do
     collection do
-      post :find,:create, :update,:create_footprint, :update_person, :find_demographics, :update_demographics
-      get :index, :new, :find, :edit, :confirm_demographics
+      post :find,:create,:create_footprint, :update_person, :find_demographics, :update_demographics
+      get :find, :confirm_demographics
      
     end
   end
