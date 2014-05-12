@@ -27,7 +27,7 @@ class User < CouchRest::Model::Base
   cattr_accessor :current_user
 
   def has_role?(role_name)
-    true
+    self.current_user.role == role_name ? true : false
   end
 
    design do
@@ -69,9 +69,5 @@ class User < CouchRest::Model::Base
     @password = BCrypt::Password.create(new_password)
     self.password_hash = @password
   end
-
-  def admin?
-    self.role == 'admin'
-  end
-   
+ 
 end
