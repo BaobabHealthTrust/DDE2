@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+
+
   post 'user/create'
 
   post 'user/edit'
@@ -17,38 +19,21 @@ Rails.application.routes.draw do
 
   get 'user/logout'
 
-  resource :login do
-    collection do
-      get :logout
-    end
-  end																																															
-
-  #root 'administration#index'
-   root :to => 'logins#show'
-
   
   get "check_thresholds" => "services#check_thresholds"
   
   get "process_queued_sites" => "services#process_queued_sites"
   
-  get 'administration/site_add'
-
-  post 'administration/create_site'
-
-  get 'administration/site_edit'
-
-  post 'administration/update_site'
-
-  get 'administration/site_show'
-
-  get 'administration/site_assign'
-
-  get 'administration/region_edit'
-
-  get 'administration/region_show'
-
   get 'administration/index'
+
+  resources :administration do 
+    collection  do
+		  post :create_site, :update_site
+		  get :site_add, :site_edit, :site_show, :site_assign, :region_edit,:region_show 
+    end
+  end
   
+
   post 'check_site_code' => "services#check_site_code"
 
   get '/map' => "administration#map"
@@ -87,11 +72,19 @@ Rails.application.routes.draw do
 
   resources :people do
     collection do
-      post :find,:create,:create_footprint, :update_person, :find_demographics, :update_demographics
-      get :find, :confirm_demographics
-     
+      post :find, :create, :create_footprint, :update_person, :find_demographics, :update_demographics
+      get :find, :confirm_demographics 
     end
   end
+
+
+  resource :login do
+    collection do
+      get :logout
+    end
+  end																																															
+
+  root :to => 'logins#show'
 
 
   # The priority is based upon order of creation: first created -> highest priority.                              z
