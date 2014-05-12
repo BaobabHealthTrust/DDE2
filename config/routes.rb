@@ -17,7 +17,15 @@ Rails.application.routes.draw do
 
   get 'user/logout'
 
-  root 'administration#index'
+  resource :login do
+    collection do
+      get :logout
+    end
+  end																																															
+
+  #root 'administration#index'
+   root :to => 'logins#show'
+
   
   get "check_thresholds" => "services#check_thresholds"
   
