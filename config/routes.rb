@@ -1,37 +1,10 @@
 Rails.application.routes.draw do
 
-
-  post 'user/create'
-
-  post 'user/edit'
-
-  get 'user/username_availability'
-
-  get 'user/view'
-
-  get 'user/new'
-
-  get 'user/settings'
-
-  get 'user/login'
-
-  post 'user/login'
-
-  get 'user/logout'
-
-  
   get "check_thresholds" => "services#check_thresholds"
   
   get "process_queued_sites" => "services#process_queued_sites"
   
-  get 'administration/index'
-
-  resources :administration do 
-    collection  do
-		  post :create_site, :update_site
-		  get :site_add, :site_edit, :site_show, :site_assign, :region_edit,:region_show 
-    end
-  end
+  
   
 
   post 'check_site_code' => "services#check_site_code"
@@ -70,6 +43,16 @@ Rails.application.routes.draw do
 
   get '/username_available' => "services#username_available"
 
+
+
+  resources :user do
+    collection do
+     post :create, :edit
+     get :new ,:view, :username_availability, :settings
+    end
+  end
+
+
   resources :people do
     collection do
       post :find, :create, :create_footprint, :update_person, :find_demographics, :update_demographics
@@ -82,7 +65,17 @@ Rails.application.routes.draw do
     collection do
       get :logout
     end
-  end																																															
+  end	
+
+
+  resources :administration do 
+    collection  do
+		  post :create_site, :update_site
+		  get :index, :site_add, :site_edit, :site_show, :site_assign, :region_edit,:region_show 
+    end
+  end
+
+																																														
 
   root :to => 'logins#show'
 
