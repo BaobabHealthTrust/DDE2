@@ -24,7 +24,11 @@ class User < CouchRest::Model::Base
   
   timestamps!
 
-  cattr_accessor :current
+  cattr_accessor :current_user
+
+  def has_role?(role_name)
+    true
+  end
 
    design do
     view :by_active
