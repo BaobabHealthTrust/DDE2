@@ -113,7 +113,7 @@
               </ul>
             </li>
 
-            <%if User.current_user.has_role?:admin %> 
+            <%if User.current_user.has_role?("admin") %> 
               
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration</b> <b class="caret"></b></a>
