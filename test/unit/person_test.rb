@@ -148,6 +148,13 @@ class UtilsPersonTest < ActiveSupport::TestCase
     count = 0
     
     obj = JSON.parse(json)
+           
+    # Check if site has npids and use all of them
+    if Utils::Proxy.check_if_npids_available()
+      while (Utils::Proxy.check_if_npids_available()) do
+        u = Utils::UPerson.confirmed_person_to_create_or_update_or_select(json, 'create') rescue nil
+      end
+    end
         
     u = Utils::UPerson.confirmed_person_to_create_or_update_or_select(json, 'create') rescue nil
     
@@ -164,6 +171,13 @@ class UtilsPersonTest < ActiveSupport::TestCase
     count = 0
     
     obj = JSON.parse(json)
+            
+    # Check if site has npids and use all of them
+    if Utils::Proxy.check_if_npids_available()
+      while (Utils::Proxy.check_if_npids_available()) do
+        u = Utils::UPerson.confirmed_person_to_create_or_update_or_select(json, 'create') rescue nil
+      end
+    end
         
     u = Utils::UPerson.confirmed_person_to_create_or_update_or_select(json, 'create') rescue nil
     
