@@ -198,6 +198,18 @@ module Utils
     
       return false
     end
+         
+=begin
+  + check_if_npids_available():BOOLEAN
+  
+  
+=end
+    def self.check_if_region_npids_available()
+      result = Npid.assigned_at_this_region.count
+      
+      return (result > 0)
+    end
+   
    
   end
 

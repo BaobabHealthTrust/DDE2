@@ -112,6 +112,17 @@ class Person < CouchRest::Model::Base
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.birthdate,doc.addresses.home_district], doc);
             }
           }"
+    view :search_by_all_identifiers,
+         :map => "function(doc) {
+	          if ((doc['type'] == 'Person' && doc['patient']['identifiers'].length > 0)) {
+		          for(var i in doc['patient']['identifiers']){
+			          if(doc['patient']['identifiers'][i].trim().length > 0){
+              	  emit(doc['patient']['identifiers'][i], 1);
+			          }
+		          }
+		          emit(doc['_id'], 1);
+	          }
+          }"
     
   end
 
@@ -119,6 +130,5 @@ class Person < CouchRest::Model::Base
     self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
     self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?
   end
-
 
 end

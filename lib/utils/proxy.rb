@@ -31,6 +31,10 @@ module Utils
         result.update_attributes(assigned: true)
         
         js["national_id"] = result.national_id rescue nil
+        
+        js["assigned_site"] = Site.current.site_code rescue nil
+        
+        js["patient_assigned"] = true
       
         return js.to_json
         
@@ -55,10 +59,16 @@ module Utils
       
       js = JSON.parse(json)
       
-      js["identifiers"] = {} if js["identifiers"].nil?
+      js["identifiers"] = [] if js["identifiers"].nil?
       
-      js["identifiers"]["temporary_id"] = temporary_id
+      js["identifiers"] << temporary_id
+      
+      js["national_id"] = temporary_id
     
+      js["assigned_site"] = Site.current.site_code rescue nil
+      
+      js["patient_assigned"] = true
+      
       return js.to_json
     
     end
