@@ -24,7 +24,11 @@ class User < CouchRest::Model::Base
   
   timestamps!
 
-  cattr_accessor :current
+  cattr_accessor :current_user
+
+  def has_role?(role_name)
+    self.current_user.role == role_name ? true : false
+  end
 
    design do
     view :by_active
@@ -65,9 +69,5 @@ class User < CouchRest::Model::Base
     @password = BCrypt::Password.create(new_password)
     self.password_hash = @password
   end
-
-  def admin?
-    self.role == 'admin'
-  end
-   
+ 
 end

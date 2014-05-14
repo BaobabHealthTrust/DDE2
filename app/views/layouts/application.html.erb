@@ -2,9 +2,7 @@
 <html>
 <head>
   <title>DDE2</title>
-  <%#= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%#= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
+  <%= csrf_meta_tag %>
   <!-- Bootstrap core CSS -->
   <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
   <link href="/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
@@ -102,7 +100,8 @@
         
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <%unless session[:user_id].blank? %>
+   
+            <%unless session[:current_user_id].blank? %>
             <li><a href="/">Home</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
@@ -113,7 +112,8 @@
                 <li><a href="/administration/connection_show">Connections</a></li>
               </ul>
             </li>
-            <%if User.current.admin?%> 
+
+            <%if User.current_user.has_role?("admin") %> 
               
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration</b> <b class="caret"></b></a>
@@ -181,12 +181,12 @@
             <%end%>
            
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as:&nbsp;<b><%= User.current.username[0..9] %></b> <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as:&nbsp;<b><%= User.current_user.username[0..9] %></b> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="/user/settings?id=editpassword">Change Password</a></li>
-                <li><a href="/user/settings?username=<%= User.current.username %>&id=edit&selfedit=true">Edit Demographics</a></li>
+                <li><a href="/user/settings?username=<%= User.current_user.username %>&id=edit&selfedit=true">Edit Demographics</a></li>
                 <li><hr/></li>
-                <li><a href="/user/logout">Signout</a></li>
+                <li><a href="/login/logout">Signout</a></li>
               </ul>
             </li>
 

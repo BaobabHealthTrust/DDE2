@@ -85,8 +85,9 @@ module Utils
 =end
     def self.person_has_v4_id(json)
 
-       unless json[:value].blank?
-           return true if json[:value].length == 6
+       unless json["value"].blank?
+            person = self.get_person(json["value"])
+        person.blank? ? false : true
 			 end
 
        return false
@@ -163,82 +164,48 @@ module Utils
 
       raise "Argument can only be a JSON Object" if !json.match(/\{(.+)?\}/)
     
-      js = Proxy.assign_npid_to_person(json)
-      person_js = JSON.parse(js)
+       js = Proxy.assign_npid_to_person(json)
+       person_js = JSON.parse(js)
+       
+       if person_js.blank?
+         person_js = Proxy.assign_temporary_npid(json)
+         person = JSON(person_js)
+       else
+         person = person_js
+       end
+       
+       unless person.blank?
+		     legacy_national_id = person["person"]["data"]["patient"]["identifiers"]["old_identification_number"]
+         national_id = person["national_id"]
+		     national_id = person["identifiers"]["temporary_id"] if national_id.blank?
+		     @person = Person.new(
+		    				 :national_id => national_id,
+								 :assigned_site =>  Site.current_code,
+								 :patient_assigned => true,
+								 :person_attributes => { :citizenship => person["person"]["data"]["attributes"]["citizenship"] || nil,
+																				 :occupation => person["person"]["data"]["attributes"]["occupation"] || nil,
+																				 :home_phone_number => person["person"]["data"]["attributes"]["home_phone_number"] || nil,
+																				 :cell_phone_number => person["person"]["data"]["attributes"]["cell_phone_number"] || nil,
+																				 :race => person["person"]["data"]["attributes"]["race"] || nil
+												                },
 
-      if person_js.blank?
-        person_js = Proxy.assign_temporary_npid(json)
-        person = JSON(person_js)
-      else
-        person = person_js
-      end
+									:gender => person["person"]["data"]["gender"],
 
-      # raise person.inspect
+									:names => { :given_name => person["person"]["data"]["names"]["given_name"],
+								 					    :family_name => person["person"]["data"]["names"]["family_name"],
+												    },
 
-      # Sample expected JSON as per requirement
-      # person = {
-      #   "national_id"=>"XX0024", 
-      #   "application"=>"test", 
-      #   "site_code"=>"TST", 
-      #   "names"=>{
-      #       "family_name"=>"Test", 
-      #       "given_name"=>"Test"
-      #   }, 
-      #   "gender"=>"M", 
-      #   "attributes"=>{
-      #       "occupation"=>"", 
-      #       "cell_phone_number"=>""
-      #   }, 
-      #   "birthdate"=>"2000-01-01", 
-      #   "patient"=>{
-      #       "identifiers"=>{
-      #           "other_identifier"=>""
-      #       }
-      #   }, 
-      #   "birthdate_estimated"=>0, 
-      #   "addresses"=>{
-      #       "current_residence"=>nil, 
-      #       "current_village"=>nil, 
-      #       "current_ta"=>nil, 
-      #       "current_district"=>nil, 
-      #       "home_village"=>nil, 
-      #       "home_ta"=>nil, 
-      #       "home_district"=>nil
-      #   }
-      # }
+									:birthdate => person["person"]["data"]["birthdate"] || nil,
+									:birthdate_estimated => person["person"]["data"]["birthdate_estimated"] || nil,
 
-      unless person.blank?
-         legacy_national_id = person["person"]["data"]["patient"]["identifiers"]["old_identification_number"] rescue nil  # Added rescue nil as this value may not always be available
-         national_id = person["identifiers"]["temporary_id"] if person["national_id"].blank?
-         @person = Person.new(
-				         :national_id => national_id,
-				         :assigned_site =>  Site.current_code,
-				         :patient_assigned => true,
-				         :person_attributes => { :citizenship => (person["person"]["data"]["attributes"]["citizenship"] rescue nil),
-																         :occupation => (person["person"]["data"]["attributes"]["occupation"] rescue nil),
-																         :home_phone_number => (person["person"]["data"]["attributes"]["home_phone_number"] rescue nil),
-																         :cell_phone_number => (person["person"]["data"]["attributes"]["cell_phone_number"] rescue nil),
-																         :race => (person["person"]["data"]["attributes"]["race"] rescue nil)
-								                        },
-
-					        :gender => person["person"]["data"]["gender"],
-
-					        :names => { :given_name => person["person"]["data"]["names"]["given_name"],
-				         					    :family_name => person["person"]["data"]["names"]["family_name"],
-								            },
-
-					        :birthdate => person["person"]["data"]["birthdate"] || nil,
-					        :birthdate_estimated => person["person"]["data"]["birthdate_estimated"] || nil,
-
-					        :addresses => {:current_residence => person["person"]["data"]["addresses"]["city_village"] || nil,
-										             :current_village => person["person"]["data"]["addresses"]["city_village"] || nil,
-										             :current_ta => person["person"]["data"]["addresses"]["state_province"] || nil,
-										             :current_district => person["person"]["data"]["addresses"]["state_province"] || nil,
-										             :home_village => person["person"]["data"]["addresses"]["neighbourhood_cell"] || nil,
-										             :home_ta => person["person"]["data"]["addresses"]["county_district"] || nil,
-										             :home_district => person["person"]["data"]["addresses"]["address2"] || nil
-                                },
-
+									:addresses => {:current_residence => person["person"]["data"]["addresses"]["city_village"] || nil,
+														     :current_village => person["person"]["data"]["addresses"]["city_village"] || nil,
+														     :current_ta => person["person"]["data"]["addresses"]["state_province"] || nil,
+														     :current_district => person["person"]["data"]["addresses"]["state_province"] || nil,
+														     :home_village => person["person"]["data"]["addresses"]["neighbourhood_cell"] || nil,
+														     :home_ta => person["person"]["data"]["addresses"]["county_district"] || nil,
+														     :home_district => person["person"]["data"]["addresses"]["address2"] || nil
+		                            },
                  :old_identification_number => legacy_national_id
         )
 

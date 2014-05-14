@@ -16,16 +16,6 @@ class PeopleController < ApplicationController
 
   end
 
-  def index
-
-  end
-
-  def show
-  end
-
-  def new
-  end
-
   def create
     @person = Utils::PersonUtil.process_person_data(params.to_json)
     @person_hash = JSON.parse(@person.to_json)
@@ -43,17 +33,6 @@ class PeopleController < ApplicationController
     json = params   
     footprint = Utils::FootprintUtil.log_application_and_site(json) if params
     render :text => footprint.to_s and return
-  end
-
-  def edit
-
-  end
-
-  def update
-
-  end
-
-  def destroy
   end
 
   def confirm_demographics
@@ -95,4 +74,5 @@ class PeopleController < ApplicationController
     @matching_records = Utils::PersonUtil.confirm_person_to_update(params.to_json)
     render :action =>"confirm_demographics" , :layout => false
   end
+
 end

@@ -1,22 +1,6 @@
 class UserController < ApplicationController
-  def login
-    if request.post?
-      user = Utils::UserUtil.get_active_user(params[:user]["username"])
-      if user and user.password_matches?(params[:user]["password"])
-        session[:user_id] = user.username
-        flash[:error] = nil
-        redirect_to "/" and return
-      else
-        flash[:error] = 'That username and/or password was not valid.'
-      end
-    else
-      reset_session
-    end
-
-  end
-
-  def logout
-    redirect_to '/user/login' 
+ 
+  def new
   end
 
   def create
@@ -28,9 +12,6 @@ class UserController < ApplicationController
       
       redirect_to '/user/settings?id=newuser' 
     end
-  end
-
-  def new
   end
 
   def username_availability
