@@ -2,7 +2,7 @@ module Utils
 
   class UPerson
     
-    @@page_size = 10
+    @@page_size = CONFIG["pagesize"] rescue 10
     
 =begin
   + process_person_data(JSON):Array(JSON)
@@ -35,7 +35,7 @@ module Utils
       
       identifier = person["national_id"] rescue nil
       
-      if !identifier.blank? and self.is_valid_v4_npid(identifier)
+      if !identifier.blank? and (self.is_valid_v4_npid(identifier) or self.is_valid_temporary_id(identifier))
         
         result = self.search_by_npid(json, page)
         
@@ -351,9 +351,9 @@ module Utils
       
       input = JSON.parse(json)
       
-      person = Person.find_by__id(input["national_id"]) rescue nil
+      person = Person.find_by__id(input["national_id"]) # rescue nil
       
-      result = person.update_attributes(input) rescue false
+      result = person.update_attributes(input) # rescue false
       
       return result
     end
@@ -375,6 +375,14 @@ module Utils
       end
       
       return result.to_json
+    end
+    
+    def self.is_valid_temporary_id(identifier)
+      if identifier.match(/^[A-Z]{3}\d{14}$/)
+        return true
+      else
+        return false
+      end
     end
     
     def self.is_valid_v4_npid(identifier)

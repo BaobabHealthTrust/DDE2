@@ -11,7 +11,7 @@ module Utils
   
   
 =end
-    def log_application_and_site(npid, application, site)
+    def self.log_application_and_site(npid, application, site)
       result = Footprint.create(npid: npid, application: application, site_code: site) rescue false
     end
   

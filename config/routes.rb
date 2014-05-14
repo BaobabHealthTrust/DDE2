@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+
+  root 'administration#index'
+  
+  get 'process/process_data'
+
+  get 'process/search'
+
   post 'user/create'
 
   post 'user/edit'
@@ -16,8 +23,6 @@ Rails.application.routes.draw do
   post 'user/login'
 
   get 'user/logout'
-
-  root 'administration#index'
   
   get "check_thresholds" => "services#check_thresholds"
   
@@ -76,6 +81,18 @@ Rails.application.routes.draw do
   get '/check_duplicate_connections' => "services#check_duplicate_connections"
 
   get '/username_available' => "services#username_available"
+
+  get '/process_data' => "process#process_data"
+
+  post '/process_data' => "process#process_data"
+
+  get '/search' => "process#search"
+
+  post '/search' => "process#search"
+
+  post '/process_confirmation' => "process#process_confirmation"
+
+  post '/ajax_process_data' => "process#ajax_process_data"
 
   resources :people do
     collection do

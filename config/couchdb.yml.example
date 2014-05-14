@@ -10,6 +10,7 @@ development: &development
   region: Central  
   mode: master  # master/proxy
   masterport: 3000  # Port where application is running from for background processes
+  pagesize: 10
 
 test:
   <<: *development
@@ -27,3 +28,4 @@ production:
   region: Central   
   mode: master  # master/proxy
   masterport: 3000  # Port where application is running from for background processes
+  pagesize: 10
