@@ -11,6 +11,8 @@ development: &development
   mode: master  # master/proxy
   masterport: 3000  # Port where application is running from for background processes
   pagesize: 10
+  app_username:
+  app_password:
 
 test:
   <<: *development
@@ -29,3 +31,5 @@ production:
   mode: master  # master/proxy
   masterport: 3000  # Port where application is running from for background processes
   pagesize: 10
+  app_username:
+  app_password:

@@ -272,14 +272,26 @@
       
 </div>
 
+<%= form_tag("#{(!@json['return_path'].nil? ? @json['return_path'] : '/lost')}", method: 'post', enctype: 'multipart/form-data', 
+          id: 'form') do %>
+    <textarea id="json" name="person" ></textarea>
+<% end %>
+
 <script type="text/javascript">
   <!--
   
   var json = <%= (params[:person]).html_safe rescue {} %>;
   var people = [];
-    
+  
+  function make_base_auth(user, password) {
+    var tok = user + ':' + password;
+    var hash = btoa(tok);
+    return "Basic " + hash;
+  }
+
   function ajaxProcessRequest(target){
     var url = "/process_confirmation";
+    var auth = "<%= Base64.encode64("#{CONFIG["app_username"]}:#{CONFIG["app_password"]}").strip %>";
     
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
@@ -288,6 +300,7 @@
     try {
         httpRequest.open("POST", url, true);
         httpRequest.setRequestHeader("Content-type","application/json;charset=UTF-8");
+        httpRequest.setRequestHeader('Authorization', auth);
         httpRequest.send(JSON.stringify({person: json, target: target}));
     } catch(e){
     }
@@ -301,12 +314,19 @@
                   
         var result = aXMLHttpRequest.responseText;
         
-        // TODO: Need to return to calling application having done processing
+        if(__$("json")){
+          __$("json").innerHTML = result;
+        }
+        
+        if(__$("form")){
+          __$("form").submit();
+        }
     }
   }
     
   function ajaxRequest(page){
     var url = "/ajax_process_data";
+    var auth = "<%= Base64.encode64("#{CONFIG["app_username"]}:#{CONFIG["app_password"]}").strip %>";
     
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
@@ -315,6 +335,7 @@
     try {
         httpRequest.open("POST", url, true);
         httpRequest.setRequestHeader("Content-type","application/json;charset=UTF-8");
+        httpRequest.setRequestHeader('Authorization', auth);
         httpRequest.send(JSON.stringify({person: json, page: page}));
     } catch(e){
     }

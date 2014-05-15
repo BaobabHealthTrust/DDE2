@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  root 'administration#index'
+  # root 'administration#index'
   
   get 'process/process_data'
 
@@ -75,6 +75,8 @@ Rails.application.routes.draw do
   post '/process_confirmation' => "process#process_confirmation"
 
   post '/ajax_process_data' => "process#ajax_process_data"
+
+  post '/lost' => "process#lost"
 
   resources :people do
     collection do

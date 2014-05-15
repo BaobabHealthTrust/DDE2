@@ -262,40 +262,21 @@
       
 </div>
 
+<%= form_tag("#{(!@json['return_path'].nil? ? @json['return_path'] : '/lost')}", method: 'post', enctype: 'multipart/form-data', 
+          id: 'form') do %>
+    <textarea id="json" name="person" ></textarea>
+<% end %>
+
 <script type="text/javascript">
   <!--
   
+  var return_path = "<%= (!@json['return_path'].nil? ? @json['return_path'] : '/lost') %>";
   var json = <%= (params[:person]).html_safe rescue {} %>;
   var people = [];
     
-  function ajaxProcessRequest(target){
-    var url = "/";  // TODO: Need to return to calling application
-    
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function() {
-        handleAjaxProcessRequest(httpRequest);
-    };
-    try {
-        httpRequest.open("POST", url, true);
-        httpRequest.setRequestHeader("Content-type","application/json;charset=UTF-8");
-        httpRequest.send(JSON.stringify({person: json, target: target}));
-    } catch(e){
-    }
-  }
-  
-  function handleAjaxProcessRequest(aXMLHttpRequest){
-    if (!aXMLHttpRequest) return;                    
-
-    if (aXMLHttpRequest.readyState == 4 && (aXMLHttpRequest.status == 200 || 
-          aXMLHttpRequest.status == 304)) {
-                  
-        var result = aXMLHttpRequest.responseText;
-        
-    }
-  }
-    
   function ajaxRequest(page){
     var url = "/ajax_process_data";
+    var auth = "<%= Base64.encode64("#{CONFIG["app_username"]}:#{CONFIG["app_password"]}").strip %>";
     
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
@@ -304,6 +285,7 @@
     try {
         httpRequest.open("POST", url, true);
         httpRequest.setRequestHeader("Content-type","application/json;charset=UTF-8");
+        httpRequest.setRequestHeader('Authorization', auth);
         httpRequest.send(JSON.stringify({person: json, page: page}));
     } catch(e){
     }
@@ -414,12 +396,14 @@
         __$("btnSelect").className = "button_green";
         __$("btnSelect").setAttribute("pos", pos);
         
-        __$("btnSelect").onclick = function(){
-          var obj = JSON.parse(people[parseInt(this.getAttribute("pos"))]);      
+        __$("btnSelect").onclick = function(){          
+          if(__$("json")){
+            __$("json").innerHTML = people[parseInt(this.getAttribute("pos"))];
+          }
           
-          json = obj
-          
-          ajaxProcessRequest("search");
+          if(__$("form")){
+            __$("form").submit();
+          }
         }
       }
               

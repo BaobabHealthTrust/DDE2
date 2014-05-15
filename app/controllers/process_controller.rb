@@ -1,4 +1,4 @@
-class ProcessController < ApplicationController
+class ProcessController < ApplicationController 
 
   def process_data
     if Rails.env == "development" and false
@@ -64,6 +64,11 @@ class ProcessController < ApplicationController
     end
     
     render :text => @results.to_json
+  end
+  
+  def lost 
+    raise params.inspect
+    render :layout => "ts"     
   end
   
 end
