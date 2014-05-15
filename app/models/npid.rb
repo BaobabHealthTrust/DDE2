@@ -91,10 +91,6 @@ class Npid < CouchRest::Model::Base
   end
 
   design do
-    view :by__id
-    view :by__national_id
-    view :by_site_code
-    
     if Rails.env.downcase == "production"
         # NOTE: all occurences of "doc['type'] == 'npid'" are using lowercase type
         # which is different from the way CouchRest::Model creates its type field
@@ -263,11 +259,39 @@ class Npid < CouchRest::Model::Base
                 if (doc['type'] == 'npid' && doc['region'] == 'South' && (doc['site_code'] != '' && doc['site_code'] != null) && !doc.assigned ){
                   emit(doc.region, {id: doc._id ,national_id: doc.national_id, site_id: doc.site_code, assigned: doc.assigned, region: doc.region, updated_at: doc.updated_at});
                 }
-              }"         
+              }"    
+        view :by__id,
+            :map => "function(doc) {
+                if ((doc['type'] == 'npid') && (doc['_id'] != null)) {
+                  emit(doc['_id'], 1);
+                }
+              }"   
+        view :by__national_id,
+            :map => "function(doc) {
+                if ((doc['type'] == 'npid') && (doc['_national_id'] != null)) {
+                  emit(doc['_national_id'], 1);
+                }
+              }" 
+        view :by_site_code,
+            :map => "function(doc) {
+                if ((doc['type'] == 'npid') && (doc['site_code'] != null)) {
+                  emit(doc['site_code'], 1);
+                }
+              }"
+        view :all,
+            :map => "function(doc) {
+              if (doc['type'] == 'npid') {
+                emit(doc._id, null);
+              }
+            }"
     else 
         # NOTE: this set of views is created specifically for "development" and 
         # "test" environments only and not to be used in "production" mode.
         
+        view :by__id
+        view :by__national_id
+        view :by_site_code
+    
         # Site views
         view :unassigned_to_site,
              :map => "function(doc){
