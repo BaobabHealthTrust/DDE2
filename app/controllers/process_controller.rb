@@ -1,4 +1,6 @@
-class ProcessController < ApplicationController 
+class ProcessController < ActionController::Base  # ApplicationController
+  
+  before_filter :check_login
 
   def process_data
     if Rails.env == "development" and false
@@ -70,5 +72,40 @@ class ProcessController < ApplicationController
     raise params.inspect
     render :layout => "ts"     
   end
-  
+                            
+  def login!(user)
+    session[:current_user_id] = user.id
+    @@current_user = user
+  end
+
+  def logout!
+    session[:current_user_id] = nil
+    @@current_user = nil
+  end
+
+  protected
+
+  def check_login
+    if session[:current_user_id].blank?
+      authenticate
+    end
+  end
+
+  def authenticate
+    
+    authenticate_or_request_with_http_basic do |username, password|
+    
+      user = Utils::UserUtil.get_active_user(username)
+      
+      if user and user.password_matches?(password)
+        login! user
+        render :action => request.fullpath and return
+      else
+        flash[:error] = 'That username and/or password was not valid.'
+        
+        redirect_to "/user/login" and return
+      end
+    
+    end
+  end
 end
