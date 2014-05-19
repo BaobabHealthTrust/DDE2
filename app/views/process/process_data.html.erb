@@ -274,7 +274,7 @@
       
 </div>
 
-<%= form_tag("#{(!@json['return_path'].nil? ? @json['return_path'] : '/lost')}", method: 'post', enctype: 'multipart/form-data', 
+<%= form_tag("#{(!@json.nil? and !@json['return_path'].nil? ? @json['return_path'] : '/lost')}", method: 'post', enctype: 'multipart/form-data', 
           id: 'form') do %>
     <textarea id="json" name="person" ></textarea>
 <% end %>
