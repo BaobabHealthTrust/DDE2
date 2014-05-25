@@ -118,7 +118,7 @@
               First Name:
             </div>
             <div class="cell  input_cell ">
-              &nbsp;<%= @json["names"]["given_name"] rescue nil %>
+              &nbsp;
             </div>
             <div class="cell" style="width: 30px;">
               &nbsp;
@@ -130,7 +130,7 @@
               Last Name:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= @json["names"]["family_name"] rescue nil %>
+              &nbsp;
             </div>
           </div>
           
@@ -139,7 +139,7 @@
               Gender:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= @json["gender"] rescue nil %>
+              &nbsp;
             </div>
             <div class="cell">
               &nbsp;
@@ -151,7 +151,7 @@
               Birthdate:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= ((@json["birthdate_estimated"] rescue false) ? "~" : "") %><%= @json["birthdate"] rescue nil %>
+              &nbsp;
             </div>
           </div>
           
@@ -160,7 +160,7 @@
               National ID:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= @json["national_id"] rescue nil %>
+              &nbsp;
             </div>
             <div class="cell">
               &nbsp;
@@ -172,7 +172,7 @@
               Other Identifiers:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= (@json["patient"]["identifiers"] rescue []).join(",\n") %>
+              &nbsp;
             </div>
           </div>
           
@@ -181,10 +181,6 @@
               Current Address:
             </div>
             <div class="cell  input_cell no_bottom">
-              <%= @json["addresses"]["current_residence"] rescue nil %><br/>
-              <%= @json["addresses"]["current_village"] rescue nil %><br/>
-              <%= @json["addresses"]["current_ta"] rescue nil %><br/>
-              <%= @json["addresses"]["current_district"] rescue nil %>
               &nbsp;
             </div>
             <div class="cell">
@@ -197,9 +193,6 @@
               Home Address:
             </div>
             <div class="cell input_cell no_bottom">
-              <%= @json["addresses"]["home_village"] rescue nil %><br/>
-              <%= @json["addresses"]["home_ta"] rescue nil %><br/>
-              <%= @json["addresses"]["home_district"] rescue nil %>
               &nbsp;
             </div>
           </div>
@@ -261,6 +254,10 @@
     <textarea id="json" name="person" ></textarea>
 <% end %>
 
+<button onclick="window.location.reload();" >
+    Refresh
+</button>
+      
 <script type="text/javascript">
   <!--
   

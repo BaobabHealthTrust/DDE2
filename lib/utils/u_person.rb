@@ -41,15 +41,17 @@ module Utils
         
       else
               
-        result = self.search_for_person_by_params(
-                    person["names"]["given_name"], 
-                    person["names"]["family_name"], 
-                    person["gender"], 
-                    person["date_of_birth"], 
-                    person["addresses"]["home_t_a"], 
-                    person["addresses"]["home_district"],
-                    page
-                  )        
+        if !person["names"]["given_name"].blank? and !person["names"]["family_name"].blank? and !person["gender"].blank?      
+          result = self.search_for_person_by_params(
+                      person["names"]["given_name"], 
+                      person["names"]["family_name"], 
+                      person["gender"], 
+                      person["date_of_birth"], 
+                      person["addresses"]["home_t_a"], 
+                      person["addresses"]["home_district"],
+                      page
+                    )     
+        end   
       
       end
               
@@ -331,6 +333,8 @@ module Utils
       result = false
       
       person = JSON.parse(json)
+      
+      person[:patient_assigned] = true
       
       outcome = Person.create(person) rescue nil
       

@@ -30,6 +30,14 @@ module Utils
       
         result.update_attributes(assigned: true)
         
+        # Keep current npid as a reference for later        
+        js["patient"] = {} if js["patient"].blank?
+        
+        js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
+        
+        js["patient"]["identifiers"] << js["national_id"]
+      
+        
         js["national_id"] = result.national_id rescue nil
         
         js["assigned_site"] = Site.current.site_code rescue nil
@@ -61,7 +69,16 @@ module Utils
       
       js["identifiers"] = [] if js["identifiers"].nil?
       
-      js["identifiers"] << temporary_id
+      # Keep current npid as a reference for later          
+      js["patient"] = {} if js["patient"].blank?
+      
+      js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
+      
+      js["patient"]["identifiers"] << js["national_id"]
+            
+      js["patient"]["identifiers"] << js["national_id"]
+      
+      js["patient"]["identifiers"] << temporary_id
       
       js["national_id"] = temporary_id
     

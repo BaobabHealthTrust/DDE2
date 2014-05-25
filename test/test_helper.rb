@@ -6,7 +6,7 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
   
   if Npid.unassigned_to_site.count < 100
-    j = 0
+    j = 1
     (1..1000).collect{|n| n}.shuffle.each do |i|
       id = ("XX%04d" % i)
       

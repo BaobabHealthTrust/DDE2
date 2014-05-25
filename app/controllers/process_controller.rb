@@ -65,7 +65,7 @@ class ProcessController < ActionController::Base  # ApplicationController
       @results = Utils::UPerson.confirmed_person_to_create_or_update_or_select(@json.to_json, target)
     end
     
-    render :text => @results.to_json
+    render :text => @results    # .to_json
   end
   
   def lost 
