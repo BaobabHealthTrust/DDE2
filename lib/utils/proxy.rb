@@ -64,7 +64,9 @@ module Utils
     
       raise "First argument can only be a JSON Object" if !json.match(/\{(.+)?\}/)    
     
-      temporary_id = "#{Site.current_code}#{Time.now.strftime("%Y%m%d%H%M%S")}"
+      suffix = "%04d" % (rand * 1000).round(0)
+      
+      temporary_id = "#{Site.current_code}#{Time.now.strftime("%Y%m%d%H%M%S")}#{suffix}"
       
       js = JSON.parse(json)
       

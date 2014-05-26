@@ -7,7 +7,7 @@ class ActiveSupport::TestCase
   
   if Npid.unassigned_to_site.count < 100
     j = 1
-    (1..1000).collect{|n| n}.shuffle.each do |i|
+    (1..500).collect{|n| n}.shuffle.each do |i|
       id = ("XX%04d" % i)
       
       Npid.find_by__id((j + 1).to_s).destroy rescue nil

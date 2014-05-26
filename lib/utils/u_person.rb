@@ -100,7 +100,7 @@ module Utils
             
             if (!JSON.parse(outcome).blank? rescue false)
           
-              output = self.create_person(outcome) rescue false
+              output = self.create_person(outcome) # rescue false
               
               if output
                 result = outcome
@@ -131,7 +131,7 @@ module Utils
         
       end
     
-      obj = JSON.parse(result) rescue {}
+      obj = JSON.parse(result) # rescue {}
       
       Utils::FootprintUtil.log_application_and_site(obj["national_id"], obj["application"], obj["site_code"]) rescue nil
     
@@ -157,6 +157,14 @@ module Utils
           
       if !param.nil?
       
+        person = Person.find_by__id(param)
+        
+        if !person.nil?
+          
+            result << person.to_json
+            
+        end
+          
         (Person.search_by_all_identifiers.keys([param]).page(page).per(@@page_size).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
@@ -382,7 +390,7 @@ module Utils
     end
     
     def self.is_valid_temporary_id(identifier)
-      if identifier.match(/^[A-Z]{3}\d{14}$/)
+      if identifier.match(/^[A-Z]{3}\d{18}$/)
         return true
       else
         return false
