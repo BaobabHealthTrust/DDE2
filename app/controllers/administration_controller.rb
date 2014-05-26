@@ -417,7 +417,8 @@ class AdministrationController < ApplicationController
       sink = Site.find_by__id(params[:sink]) rescue nil
               
       if !source.nil? and !sink.nil? 
-               
+      
+=begin               
         if Rails.env.downcase == "development" or Rails.env.downcase == "test"          
           result = RestClient.get("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db1}") rescue nil          
           if result.nil?         
@@ -436,6 +437,7 @@ class AdministrationController < ApplicationController
             result = RestClient.put("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db2}", {}.to_json) # rescue nil
           end       
         end
+=end
         
         at_least_one_db_to_sync = false
         
@@ -448,7 +450,8 @@ class AdministrationController < ApplicationController
               http_connections: 30,
               continuous: true
             }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
-            
+          
+=begin            
           result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
               source: "http://#{sink.ip_address}:5984/#{sink.site_db1}",
               target: "http://#{source.ip_address}:5984/#{source.site_db1}",
@@ -457,6 +460,7 @@ class AdministrationController < ApplicationController
               http_connections: 30,
               continuous: true
             }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
+=end
             
           at_least_one_db_to_sync = true
         end
@@ -471,6 +475,7 @@ class AdministrationController < ApplicationController
               continuous: true
             }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
             
+=begin            
           result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
               source: "http://#{sink.ip_address}:5984/#{sink.site_db2}",
               target: "http://#{source.ip_address}:5984/#{source.site_db2}",
@@ -479,6 +484,7 @@ class AdministrationController < ApplicationController
               http_connections: 30,
               continuous: true
             }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
+=end
             
           at_least_one_db_to_sync = true
         end
