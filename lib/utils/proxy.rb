@@ -35,14 +35,15 @@ module Utils
         
         js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
         
-        js["patient"]["identifiers"] << js["national_id"]
-      
-        
+        js["patient"]["identifiers"] << {"Old Identification Number" => js["national_id"]}
+              
         js["national_id"] = result.national_id rescue nil
         
         js["assigned_site"] = Site.current.site_code rescue nil
         
         js["patient_assigned"] = true
+      
+        js["patient"]["identifiers"] = js["patient"]["identifiers"].uniq
       
         return js.to_json
         
@@ -74,11 +75,9 @@ module Utils
       
       js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
       
-      js["patient"]["identifiers"] << js["national_id"]
-            
-      js["patient"]["identifiers"] << js["national_id"]
+      js["patient"]["identifiers"] << {"Old Identification Number" => js["national_id"]} if !js["national_id"].blank?
       
-      js["patient"]["identifiers"] << temporary_id
+      js["patient"]["identifiers"] << {"Temporary ID" => temporary_id}
       
       js["national_id"] = temporary_id
     

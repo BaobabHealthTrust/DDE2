@@ -35,7 +35,7 @@ class Person < CouchRest::Model::Base
   end
 
   property :patient do
-    property :identifiers, [String]
+    property :identifiers, []
   end
 
   property :birthdate, String
@@ -116,11 +116,8 @@ class Person < CouchRest::Model::Base
          :map => "function(doc) {
 	          if ((doc['type'] == 'Person' && doc['patient']['identifiers'].length > 0)) {
 		          for(var i in doc['patient']['identifiers']){
-			          if(doc['patient']['identifiers'][i].trim().length > 0){
-              	  emit(doc['patient']['identifiers'][i], 1);
-			          }
-		          }
-		          emit(doc['_id'], 1);
+              	  		emit(doc['patient']['identifiers'][i][Object.keys(doc['patient']['identifiers'][i])[0]], 1);
+		          }		          
 	          }
           }"
     

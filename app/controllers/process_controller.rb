@@ -3,11 +3,6 @@ class ProcessController < ActionController::Base  # ApplicationController
   before_filter :check_login
 
   def process_data
-    if Rails.env == "development" and false
-    
-      params[:person] = "{\"national_id\":\"\",\"application\":\"test\",\"site_code\":\"TST\",\"names\":{\"family_name\":\"Test\",\"given_name\":\"Test\"},\"gender\":\"M\",\"attributes\":{\"occupation\":\"\",\"cell_phone_number\":\"\"},\"birthdate\":\"2000-01-01\",\"patient\":{\"identifiers\":[\"P1700000011\",\"KCH20140503083423\",\"000000\"]},\"birthdate_estimated\":0,\"addresses\":{\"current_residence\":null,\"current_village\":null,\"current_ta\":null,\"current_district\":null,\"home_village\":null,\"home_ta\":null,\"home_district\":null}}"
-      
-    end
     
     @json = JSON.parse(params[:person]) rescue {}
     
@@ -34,11 +29,6 @@ class ProcessController < ActionController::Base  # ApplicationController
   end
 
   def search
-    if Rails.env == "development" and false
-    
-      params[:person] = "{\"national_id\":\"P1700000011\",\"application\":\"test\",\"site_code\":\"TST\",\"names\":{\"family_name\":\"Test\",\"given_name\":\"Test\"},\"gender\":\"M\",\"attributes\":{\"occupation\":\"\",\"cell_phone_number\":\"\"},\"birthdate\":\"2000-01-01\",\"patient\":{\"identifiers\":[\"P1700000011\",\"KCH20140503083423\"]},\"birthdate_estimated\":0,\"addresses\":{\"current_residence\":null,\"current_village\":null,\"current_ta\":null,\"current_district\":null,\"home_village\":null,\"home_ta\":null,\"home_district\":null}}"
-      
-    end
     
     @json = JSON.parse(params[:person]) rescue {}
     

@@ -71,7 +71,7 @@
               Other Identifiers:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= (@json["patient"]["identifiers"] rescue []).join(",\n") %>
+              &nbsp;<%= @json["patient"]["identifiers"].collect{|id| "#{id.keys[0]}: #{id[id.keys[0]]}"}.join("\n") %>
             </div>
           </div>
           
@@ -174,7 +174,7 @@
               Other Identifiers:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= (@json["patient"]["identifiers"] rescue []).join(",\n") %>
+              &nbsp;<%= (@json["patient"]["identifiers"].collect{|k,v| "#{k}: #{v}"} rescue []).join(",\n") %>
             </div>
           </div>
           
@@ -509,7 +509,7 @@
             },
             {
               field:"Other Identifiers",
-              value: obj.patient.identifiers
+              value: []
             }
           ],
           [
@@ -530,6 +530,10 @@
             }
           ]
         ];          
+      
+        for(var e = 0; e < obj.patient.identifiers.length; e++){
+          rows[2][1]["value"].push(Object.keys(obj.patient.identifiers[e]) + ": " + obj.patient.identifiers[e][Object.keys(obj.patient.identifiers[e])] + "<br />");
+        }
       
         var table = document.createElement("div");
         table.className = "table";

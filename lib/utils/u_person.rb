@@ -473,7 +473,7 @@ module Utils
           
           result = JSON.parse(outcome)
           
-          result["patient"]["identifiers"] << person.id
+          result["patient"]["identifiers"] << {"Temporary ID" => person.id}
           
           result["patient"]["identifiers"] = result["patient"]["identifiers"].uniq
           
