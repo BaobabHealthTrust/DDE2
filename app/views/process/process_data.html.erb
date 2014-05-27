@@ -459,12 +459,14 @@
         __$("btnSelect").className = "button_green";
         __$("btnSelect").setAttribute("pos", pos);
         
-        __$("btnSelect").onclick = function(){
-          var obj = JSON.parse(people[parseInt(this.getAttribute("pos"))]);      
+        __$("btnSelect").onclick = function(){          
+          if(__$("json")){
+            __$("json").innerHTML = people[parseInt(this.getAttribute("pos"))];
+          }
           
-          json["national_id"] = obj["_id"];
-          
-          ajaxProcessRequest("select");
+          if(__$("form")){
+            __$("form").submit();
+          }
         }
       }
              
