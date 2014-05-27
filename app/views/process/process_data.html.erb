@@ -71,7 +71,7 @@
               Other Identifiers:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= @json["patient"]["identifiers"].collect{|id| "#{id.keys[0]}: #{id[id.keys[0]]}"}.join("\n") %>
+              &nbsp;<%= @json["patient"]["identifiers"].collect{|id| "#{id.keys[0]}: #{id[id.keys[0]]}"}.join("\n") rescue nil %>
             </div>
           </div>
           
@@ -174,7 +174,7 @@
               Other Identifiers:
             </div>
             <div class="cell  input_cell">
-              &nbsp;<%= (@json["patient"]["identifiers"].collect{|k,v| "#{k}: #{v}"} rescue []).join(",\n") %>
+              &nbsp;<%= (@json["patient"]["identifiers"].collect{|k,v| "#{k}: #{v}"} rescue []).join(",\n") rescue nil %>
             </div>
           </div>
           
