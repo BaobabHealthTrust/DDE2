@@ -34,6 +34,8 @@ gem "bcrypt-ruby", :require => "bcrypt"
 
 gem "cancancan", "~> 1.8"
 
+gem 'national_patient_id', '0.1.1'
+
 #gem 'bootstrap-sass', '>= 3.0.0.0'
 
 # Use ActiveModel has_secure_password
