@@ -33,9 +33,9 @@ module Utils
               
       person = JSON.parse(json)
       
-      identifier = person["national_id"] rescue nil
+      identifier = (person["national_id"] || person["_id"]) rescue nil
       
-      if !identifier.blank? and (self.is_valid_v4_npid(identifier) or self.is_valid_temporary_id(identifier))
+      if !identifier.blank? # and (self.is_valid_v4_npid(identifier) or self.is_valid_temporary_id(identifier))
         
         result = self.search_by_npid(json, page)
         
@@ -119,7 +119,7 @@ module Utils
           person = JSON.parse(json) rescue nil
           
           # If the presented NPID is not a valid version 4, try to recreate another one
-          if !person.nil? and !self.is_valid_v4_npid(person["national_id"])
+          if !person.nil? and !self.is_valid_v4_npid((person["national_id"] || person["_id"]))
             
             result = self.update_npid(json)
             
@@ -195,7 +195,7 @@ module Utils
         
       person = JSON.parse(json)
       
-      npid = person["national_id"] rescue nil
+      npid = (person["national_id"] || person["_id"]) rescue nil
       
       if !npid.nil?
         return self.is_valid_v4_npid(npid)
@@ -226,10 +226,20 @@ module Utils
        
       fname_code = first_name.soundex
       lname_code = last_name.soundex
-           
+       
+      yr = ((date_of_birth.to_date.year rescue nil) || Date.today.year)
+          
       if !date_of_birth.nil? and !home_t_a.nil? and !home_district.nil?
       
-        (Person.advanced_search.keys([[fname_code, lname_code, gender, date_of_birth, home_t_a, home_district]]).page(page).per(@@page_size).rows).each do |row|
+        params = []
+        
+        ((yr - 5)..(yr + 5)).each do |y|
+          
+          params << [fname_code, lname_code, gender, y, home_t_a, home_district]
+          
+        end
+      
+        (Person.advanced_search.keys(params).page(page).per(@@page_size).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -243,7 +253,15 @@ module Utils
         
       elsif !date_of_birth.nil? and !home_t_a.nil? and home_district.nil?
       
-        (Person.search_with_dob_home_ta.keys([[fname_code, lname_code, gender, date_of_birth, home_t_a]]).page(page).per(@@page_size).rows).each do |row|
+        params = []
+        
+        ((yr - 5)..(yr + 5)).each do |y|
+          
+          params << [fname_code, lname_code, gender, y, home_t_a]
+          
+        end
+      
+        (Person.search_with_dob_home_ta.keys(params).page(page).per(@@page_size).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -257,7 +275,15 @@ module Utils
       
       elsif !date_of_birth.nil? and home_t_a.nil? and !home_district.nil?
       
-        (Person.search_with_dob_home_district.keys([[fname_code, lname_code, gender, date_of_birth, home_district]]).page(page).per(@@page_size).rows).each do |row|
+        params = []
+        
+        ((yr - 5)..(yr + 5)).each do |y|
+          
+          params << [fname_code, lname_code, gender, y, home_district]
+          
+        end
+      
+        (Person.search_with_dob_home_district.keys(params).page(page).per(@@page_size).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -271,7 +297,15 @@ module Utils
         
       elsif !date_of_birth.nil? and home_t_a.nil? and home_district.nil?
       
-        (Person.search_with_dob.keys([[fname_code, lname_code, gender, date_of_birth]]).page(page).per(@@page_size).rows).each do |row|
+        params = []
+        
+        ((yr - 5)..(yr + 5)).each do |y|
+          
+          params << [fname_code, lname_code, gender, y]
+          
+        end
+      
+        (Person.search_with_dob.keys(params).page(page).per(@@page_size).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -285,7 +319,15 @@ module Utils
         
       elsif !date_of_birth.nil? and !home_t_a.nil? and home_district.nil?
       
-        (Person.search_with_home_district.keys([[fname_code, lname_code, gender, date_of_birth, home_t_a]]).page(page).per(@@page_size).rows).each do |row|
+        params = []
+        
+        ((yr - 5)..(yr + 5)).each do |y|
+          
+          params << [fname_code, lname_code, gender, y, home_t_a]
+          
+        end
+      
+        (Person.search_with_home_district.keys(params).page(page).per(@@page_size).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
