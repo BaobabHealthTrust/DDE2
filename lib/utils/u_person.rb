@@ -409,6 +409,30 @@ module Utils
       
       result = person.update_attributes(input) # rescue false
       
+      identifiers = []
+      
+      if input["patient"]["identifiers"].class.to_s.downcase == "hash"
+      
+        tmp = input["patient"]["identifiers"]
+        
+        input["patient"]["identifiers"] = []
+        
+        tmp.each do |key, value|
+          
+          input["patient"]["identifiers"] << {key => value}
+          
+        end
+      
+      end
+      
+      input["patient"]["identifiers"].each do |id|
+      
+        identifiers << {id.keys[0] => id[id.keys[0]]}
+      
+      end
+      
+      result = person.update_attributes(patient: {identifiers: identifiers})
+      
       return result
     end
  

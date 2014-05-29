@@ -89,7 +89,7 @@ class ProcessController < ActionController::Base  # ApplicationController
       
       if user and user.password_matches?(password)
         login! user
-        render :action => request.fullpath and return
+        # render :action => request.fullpath and return
       else
         flash[:error] = 'That username and/or password was not valid.'
         
