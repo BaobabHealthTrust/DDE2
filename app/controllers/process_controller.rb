@@ -22,7 +22,7 @@ class ProcessController < ActionController::Base  # ApplicationController
     @results = []
     
     if !@json.blank?
-      @results = Utils::UPerson.process_person_data(@json.to_json, (params[:page].to_i rescue 1))
+      @results = Utils::UPerson.process_person_data(@json.to_json, (params[:page].to_i rescue 1), (!params[:pagesize].blank? ? params[:pagesize].to_i : 10))
     end
     
     render :text => @results.to_json

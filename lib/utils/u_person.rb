@@ -26,7 +26,7 @@ module Utils
         specific identifiers are presented for confirmation if the required case
         matches any of those presented or completely new instances have to be created
 =end
-    def self.process_person_data(json, page=1)
+    def self.process_person_data(json, page=1, pagesize=@@page_size)
       raise "Argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
         
       result = []
@@ -47,9 +47,10 @@ module Utils
                       person["names"]["family_name"], 
                       person["gender"], 
                       person["date_of_birth"], 
-                      person["addresses"]["home_t_a"], 
-                      person["addresses"]["home_district"],
-                      page
+                      (person["addresses"]["home_t_a"] rescue nil), 
+                      (person["addresses"]["home_district"] rescue nil),
+                      page,
+                      pagesize
                     )     
         end   
       
@@ -216,7 +217,7 @@ module Utils
   
   
 =end
-    def self.search_for_person_by_params(first_name, last_name, gender, date_of_birth=nil, home_t_a=nil, home_district=nil, page=1)
+    def self.search_for_person_by_params(first_name, last_name, gender, date_of_birth=nil, home_t_a=nil, home_district=nil, page=1, pagesize=@@page_size)
 
       raise "First argument cannot be blank" unless !first_name.blank?
       raise "Second argument cannot be blank" unless !last_name.blank?
@@ -239,7 +240,7 @@ module Utils
           
         end
       
-        (Person.advanced_search.keys(params).page(page).per(@@page_size).rows).each do |row|
+        (Person.advanced_search.keys(params).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -261,7 +262,7 @@ module Utils
           
         end
       
-        (Person.search_with_dob_home_ta.keys(params).page(page).per(@@page_size).rows).each do |row|
+        (Person.search_with_dob_home_ta.keys(params).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -283,7 +284,7 @@ module Utils
           
         end
       
-        (Person.search_with_dob_home_district.keys(params).page(page).per(@@page_size).rows).each do |row|
+        (Person.search_with_dob_home_district.keys(params).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -305,7 +306,7 @@ module Utils
           
         end
       
-        (Person.search_with_dob.keys(params).page(page).per(@@page_size).rows).each do |row|
+        (Person.search_with_dob.keys(params).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -327,7 +328,7 @@ module Utils
           
         end
       
-        (Person.search_with_home_district.keys(params).page(page).per(@@page_size).rows).each do |row|
+        (Person.search_with_home_district.keys(params).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -341,7 +342,7 @@ module Utils
         
       elsif date_of_birth.nil? and !home_t_a.nil? and home_district.nil?
       
-        (Person.search_with_home_ta.keys([[fname_code, lname_code, gender, home_t_a]]).page(page).per(@@page_size).rows).each do |row|
+        (Person.search_with_home_ta.keys([[fname_code, lname_code, gender, home_t_a]]).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -355,7 +356,7 @@ module Utils
         
       else
       
-        (Person.search.keys([[fname_code, lname_code, gender]]).page(page).per(@@page_size).rows).each do |row|
+        (Person.search.keys([[fname_code, lname_code, gender]]).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
