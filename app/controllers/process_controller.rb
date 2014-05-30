@@ -1,7 +1,7 @@
 class ProcessController < ActionController::Base  # ApplicationController
   
-  before_filter :check_login
-
+  before_filter :check_login  
+  
   def process_data
     
     @json = JSON.parse(params[:person]) rescue {}

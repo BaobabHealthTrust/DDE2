@@ -133,7 +133,7 @@ module Utils
     
       obj = JSON.parse(result) # rescue {}
       
-      Utils::FootprintUtil.log_application_and_site(obj["national_id"], obj["application"], obj["site_code"]) rescue nil
+      Utils::FootprintUtil.log_application_and_site((obj["national_id"] || obj["_id"]), obj["application"], obj["site_code"]) rescue nil
     
       return result      
     end    
@@ -153,7 +153,7 @@ module Utils
       
       result = []
              
-      param = JSON.parse(json)["national_id"] # rescue nil
+      param = (JSON.parse(json)["national_id"] || JSON.parse(json)["_id"]) # rescue nil
           
       if !param.nil?
       
@@ -405,7 +405,7 @@ module Utils
       
       input = JSON.parse(json)
       
-      person = Person.find_by__id(input["national_id"]) # rescue nil
+      person = Person.find_by__id((input["national_id"] || input["_id"])) # rescue nil
       
       result = person.update_attributes(input) # rescue false
       
@@ -537,21 +537,29 @@ module Utils
     
       obj = JSON.parse(json)
       
-      person = Person.find_by__id(obj["national_id"]) rescue nil
+      person = Person.find_by__id((obj["national_id"] || obj["_id"])) rescue nil
       
-      if !person.nil?
+      if !person.nil? and Utils::Proxy.check_if_npids_available()
         
-        outcome = Utils::Proxy.assign_npid_to_person(json) rescue "{}"
+        outcome = Utils::Proxy.assign_npid_to_person(json) # rescue "{}"
           
         if (!JSON.parse(outcome).blank? rescue false)
           
           result = JSON.parse(outcome)
           
-          result["patient"]["identifiers"] << {"Temporary ID" => person.id}
-          
           result["patient"]["identifiers"] = result["patient"]["identifiers"].uniq
           
-          output = Person.create(result) rescue false
+          result["print_barcode"] = true
+          
+          result.delete("_id") rescue nil
+          
+          result.delete("_rev") rescue nil
+          
+          result.delete("type") rescue nil
+          
+          result["person_attributes"] = [] if result["person_attributes"].blank?
+          
+          output = Person.create(result) # rescue false
           
           # We've recreated the record with a new npid so we can delete the old one
           if output

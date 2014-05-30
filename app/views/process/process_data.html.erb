@@ -343,7 +343,7 @@
     try {
         httpRequest.open("POST", url, true);
         httpRequest.setRequestHeader("Content-type","application/json;charset=UTF-8");
-        httpRequest.setRequestHeader('Authorization', auth);
+        // httpRequest.setRequestHeader('Authorization', auth);
         httpRequest.send(JSON.stringify({person: json, page: page}));
     } catch(e){
     }
