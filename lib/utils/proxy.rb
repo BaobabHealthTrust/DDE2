@@ -49,7 +49,7 @@ module Utils
         
         end 
     
-        js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])}
+        js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])} if !(js["national_id"] || js["_id"]).blank?
               
         js["national_id"] = result.national_id rescue nil
         
