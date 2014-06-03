@@ -649,4 +649,50 @@ class AdministrationController < ApplicationController
     # raise @sites.inspect
   end
 
+  def search    
+  end
+  
+  def ajax_search
+    results = []
+    
+    results = Person.search.keys(
+        [[params["first_name"].soundex, 
+        params["last_name"].soundex, 
+        params["gender"]]]).page(params["page"].to_i).per(params["pagesize"].to_i).rows.collect{|person|
+          {
+            name: "#{person["value"]["names"]["given_name"] rescue nil} #{person["value"]["names"]["family_name"] rescue nil}",
+            gender: "#{(!person["value"]["gender"].blank? ? (person["value"]["gender"].strip.downcase == "f" ? "Female" : "Male") : "")}",
+            dob: "#{(((person["value"]["birthdate_estimated"] and person["value"]["birthdate"].to_date.month == 7 and (person["value"]["birthdate"].to_date.day == 15 or person["value"]["birthdate"].to_date.day == 10 or person["value"]["birthdate"].to_date.day == 5)) ? "?" : person["value"]["birthdate"].to_date.day) rescue nil)}/#{(((person["value"]["birthdate_estimated"] and person["value"]["birthdate"].to_date.month == 7 and (person["value"]["birthdate"].to_date.day == 15 or person["value"]["birthdate"].to_date.day == 10)) ? "?" : person["value"]["birthdate"].to_date.strftime("%b")) rescue nil)}/#{(person["value"]["birthdate"].to_date.year rescue '?')}",
+            current_address: "#{person["value"]["addresses"]["current_residence"] rescue nil}<br/>#{person["value"]["addresses"]["current_village"] rescue nil}<br/>#{person["value"]["addresses"]["current_ta"] rescue nil}<br/>#{person["value"]["addresses"]["current_district"] rescue nil}".gsub(/(\<br\/\>){3}|(\<br\/\>){2}|^\<br\/\>/,""),
+            home_address: "#{person["value"]["addresses"]["home_village"] rescue nil}<br/>#{person["value"]["addresses"]["home_ta"] rescue nil}<br/>#{person["value"]["addresses"]["home_district"] rescue nil}".gsub(/(\<br\/\>){3}|(\<br\/\>){2}|^\<br\/\>/,""),
+            national_id: "#{(0..(person["id"].length-1)).step(3).collect{|e| person["id"][e,3]}.join("-") rescue nil}",
+            other_identifiers: "#{person["value"]["patient"]["identifiers"].collect{|id| id.keys[0] + ":" + (0..(id[id.keys[0]].length-1)).step(3).collect{|e| id[id.keys[0]][e,3]}.join("-")}.join("<br/>") rescue nil}"
+          }
+        }
+    
+    render :text => results.to_json
+  end
+
+  def footprint
+    visits = Footprint.where_gone.keys([params["npid"].gsub(/\-/, "")]).rows rescue []
+    
+    @sites = []
+    
+    visits.each do |visit|
+      s = Site.find_by__id(visit["value"]["site"])
+      
+      site = {
+        sitecode: s.site_code,
+        name: "#{s.name} (#{visit["value"]["application"]} on #{visit["value"]["when"].to_time.to_s rescue nil})",
+        region: s.region,
+        x: s.x,
+        y: s.y
+      }
+      
+      @sites << site
+    end
+    
+    render :layout => false
+  end
+
 end
