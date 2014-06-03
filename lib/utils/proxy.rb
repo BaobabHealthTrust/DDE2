@@ -78,9 +78,11 @@ module Utils
     
       raise "First argument can only be a JSON Object" if !json.match(/\{(.+)?\}/)    
     
-      suffix = "%04d" % (rand * 1000).round(0)
+      suffix = "%02d" % (rand * 99).round(0)
       
-      temporary_id = "#{Site.current_code}#{Time.now.strftime("%Y%m%d%H%M%S")}#{suffix}"
+      base = self.convert("#{Time.now.strftime("%y%m%d%H%M%S")}#{suffix}".to_i)
+      
+      temporary_id = "#{Site.current_code}#{base}"
       
       js = JSON.parse(json)
       
@@ -178,6 +180,23 @@ module Utils
       result.to_json
     end
 
-end
+    # Convert a Base 10 <tt>number</tt> to the specified <tt>base</tt>
+    def self.convert(num)
+      # we are taking out letters B, I, O, Q, S, Z because they might be
+      # mistaken for 8, 1, 0, 0, 5, 2 respectively
+      base_map = ['0','1','2','3','4','5','6','7','8','9','A','C','D','E','F','G',
+                    'H','J','K','L','M','N','P','R','T','U','V','W','X','Y']
+      base = 30
+      results = ''
+      quotient = num.to_i
+        
+      while quotient > 0 
+        results = base_map[quotient % base] + results
+        quotient = (quotient / base)
+      end
+      results
+    end
+
+  end
 
 end

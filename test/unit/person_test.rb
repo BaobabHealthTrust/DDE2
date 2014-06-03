@@ -164,7 +164,7 @@ class UtilsPersonTest < ActiveSupport::TestCase
     
     output = JSON.parse(u) # rescue {}
     
-    result = ((!output["national_id"].match(/^[A-Z]{3}\d{18}$/).nil?) rescue false)
+    result = ((!output["national_id"].match(/^[A-Z]{3}[A-Z0-9]+/).nil?) rescue false)
     
     assert_equal(true, result, "Final record expected to have a temporary ID")
   end
@@ -187,7 +187,7 @@ class UtilsPersonTest < ActiveSupport::TestCase
     
     output = JSON.parse(u)
     
-    result = ((!output["national_id"].match(/^[A-Z]{3}\d{18}$/).nil?) rescue false)
+    result = ((!output["national_id"].match(/^[A-Z]{3}[A-Z0-9]+/).nil?) rescue false)
     
     assert_equal(true, result, "Initial test expected to have a temporary ID")
     

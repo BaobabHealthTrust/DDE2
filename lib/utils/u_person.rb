@@ -457,7 +457,7 @@ module Utils
     end
     
     def self.is_valid_temporary_id(identifier)
-      if identifier.match(/^[A-Z]{3}\d{18}$/)
+      if identifier.match(/^[A-Z]{3}[A-Z0-9]{11}/)
         return true
       else
         return false
