@@ -687,9 +687,9 @@ class AdministrationController < ApplicationController
         region: s.region,
         x: s.x,
         y: s.y
-      }
+      } rescue nil
       
-      @sites << site
+      @sites << site if !site.nil?
     end
     
     render :layout => false
