@@ -412,7 +412,7 @@ module Utils
       
       identifiers = []
       
-      if input["patient"]["identifiers"].class.to_s.downcase == "hash"
+      if (input["patient"]["identifiers"] rescue "").class.to_s.downcase == "hash"
       
         tmp = input["patient"]["identifiers"]
         
@@ -426,7 +426,7 @@ module Utils
       
       end
       
-      input["patient"]["identifiers"].each do |id|
+      (input["patient"]["identifiers"] rescue []).each do |id|
       
         identifiers << {id.keys[0] => id[id.keys[0]]}
       
@@ -575,6 +575,38 @@ module Utils
       
       return json
     
+    end
+    
+=begin
+    + compare_people(person_a:JSON, person_b:JSON):BOOLEAN
+=end
+
+    def self.compare_people(personA,personB )
+
+      single_attributes = ['birthdate', 'gender']
+      addresses = ['current_residence','current_village','current_ta','current_district','home_village','home_ta','home_district',]
+      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number']
+
+      single_attributes.each do |metric|
+        if personA[metric] != personB[metric]
+          return false
+        end
+      end
+
+      attributes.each do |metric|
+        if personA['person_attributes'][metric] != personB['person_attributes'][metric]
+          return false
+        end
+      end
+
+      addresses.each do |metric|
+        if self['addresses'][metric] != person['addresses'][metric]
+          return false
+        end
+      end
+
+      return true
+
     end
     
   end
