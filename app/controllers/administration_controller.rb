@@ -674,7 +674,25 @@ class AdministrationController < ApplicationController
   end
 
   def footprint
-    visits = Footprint.where_gone.keys([params["npid"].gsub(/\-/, "")]).rows rescue []
+    pid = params["npid"].gsub(/\-/, "")
+    
+    ids = []
+    
+    ids << pid
+    
+    Person.find_by__id(pid).patient.identifiers.each do |identifier|
+    
+      id = identifier[identifier.keys[0]] rescue nil
+      
+      ids << id if !id.blank?
+    
+    end rescue nil
+    
+    ids = ids.uniq
+    
+    # raise ids.inspect
+    
+    visits = Footprint.where_gone.keys(ids).rows rescue []
     
     @sites = []
     
