@@ -120,7 +120,7 @@ class AdministrationController < ApplicationController
         site_db2: params["site_db2"],
         description: params["description"],
         region: params["region"],
-        batchsize: params["batchsize"],
+        batch_size: params["batchsize"],
         threshold: params["threshold"],
         x: params["x"],
         y: params["y"]
@@ -167,7 +167,7 @@ class AdministrationController < ApplicationController
         site_db2: params["site_db2"],
         description: params["description"],
         region: params["region"],
-        batchsize: params["batchsize"],
+        batch_size: params["batchsize"],
         threshold: params["threshold"],
         x: params["x"],
         y: params["y"]
