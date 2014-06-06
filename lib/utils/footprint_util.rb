@@ -12,7 +12,14 @@ module Utils
   
 =end
     def self.log_application_and_site(npid, application, site)
-      result = Footprint.create(npid: npid, application: application, site_code: site) rescue false
+      current = Footprint.existing.keys([[npid, application, site, Date.today.year, Date.today.month, Date.today.day]]).rows
+      
+      if current.length <= 0
+        
+        result = Footprint.create(npid: npid, application: application, site_code: site) rescue false
+        
+      end
+      
     end
   
     # def self.log_application_and_site(json)

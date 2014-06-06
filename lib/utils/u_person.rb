@@ -134,7 +134,7 @@ module Utils
     
       obj = JSON.parse(result) # rescue {}
       
-      Utils::FootprintUtil.log_application_and_site((obj["national_id"] || obj["_id"]), obj["application"], obj["site_code"]) rescue nil
+      Utils::FootprintUtil.log_application_and_site((obj["national_id"] || obj["_id"]), obj["application"], obj["site_code"]) rescue nil if !obj["application"].blank? and !obj["site_code"].blank?
     
       return result      
     end    
@@ -607,6 +607,16 @@ module Utils
 
       return true
 
+    end
+    
+    def self.log_footprint(json)
+      
+      obj = JSON.parse(json) # rescue {}
+      
+      result = Utils::FootprintUtil.log_application_and_site((obj["national_id"] || obj["_id"]), obj["application"], obj["site_code"]) rescue nil if !obj["application"].blank? and !obj["site_code"].blank?
+    
+      return !result.blank?
+    
     end
     
   end

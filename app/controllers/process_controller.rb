@@ -73,6 +73,19 @@ class ProcessController < ActionController::Base  # ApplicationController
     @@current_user = nil
   end
 
+  def ajax_log
+    
+    @json = params[:person] rescue {}
+    
+    @results = []
+    
+    if !@json.blank?
+      @results = Utils::UPerson.log_footprint(@json.to_json)
+    end
+    
+    render :text => @results.to_json
+  end
+  
   protected
 
   def check_login
@@ -98,4 +111,6 @@ class ProcessController < ActionController::Base  # ApplicationController
     
     end
   end
+  
+
 end

@@ -84,6 +84,8 @@ Rails.application.routes.draw do
 
   get '/footprint' => "administration#footprint"
 
+  post '/ajax_log' => "process#ajax_log"
+
   resources :people do
     collection do
       post :find, :create, :create_footprint, :update_person, :find_demographics, :update_demographics

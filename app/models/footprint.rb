@@ -17,6 +17,13 @@ class Footprint < CouchRest::Model::Base
               emit(doc.npid, {application: doc.application, site: doc.site_code, when: doc.updated_at});
             }
           }"
+
+    view :existing,
+       :map => "function(doc) {
+            if (doc['type'] == 'Footprint') {
+              emit([doc.npid, doc.application, doc.site_code, (new Date(doc.updated_at)).getFullYear(), ((new Date(doc.updated_at)).getMonth() + 1), (new Date(doc.updated_at)).getDate()], {application: doc.application, site: doc.site_code, when: doc.updated_at});
+            }
+          }"
   end
 
 end
