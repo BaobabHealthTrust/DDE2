@@ -155,8 +155,8 @@ module Utils
       result = []
              
       param = (JSON.parse(json)["national_id"] || JSON.parse(json)["_id"]) # rescue nil
-          
-      if !param.nil?
+         
+      if !param.blank?
       
         person = Person.find_by__id(param)
         
@@ -179,7 +179,7 @@ module Utils
         end
         
       end
-              
+           
       return result.uniq
     end
 
