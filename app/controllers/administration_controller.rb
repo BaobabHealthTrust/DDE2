@@ -674,40 +674,42 @@ class AdministrationController < ApplicationController
   end
 
   def footprint
-    pid = params["npid"].gsub(/\-/, "")
-    
-    ids = []
-    
-    ids << pid
-    
-    Person.find_by__id(pid).patient.identifiers.each do |identifier|
-    
-      id = identifier[identifier.keys[0]] rescue nil
-      
-      ids << id if !id.blank?
-    
-    end rescue nil
-    
-    ids = ids.uniq
-    
-    # raise ids.inspect
-    
-    visits = Footprint.where_gone.keys(ids).rows rescue []
+    pid = params["npid"].gsub(/\-/, "") rescue nil
     
     @sites = []
     
-    visits.each do |visit|
-      s = Site.find_by__id(visit["value"]["site"])
+    if !pid.blank?
+      ids = []
       
-      site = {
-        sitecode: s.site_code,
-        name: "#{s.name} (#{visit["value"]["application"]} on #{visit["value"]["when"].to_time.to_s rescue nil})",
-        region: s.region,
-        x: s.x,
-        y: s.y
-      } rescue nil
+      ids << pid
       
-      @sites << site if !site.nil?
+      Person.find_by__id(pid).patient.identifiers.each do |identifier|
+      
+        id = identifier[identifier.keys[0]] rescue nil
+        
+        ids << id if !id.blank?
+      
+      end rescue nil
+      
+      ids = ids.uniq
+      
+      # raise ids.inspect
+      
+      visits = Footprint.where_gone.keys(ids).rows rescue []
+      
+      visits.each do |visit|
+        s = Site.find_by__id(visit["value"]["site"])
+        
+        site = {
+          sitecode: s.site_code,
+          name: "#{s.name} (#{visit["value"]["application"]} on #{visit["value"]["when"].to_time.to_s rescue nil})",
+          region: s.region,
+          x: s.x,
+          y: s.y
+        } rescue nil
+        
+        @sites << site if !site.nil?
+      end
     end
     
     render :layout => false

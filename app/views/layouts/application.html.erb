@@ -212,7 +212,7 @@
           </button>
           <a class="navbar-brand" >DDE <%= CONFIG["mode"].upcase rescue "?" %> @ 
               <span style="color: #428BCA"><%= Site.find_by__id(CONFIG["sitecode"]).name rescue "?" %></span> 
-              <%= (CONFIG["master-master"] ? " as MASTER-BWANA" : "") %> </a>
+              <%= (CONFIG["master-master"] ? " as MASTER-CONTROL" : "") %> </a>
         </div>
         
         <div class="navbar-collapse collapse">
