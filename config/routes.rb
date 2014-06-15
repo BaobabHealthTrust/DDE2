@@ -86,6 +86,26 @@ Rails.application.routes.draw do
 
   post '/ajax_log' => "process#ajax_log"
 
+  get '/dashboard' => "dashboard#dashboard"
+
+  get '/dashboard_person' => "dashboard#person_map"
+
+  get '/dashboard_npids' => "dashboard#npids_map"
+
+  get '/ajax_connections' => "dashboard#ajax_connections"
+
+  namespace :ws do
+    namespace :rest do
+      resources :v1 do
+        
+        collection do
+          get :active_tasks
+        end
+        
+      end
+    end
+  end
+
   resources :people do
     collection do
       post :find, :create, :create_footprint, :update_person, :find_demographics, :update_demographics

@@ -212,7 +212,7 @@
           </button>
           <a class="navbar-brand" >DDE <%= CONFIG["mode"].upcase rescue "?" %> @ 
               <span style="color: #428BCA"><%= Site.find_by__id(CONFIG["sitecode"]).name rescue "?" %></span> 
-              <%= (CONFIG["master-master"] ? " as MASTER-CONTROL" : "") %> </a>
+              <%= (CONFIG["master-master"] ? " as CONTROL" : "") %> </a>
         </div>
         
         <div class="navbar-collapse collapse">
@@ -347,6 +347,7 @@
   <script src="/javascripts/jquery.js"></script>
   <script src="/bootstrap/js/bootstrap.js"></script>
   <script src="/javascripts/jquery.validate.js"></script>
+  <script src="/javascripts/jquery.knob.js"></script>
   
   <%= yield %>
   

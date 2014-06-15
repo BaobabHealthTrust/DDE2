@@ -418,27 +418,6 @@ class AdministrationController < ApplicationController
               
       if !source.nil? and !sink.nil? 
       
-=begin               
-        if Rails.env.downcase == "development" or Rails.env.downcase == "test"          
-          result = RestClient.get("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db1}") rescue nil          
-          if result.nil?         
-            result = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db1}", {}.to_json) # rescue nil            
-          end
-          result = RestClient.get("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db1}") rescue nil 
-          if result.nil?          
-            result = RestClient.put("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db1}", {}.to_json) # rescue nil
-          end                
-          result = RestClient.get("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}") rescue nil          
-          if result.nil?         
-            result = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}", {}.to_json) # rescue nil            
-          end
-          result = RestClient.get("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db2}") rescue nil 
-          if result.nil?          
-            result = RestClient.put("http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/#{sink.site_db2}", {}.to_json) # rescue nil
-          end       
-        end
-=end
-        
         at_least_one_db_to_sync = false
         
         if !source.site_db1.blank? and !sink.site_db1.blank?
@@ -451,17 +430,6 @@ class AdministrationController < ApplicationController
               continuous: true
             }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
           
-=begin            
-          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-              source: "http://#{sink.ip_address}:5984/#{sink.site_db1}",
-              target: "http://#{source.ip_address}:5984/#{source.site_db1}",
-              connection_timeout: 60000,
-              retries_per_request: 20,
-              http_connections: 30,
-              continuous: true
-            }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
-=end
-            
           at_least_one_db_to_sync = true
         end
           
@@ -474,17 +442,6 @@ class AdministrationController < ApplicationController
               http_connections: 30,
               continuous: true
             }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
-            
-=begin            
-          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-              source: "http://#{sink.ip_address}:5984/#{sink.site_db2}",
-              target: "http://#{source.ip_address}:5984/#{source.site_db2}",
-              connection_timeout: 60000,
-              retries_per_request: 20,
-              http_connections: 30,
-              continuous: true
-            }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
-=end
             
           at_least_one_db_to_sync = true
         end
@@ -511,23 +468,42 @@ class AdministrationController < ApplicationController
     source = Site.find_by__id(src[0]) rescue nil      
     sink = Site.find_by__id(src[1]) rescue nil
             
+    result = JSON.parse(RestClient.get("http://#{CONFIG["username"]}:#{CONFIG["password"]}@#{CONFIG["host"]}:5984/_active_tasks")) rescue []
+  
+    connections = {}
+    
+    result.each do |conn|
+    
+      src = conn["source"].strip.match(/(http\:\/\/(.+)\:\d+\/)?([^\/]+)/) # rescue nil
+      
+      tgt = conn["target"].strip.match(/(http\:\/\/(.+)\:\d+\/)?([^\/]+)/) # rescue nil
+      
+      connections[[
+            (!src[2].nil? ? src[2] : "127.0.0.1"),
+            src[3],
+            (!tgt[2].nil? ? tgt[2] : "127.0.0.1"),
+            tgt[3]
+          ]] = {
+              replication_id:           conn["replication_id"],
+              pid:                      conn["pid"]
+            }
+      
+    end
+  
     if !source.nil? and !sink.nil? 
-      result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-          source: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
-          target: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
-          connection_timeout: 60000,
-          retries_per_request: 20,
-          cancel: true
-        }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
-        
-      result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-          source: "http://#{sink.ip_address}:5984/dde_#{sink.site_code.downcase}",
-          target: "http://#{source.ip_address}:5984/dde_#{source.site_code.downcase}",
-          connection_timeout: 60000,
-          retries_per_request: 20,
-          http_connections: 30,
-          cancel: true
-        }.to_json}' "http://#{sink.username}:#{sink.password}@#{sink.ip_address}:5984/_replicate"]
+      if !connections[[source.ip_address, source.site_db1, sink.ip_address, sink.site_db1]].blank?
+        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+            replication_id: "#{connections[[source.ip_address, source.site_db1, sink.ip_address, sink.site_db1]][:replication_id]}",
+            cancel: true
+          }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+      end
+      
+      if !connections[[source.ip_address, source.site_db2, sink.ip_address, sink.site_db2]].blank?
+        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+            replication_id: "#{connections[[source.ip_address, source.site_db2, sink.ip_address, sink.site_db2]][:replication_id]}",
+            cancel: true
+          }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+      end
                   
       Connection.find_by__id(params[:connection]).destroy rescue nil
     end
