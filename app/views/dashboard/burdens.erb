@@ -22,7 +22,7 @@
     }
 
     .progress-meter .foreground-red {
-      fill: crimson;
+      fill: red;
     }
 
     .progress-meter .foreground-orange {
@@ -100,9 +100,6 @@
       var lineData = [];
       var lnData = [];
       var lineGraph = {};
-      var foreground = {};
-      var text = {};
-      var meter = {};
 
       var oradius = 17;
       var arc = d3.svg.arc()
@@ -128,20 +125,23 @@
            
         var tsvg = svg.append("g")
             .attr("transform", "translate(355,25)")
+          
+        var tsvg = svg.append("g")
+            .attr("transform", "translate(355,25)")
             
         tsvg.append("text")
               .attr("text-anchor", "middle")
               .attr("dy", ".75em")
               .attr("fill", "green")
               .style("font-size", "24px")
-              .text("Patient");
+              .text("Patient Care");
           
         tsvg.append("text")
               .attr("text-anchor", "middle")
               .attr("dy", ".75em")
               .attr("fill", "green")
               .style("font-size", "24px")
-              .text("Demographics")
+              .text("Distribution")
               .attr("transform", "translate(0,30)");
           
         tsvg.append("text")
@@ -149,7 +149,7 @@
               .attr("dy", ".75em")
               .attr("fill", "black")
               .style("font-size", "24px")
-              .text("Sync Status")
+              .text("Burden Status")
               .attr("transform", "translate(0,60)");
           
         tsvg.append("rect")
@@ -162,7 +162,7 @@
                 .attr("y", -15)  
           
         var lsvg = svg.append("g")
-            .attr("transform", "translate(5,825)")
+            .attr("transform", "translate(5,855)")
             
         lsvg.append("rect")
                 .style("stroke", "green")
@@ -184,7 +184,7 @@
                 .style("stroke-width", "1px")
                 .style("fill", "none")
                 .attr("width", 150)
-                .attr("height", 220)
+                .attr("height", 180)
                 .attr("x", -5)
                 .attr("y", -20)  
           
@@ -201,13 +201,13 @@
               .attr("text-anchor", "left")
               .attr("fill", "black")
               .style("font-size", "12px")
-              .text("< 5% or Offline")
+              .text("0% or Offline")
               .attr("transform", "translate(30,30)");
           
         lsvg.append("rect")
                 .style("stroke", "none")
                 .style("stroke-width", "1px")
-                .style("fill", red)
+                .style("fill", blue)
                 .attr("width", 25)
                 .attr("height", 20)
                 .attr("x", 1)
@@ -217,13 +217,13 @@
               .attr("text-anchor", "left")
               .attr("fill", "black")
               .style("font-size", "12px")
-              .text(">=5% & <25%")
+              .text(">0% & <25%")
               .attr("transform", "translate(30,60)");
           
         lsvg.append("rect")
                 .style("stroke", "none")
                 .style("stroke-width", "1px")
-                .style("fill", orange)
+                .style("fill", green)
                 .attr("width", 25)
                 .attr("height", 20)
                 .attr("x", 1)
@@ -239,7 +239,7 @@
         lsvg.append("rect")
                 .style("stroke", "none")
                 .style("stroke-width", "1px")
-                .style("fill", blue)
+                .style("fill", orange)
                 .attr("width", 25)
                 .attr("height", 20)
                 .attr("x", 1)
@@ -255,7 +255,7 @@
         lsvg.append("rect")
                 .style("stroke", "none")
                 .style("stroke-width", "1px")
-                .style("fill", green)
+                .style("fill", red)
                 .attr("width", 25)
                 .attr("height", 20)
                 .attr("x", 1)
@@ -268,44 +268,10 @@
               .text(">=75%")
               .attr("transform", "translate(30,150)");
           
-        lsvg.append("rect")
-                .style("stroke", "none")
-                .style("stroke-width", "1px")
-                .style("fill", "red")
-                .attr("width", 15)
-                .attr("height", 15)
-                .attr("x", 5)
-                .attr("y", 160)  
-                
-        lsvg.append("text")
-              .attr("text-anchor", "left")
-              .attr("fill", "black")
-              .style("font-size", "12px")
-              .text("Master Node")
-              .attr("transform", "translate(30,172)");
-          
-        lsvg.append("circle")
-                .style("stroke", "none")
-                .style("stroke-width", "1px")
-                .style("fill", "red")
-                .attr("r", 6)
-                .attr("cx", 13)
-                .attr("cy", 187)  
-                
-        lsvg.append("text")
-              .attr("text-anchor", "left")
-              .attr("fill", "black")
-              .style("font-size", "12px")
-              .text("Proxy Node")
-              .attr("transform", "translate(30,192)");
-             
         ajaxTasks();  
           
         resizeSVG();
         
-        // loadProgress();
-
-        // loadSites();
       });
        
       function loadSites(){
@@ -345,13 +311,13 @@
               d3.select("#region").append("rect")
                 .style("stroke", "white")
                 .style("stroke-width", "1px")
-                .style("fill", "red")
+                .style("fill", "#1954cd")
                 .style("margin", "auto")
                 .attr("class", "site")
-                .attr("width", 15)
-                .attr("height", 15)
-                .attr("x", xs - 7.5)
-                .attr("y", ys - 7.5)
+                .attr("width", 8)
+                .attr("height", 8)
+                .attr("x", xs - 4)
+                .attr("y", ys - 4)
                 .attr("id", sites[i]["site_code"].toLowerCase())
                 .attr("tag", sites[i]["name"])
                 .on("mouseover", function(){
@@ -374,10 +340,10 @@
                 d3.select("#region").append("circle")
                   .style("stroke", "white")
                   .style("stroke-width", "1px")
-                  .style("fill", "red")
+                  .style("fill", "#1954cd")
                   .style("margin", "auto")
                   .attr("class", "site")
-                  .attr("r", 6)
+                  .attr("r", 3)
                   .attr("cx", xs)
                   .attr("cy", ys)
                   .attr("id", sites[i]["site_code"].toLowerCase())
@@ -416,298 +382,76 @@
         text = {};
         meter = {};
         
-        for(var i = 0; i < connections.length; i++){  
+        for(var i = 0; i < sites.length; i++){  
           var xs = -10;
           var ys = -10;
           
           var xt = -10;
           var yt = -10;
           
-          if(connections[i]["source"]["x"] != null && connections[i]["source"]["y"] != null){
-            if(connections[i]["source"]["region"].toLowerCase() == "centre"){
+          if(sites[i]["x"] != null && sites[i]["y"] != null){
+            if(sites[i]["region"].toLowerCase() == "centre"){
               
-              xs = Math.round(connections[i]["source"]["x"]);
-              ys = Math.round(connections[i]["source"]["y"]) + 373;                
+              xs = Math.round(sites[i]["x"]);
+              ys = Math.round(sites[i]["y"]) + 373;                
               
-            } else if(connections[i]["source"]["region"].toLowerCase() == "north"){
+            } else if(sites[i]["region"].toLowerCase() == "north"){
             
-              xs = Math.round(connections[i]["source"]["x"]) + 39
-              ys = Math.round(connections[i]["source"]["y"])                
+              xs = Math.round(sites[i]["x"]) + 39
+              ys = Math.round(sites[i]["y"])                
               
-            } else if(connections[i]["source"]["region"].toLowerCase() == "south"){
+            } else if(sites[i]["region"].toLowerCase() == "south"){
             
-              xs = Math.round(connections[i]["source"]["x"]) + 212
-              ys = Math.round(connections[i]["source"]["y"]) + 552                
+              xs = Math.round(sites[i]["x"]) + 212
+              ys = Math.round(sites[i]["y"]) + 552                
               
             }
-          }
-        
-          if(connections[i]["target"]["x"] != null && connections[i]["target"]["y"] != null){
-            if(connections[i]["target"]["region"].toLowerCase() == "centre"){
-              
-              xt = Math.round(connections[i]["target"]["x"]);
-              yt = Math.round(connections[i]["target"]["y"]) + 373;                
-              
-            } else if(connections[i]["target"]["region"].toLowerCase() == "north"){
-            
-              xt = Math.round(connections[i]["target"]["x"]) + 39
-              yt = Math.round(connections[i]["target"]["y"])                
-              
-            } else if(connections[i]["target"]["region"].toLowerCase() == "south"){
-            
-              xt = Math.round(connections[i]["target"]["x"]) + 212
-              yt = Math.round(connections[i]["target"]["y"]) + 552                
-              
-            }
-          }
-            
-          lnData.push(
-              {
-                source:{
-                  x: xs,
-                  y: ys,
-                  ntype: connections[i]["source"]["type"]
-                },
-                target:{
-                  x: xt,
-                  y: yt,
-                  ntype: connections[i]["target"]["type"]
-                },
-                label: connections[i]["label"],
-                data: (parseInt(connections[i]["status"]["person"]["progress"]) / 100)
-              }
-           );
-         }
-         
-         var svg = d3.select("#region");
+          }        
           
-         svg.append("svg:marker")
-          .attr("id", "arrow")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 8)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z");
-
-         svg.append("svg:marker")
-          .attr("id", "arrow-crimson")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", "crimson");
-
-         svg.append("svg:marker")
-          .attr("id", "arrow-olivedrab")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", "olivedrab");
-
-         svg.append("svg:marker")
-          .attr("id", "arrow-orange")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", orange);
-
-         svg.append("svg:marker")
-          .attr("id", "arrow-blue")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", blue);
-
-         svg.append("svg:marker")
-          .attr("id", "arrow-green")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", green);
-
-         svg.append("svg:marker")
-          .attr("id", "arrow-red")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", red);
-
-         svg.append("svg:marker")
-          .attr("id", "arrow-gray")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", 12)
-          .attr("refY", 5)
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 6)
-          .attr("orient", "auto")
-          .append("svg:path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z")
-          .attr("fill", gray);
-
-        for(var i = 0; i < lnData.length; i++){
-          //The line SVG Path we draw
-          lineGraph[lnData[i].label.toLowerCase() + "-conn"] = svg.append("path")
-              .attr("d", linkArc(lnData[i]))   // lineFunction(lineData))
-              .attr("stroke", (lnData[i].source.ntype == "master" && lnData[i].target.ntype != "master" ? "olivedrab" : "#db810d"))
-              .attr("stroke-width", (lnData[i].source.ntype == "master" && lnData[i].target.ntype == "master" ? 5 : 3))
-              .attr("fill", "none")
-              .attr("marker-end", "url(#arrow-" + (lnData[i].source.ntype == "master" && lnData[i].target.ntype != "master" ? "olivedrab" : "orange") + ")")
-              .attr("id", lnData[i].label.toLowerCase() + "-conn")
-              .attr("tag", lnData[i].label + " Connection")
-              .attr("class", "progress-meter")
-              .on("mouseover", function(){
-                  return tooltip.style("visibility", "visible");
-                })
-              .on("mousemove", function(){
-                  return tooltip.style("top", 
-                      (d3.event.pageY-10)+"px")
-                        .style("left", (d3.event.pageX+20)+"px")
-                        .text(getSiteInfo(this.id));
-                })
-              .on("mouseout", function(){
-                  return tooltip.style("visibility", "hidden");
-                })
-              .on("click", function(){
-                alert(this.id);
-              });          
-        }
-
-        var svg = d3.select("#region");
-            
-        var barc = d3.svg.arc()
-            .startAngle(0)
-            .innerRadius(0)
-            .outerRadius(oradius + 1);
-
-        for(var i = 0; i < lnData.length; i++){        
-         
-          var point = d3.select("#" + lnData[i].label.toLowerCase() + "-conn").node();
-          
-          var mpoint = point.getPointAtLength(point.getTotalLength() / 2);
-             
+          var svg = d3.select("#region");
+           
           var isvg = svg.append("g")
-            .attr("transform", "translate(" + mpoint.x + "," + mpoint.y + ")")
-                
-          meter[lnData[i].label.toLowerCase() + "-conn"] = isvg.append("g")
+            .attr("transform", "translate(" + xs + "," + ys + ")")
+               
+          var barc = d3.svg.arc()
+              .startAngle(0)
+              .innerRadius(0)
+              .outerRadius(oradius + 1);
+  
+          var meter = isvg.append("g")
           .attr("class", "progress-meter");
 
-          meter[lnData[i].label.toLowerCase() + "-conn"].append("path")
+          meter.append("path")
               .attr("class", "background-most")
               .attr("d", barc.endAngle(twoPi));
 
-          meter[lnData[i].label.toLowerCase() + "-conn"].append("path")
-              .attr("class", "background")
+          var foreground = meter.append("path")
               .attr("d", arc.endAngle(twoPi));
-
-          foreground[lnData[i].label.toLowerCase() + "-conn"] = meter[lnData[i].label.toLowerCase() + "-conn"].append("path")
-              .attr("class", "foreground");
-
-          text[lnData[i].label.toLowerCase() + "-conn"] = meter[lnData[i].label.toLowerCase() + "-conn"].append("text")
+        
+          var pos = sites[i]["proportion"];
+                   
+          if(pos == 0.0){
+            foreground.attr("class", "foreground-gray");
+          } else if(pos > 0.0 && pos < 0.25){
+            foreground.attr("class", "foreground-blue");
+          } else if(pos >= 0.25 && pos < 0.50){
+            foreground.attr("class", "foreground-green");
+          } else if(pos >= 0.5 && pos < 0.75){
+            foreground.attr("class", "foreground-orange");
+          } else if(pos >= 0.75){
+            foreground.attr("class", "foreground-red");
+          }
+             
+          var text = meter.append("text")
               .attr("text-anchor", "middle")
               .attr("dy", ".35em")
-              .attr("fill", "crimson");
-              
-          var pos = lnData[i]["data"];    // Math.random();
-              
-          setPosition(lnData[i].label.toLowerCase() + "-conn", pos);
-          
-        }
-        
-        loadSites();
+              .text(formatPercent(pos));
+                  
+       }
+         
+        // loadSites();
       }
            
-      function setPosition(id, pos){
-        if(pos >= 0.75){
-        
-          lineGraph[id].attr("stroke", green)
-            .attr("marker-end", "url(#arrow-green");
-        
-          text[id].attr("fill", green);
-          
-          foreground[id].attr("class", "foreground-green");
-        
-        } else if(pos >= 0.50 && pos < 0.75){
-        
-          lineGraph[id].attr("stroke", blue)
-            .attr("marker-end", "url(#arrow-blue");
-        
-          text[id].attr("fill", blue);
-          
-          foreground[id].attr("class", "foreground-blue");
-        
-        } else if(pos >= 0.25 && pos < 0.50){
-        
-          lineGraph[id].attr("stroke", orange)
-            .attr("marker-end", "url(#arrow-orange");
-        
-          text[id].attr("fill", orange);
-          
-          foreground[id].attr("class", "foreground-orange");
-        
-        } else if(pos >= 0.05 && pos < 0.25){
-        
-          lineGraph[id].attr("stroke", red)
-            .attr("marker-end", "url(#arrow-red");
-        
-          text[id].attr("fill", red);
-          
-          foreground[id].attr("class", "foreground-red");
-        
-        } else {
-        
-          lineGraph[id].attr("stroke", gray)
-            .attr("marker-end", "url(#arrow-gray");
-        
-          text[id].attr("fill", gray);
-          
-          foreground[id].attr("class", "foreground-gray");
-        
-        }
-        
-        foreground[id].attr("d", arc.endAngle(twoPi * pos));
-        text[id].text(formatPercent(pos));
-      }
-       
       function linkArc(d) {
         var dx = d.target.x - d.source.x,
             dy = d.target.y - d.source.y,
@@ -755,7 +499,7 @@
       function ajaxTasks(){
          clearTimeout(timerHnd);
          
-         var url = "/ajax_connections";
+         var url = "/ajax_burdens";
          
          var httpRequest = new XMLHttpRequest();
           httpRequest.onreadystatechange = function() {
@@ -776,10 +520,8 @@
                      
           try{
             var result = JSON.parse(aXMLHttpRequest.responseText);
-                          
-            connections = result["connections"];
-            
-            sites = result["sites"];
+             
+            sites = result;
             
             loadProgress();
             

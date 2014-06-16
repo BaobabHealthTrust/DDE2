@@ -94,6 +94,18 @@ Rails.application.routes.draw do
 
   get '/ajax_connections' => "dashboard#ajax_connections"
 
+  get '/ajax_npids_distribution' => "dashboard#ajax_npids_distribution"
+
+  get '/dashboard_npids_distribution' => "dashboard#npids_distribution"
+
+  get '/dashboard_burdens' => "dashboard#burdens"
+
+  get '/ajax_burdens' => "dashboard#ajax_burdens"
+
+  get '/ajax_movements' => "dashboard#ajax_movements"
+
+  get '/dashboard_movements' => "dashboard#movements"
+
   namespace :ws do
     namespace :rest do
       resources :v1 do

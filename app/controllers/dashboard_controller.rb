@@ -257,4 +257,158 @@ class DashboardController < ActionController::Base
   
   end
 
+  def npids_distribution
+    @connections = []
+    @sites = [] 
+  end
+
+  def ajax_npids_distribution
+  
+    @sites = []
+  
+    Site.list.rows.each do |source|
+    
+      row = source.value
+      
+      available = Npid.untaken_at_region.keys([row["site_code"]]).rows.length 
+      
+      proportion = (available / (row["threshold"].to_f + row["batch_size"].to_f)) # rescue 0
+      
+      site = {
+        site_code: row["site_code"],
+        region: row["region"],
+        x: row["x"],
+        y: row["y"],
+        name: row["name"],
+        type: row["site_type"],
+        ip_address: row["ip_address"],
+        available: available,
+        threshold: row["threshold"],
+        batch_size: row["batch_size"],
+        proportion: proportion
+      }
+    
+      @sites << site 
+    end
+    
+    render :json => @sites.to_json
+  
+  end
+
+  def burdens  
+  end
+
+  def ajax_burdens
+  
+    @sites = []
+  
+    total = Footprint.by_site.rows.length 
+  
+    Site.list.rows.each do |source|
+    
+      row = source.value
+      
+      seen = Footprint.by_site.keys([row["site_code"]]).rows.length 
+      
+      proportion = (seen / total.to_f) # rescue 0
+      
+      site = {
+        site_code: row["site_code"],
+        region: row["region"],
+        x: row["x"],
+        y: row["y"],
+        name: row["name"],
+        type: row["site_type"],
+        ip_address: row["ip_address"],
+        seen: seen,
+        threshold: row["threshold"],
+        batch_size: row["batch_size"],
+        proportion: proportion
+      }
+    
+      @sites << site 
+    end
+    
+    render :json => @sites.to_json
+  
+  end
+
+  def ajax_movements
+  
+    @sites = {sites: [], movements: {}, total: 0, connections: []}
+  
+    Footprint.by_migration.keys.each do |key|
+    
+      if @sites[:movements][key].blank?
+        
+        @sites[:movements][key] = 1
+        
+      else
+      
+        @sites[:movements][key] += 1
+      
+      end
+    
+      @sites[:total] += 1
+    
+    end
+
+    @sites[:movements].each do |key, value|
+    
+      source = Site.find_by__id(key[0]) rescue nil
+      target = Site.find_by__id(key[1]) rescue nil
+              
+      if !source.nil? and !target.nil?
+        site = {
+          source: {
+            sitecode: source.site_code,
+            region: source.region,
+            x: source.x,
+            y: source.y,
+            name: source.name,
+            type: source.site_type,
+            ip_address: source.ip_address
+          },
+          target: {
+            sitecode: target.site_code,
+            region: target.region,
+            x: target.x,
+            y: target.y,
+            name: target.name,
+            type: target.site_type,
+            ip_address: target.ip_address
+          },
+          label: key.join("-") + " Migration",
+          magnitude: value
+        } 
+        
+        @sites[:connections] << site 
+      end
+      
+    end
+
+    Site.list.rows.each do |source|
+    
+      row = source.value
+      
+      site = {
+        site_code: row["site_code"],
+        region: row["region"],
+        x: row["x"],
+        y: row["y"],
+        name: row["name"],
+        type: row["site_type"],
+        ip_address: row["ip_address"]
+      }
+    
+      @sites[:sites] << site 
+    end
+    
+    render :json => @sites.to_json
+  
+  end
+
+  def movements  
+  end
+
 end

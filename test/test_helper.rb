@@ -12,7 +12,7 @@ class ActiveSupport::TestCase
       
       Npid.find_by__id((j + 1).to_s).destroy rescue nil
       
-      Npid.create(incremental_id: j, national_id: id, site_code: "", assigned: false)
+      Npid.create(incremental_id: j, national_id: id, site_code: "", assigned: false) rescue nil
       
       j += 1
       

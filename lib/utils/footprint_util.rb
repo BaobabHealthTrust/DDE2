@@ -16,7 +16,9 @@ module Utils
       
       if current.length <= 0
         
-        result = Footprint.create(npid: npid, application: application, site_code: site) rescue false
+        origin = Person.find_by__id(npid).assigned_site rescue nil
+        
+        result = Footprint.create(npid: npid, application: application, site_code: site, origin: origin) rescue false
         
       end
       
