@@ -112,19 +112,19 @@ class Npid < CouchRest::Model::Base
               }"
         view :unassigned_at_site,
              :map => "function(doc){
-                if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.current_code}' && !doc.assigned ){
+                if (doc['type'] == 'Npid' && doc['site_code'] == 'KCH' && !doc.assigned ){
                   emit(doc.national_id, null);
                 }
               }"
         view :assigned_at_site,
              :map => "function(doc){
-                if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.current_code}' && doc.assigned ){
+                if (doc['type'] == 'Npid' && doc['site_code'] == 'KCH' && doc.assigned ){
                   emit(doc.national_id, null);
                 }
               }"
         view :assigned_to_site,
              :map => "function(doc){
-                if (doc['type'] == 'Npid' && doc['site_code'] == '#{Site.current_code}' ){
+                if (doc['type'] == 'Npid' && doc['site_code'] == 'KCH' ){
                   emit(doc.national_id, null);
                 }
               }"
@@ -138,7 +138,7 @@ class Npid < CouchRest::Model::Base
               }"
         view :assigned_at_this_region,
              :map => "function(doc){
-                if (doc['type'] == 'Npid' && doc['region'] == '#{Site.current_region}' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
+                if (doc['type'] == 'Npid' && doc['region'] == 'Centre' && (doc['site_code'] != '' && doc['site_code'] != null) && doc.assigned ){
                   emit(doc.national_id, null);
                 }
               }"
