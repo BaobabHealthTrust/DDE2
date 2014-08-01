@@ -65,51 +65,51 @@ class Person < CouchRest::Model::Base
     view :search,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender], null);
             }
           }"
 
     view :advanced_search,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear(),doc.addresses.home_ta ,doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear(),doc.addresses.home_ta ,doc.addresses.home_district], null);
             }
           }"
 
     view :search_with_dob,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear()], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear()], null);
             }
           }"
     view :search_with_home_district,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_district], null);
             }
           }"
     view :search_with_home_ta,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta], null);
             }
           }"
     view :search_with_home_ta_district,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta, doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta, doc.addresses.home_district], null);
             }
           }"
     view :search_with_dob_home_ta,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender,(new Date(doc.birthdate)).getFullYear() ,doc.addresses.home_ta], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender,(new Date(doc.birthdate)).getFullYear() ,doc.addresses.home_ta], null);
             }
           }"
     view :search_with_dob_home_district,
          :map => "function(doc){
             if (doc['type'] == 'Person' ){
-              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear(),doc.addresses.home_district], doc);
+              emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear(),doc.addresses.home_district], null);
             }
           }"
     view :search_by_all_identifiers,
