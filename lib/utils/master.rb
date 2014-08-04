@@ -205,7 +205,18 @@ module Utils
   
 =end
     def self.check_if_region_npids_available()
-      result = Npid.assigned_at_this_region.count
+      # result = Npid.assigned_at_this_region.count
+      
+      result = 0
+      
+      case CONFIG["region"]
+        when "Centre"
+          result = Npid.unassigned_at_central_region.count
+        when "North"
+          result = Npid.unassigned_at_northern_region.count
+        when "South"
+          result = Npid.unassigned_at_southern_region.count
+      end
       
       return (result > 0)
     end
