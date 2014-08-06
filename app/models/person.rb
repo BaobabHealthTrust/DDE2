@@ -22,6 +22,7 @@ class Person < CouchRest::Model::Base
     property :occupation, String
     property :home_phone_number, String
     property :cell_phone_number, String
+    property :office_phone_number, String
     property :race, String
   end
 
@@ -42,6 +43,7 @@ class Person < CouchRest::Model::Base
   property :birthdate_estimated,  TrueClass, :default => false
 
   property :addresses do
+    property :address1, String
     property :current_residence, String
     property :current_village, String
     property :current_ta, String

@@ -164,6 +164,7 @@ module Utils
             "occupation" => js['person']["data"]["attributes"]["occupation"] || nil,
             "home_phone_number" => js['person']["data"]["attributes"]["home_phone_number"] || nil,
             "cell_phone_number" => js['person']["data"]["attributes"]["cell_phone_number"] || nil,
+            "office_phone_number" => js['person']["data"]["attributes"]["office_phone_number"] || nil,
             "race" => js['person']["data"]["attributes"]["race"] || nil
         },
         "addresses" => {
