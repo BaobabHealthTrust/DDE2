@@ -8,7 +8,9 @@ module Utils
   
 =end
     def self.check_if_npids_available()
-      result = Npid.unassigned_at_site.count
+      # result = Npid.unassigned_at_site.count
+      
+      result = Npid.untaken_at_region.keys([CONFIG["sitecode"]]).count
       
       return (result > 0)
     end
@@ -22,7 +24,9 @@ module Utils
     
       raise "First argument can only be a JSON Object" if !json.match(/\{(.+)?\}/)
     
-      result = Npid.unassigned_at_site.first rescue nil
+      # result = Npid.unassigned_at_site.first rescue nil
+      
+      result = Npid.untaken_at_region.keys([CONFIG["sitecode"]]).first rescue nil
       
       if !result.nil?
       
@@ -113,7 +117,9 @@ module Utils
   
 =end
     def self.get_unassigned_npids()
-      Npid.unassigned_at_site.collect{|e| e}
+      # Npid.unassigned_at_site.collect{|e| e}
+      
+      Npid.untaken_at_region.keys([CONFIG["sitecode"]]).collect{|e| e} rescue []
     end
    
 =begin
