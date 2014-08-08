@@ -62,6 +62,7 @@ module Utils
 																					:neighborhood_cell => person.addresses.home_district},
                            :attributes => {:home_phone_number => person.person_attributes.home_phone_number,
 																						:cell_phone_number => person.person_attributes.cell_phone_number,
+                                            :office_phone_number => person.person_attributes.office_phone_number,
 																						:occupation => person.person_attributes.occupation,
 																						:citizenship => person.person_attributes.citizenship,
 																						:race => person.person_attributes.race
@@ -186,7 +187,8 @@ module Utils
 																				 :occupation => person["person"]["data"]["attributes"]["occupation"] || nil,
 																				 :home_phone_number => person["person"]["data"]["attributes"]["home_phone_number"] || nil,
 																				 :cell_phone_number => person["person"]["data"]["attributes"]["cell_phone_number"] || nil,
-																				 :race => person["person"]["data"]["attributes"]["race"] || nil
+																				 :office_phone_number => person["person"]["data"]["attributes"]["office_phone_number"] || nil,
+                                         :race => person["person"]["data"]["attributes"]["race"] || nil
 												                },
 
 									:gender => person["person"]["data"]["gender"],
@@ -275,6 +277,7 @@ module Utils
               person['person_attributes']['occupation'] = js['person_attributes']['occupation'] unless js['person_attributes']['occupation'].blank?
               person['person_attributes']['home_phone_number'] = js['person_attributes']['home_phone_number'] unless js['person_attributes']['home_phone_number'].blank?
               person['person_attributes']['cell_phone_number'] = js['person_attributes']['cell_phone_number'] unless js['person_attributes']['cell_phone_number'].blank?
+              person['person_attributes']['office_phone_number'] = js['person_attributes']['office_phone_number'] unless js['person_attributes']['office_phone_number'].blank?
               person['person_attributes']['race'] = js['person_attributes']['race'] unless js['person_attributes']['race'].blank?
             end
             return person.save
@@ -317,7 +320,7 @@ module Utils
 
       single_attributes = ['birthdate', 'gender']
       addresses = ['current_residence','current_village','current_ta','current_district','home_village','home_ta','home_district',]
-      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number']
+      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number', 'office_phone_number']
 
       single_attributes.each do |metric|
         if personA[metric] != personB[metric]

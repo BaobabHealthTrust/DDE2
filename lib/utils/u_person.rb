@@ -43,15 +43,15 @@ module Utils
               
         if !person["names"]["given_name"].blank? and !person["names"]["family_name"].blank? and !person["gender"].blank?      
           result = self.search_for_person_by_params(
-                      person["names"]["given_name"], 
-                      person["names"]["family_name"], 
-                      person["gender"], 
-                      person["date_of_birth"], 
-                      (person["addresses"]["home_t_a"] rescue nil), 
-                      (person["addresses"]["home_district"] rescue nil),
-                      page,
-                      pagesize
-                    )     
+            person["names"]["given_name"],
+            person["names"]["family_name"],
+            person["gender"],
+            person["date_of_birth"],
+            (person["addresses"]["home_t_a"] rescue nil),
+            (person["addresses"]["home_district"] rescue nil),
+            page,
+            pagesize
+          )
         end   
       
       end
@@ -81,54 +81,54 @@ module Utils
       result = "{}"
       
       case action.downcase
-        when "create"
+      when "create"
         
-          # Try to get a new identifier
-          outcome = Utils::Proxy.assign_npid_to_person(json)
+        # Try to get a new identifier
+        outcome = Utils::Proxy.assign_npid_to_person(json)
           
+        if (!JSON.parse(outcome).blank? rescue false)
+          
+          output = self.create_person(outcome) rescue false
+            
+          if output
+            result = outcome
+          end
+          
+        else
+          
+          # NPIDs not available, get a temporary identifier
+          outcome = Utils::Proxy.assign_temporary_npid(json)
+            
           if (!JSON.parse(outcome).blank? rescue false)
           
-            output = self.create_person(outcome) rescue false
-            
+            output = self.create_person(outcome) # rescue false
+              
             if output
               result = outcome
             end
-          
-          else
-          
-            # NPIDs not available, get a temporary identifier
-            outcome = Utils::Proxy.assign_temporary_npid(json)
-            
-            if (!JSON.parse(outcome).blank? rescue false)
-          
-              output = self.create_person(outcome) # rescue false
               
-              if output
-                result = outcome
-              end
-              
-            end
-            
           end
+            
+        end
           
-        when "update"
-          output = self.update_person(json)
+      when "update"
+        output = self.update_person(json)
           
-          result = json if output
-        else
+        result = json if output
+      else
         
-          person = JSON.parse(json) rescue nil
+        person = JSON.parse(json) rescue nil
           
-          # If the presented NPID is not a valid version 4, try to recreate another one
-          if !person.nil? and !self.is_valid_v4_npid((person["national_id"] || person["_id"]))
+        # If the presented NPID is not a valid version 4, try to recreate another one
+        if !person.nil? and !self.is_valid_v4_npid((person["national_id"] || person["_id"]))
             
-            result = self.update_npid(json)
+          result = self.update_npid(json)
             
-          else
+        else
             
-            result = json
+          result = json
           
-          end
+        end
         
       end
     
@@ -162,7 +162,7 @@ module Utils
         
         if !person.nil?
           
-            result << person.to_json
+          result << person.to_json
             
         end
           
@@ -387,8 +387,11 @@ module Utils
       
       person[:patient_assigned] = true
       
-      outcome = Person.create(person) rescue nil
+      person["person_attributes"] = person["attributes"] if person["person_attributes"].blank? and
+       person["attributes"].present?
       
+      outcome = Person.create(person) rescue nil
+     
       result = !outcome.blank?
       
       return result
@@ -506,11 +509,11 @@ module Utils
     def self.to_decimal(num, from_base=30)
       @@separator = "-"
       @@reverse_map = {'0' => 0,'1' => 1,'2' => 2,'3' => 3,'4' => 4,'5' => 5,
-                   '6' => 6,'7' => 7,'8' => 8,'9' => 9,
-                   'A' => 10,'C' => 11,'D' => 12,'E' => 13,'F' => 14,'G' => 15,
-                   'H' => 16,'J' => 17,'K' => 18,'L' => 19,'M' => 20,'N' => 21,
-                   'P' => 22,'R' => 23,'T' => 24,'U' => 25,'V' => 26,'W' => 27,
-                   'X' => 28,'Y' => 29}
+        '6' => 6,'7' => 7,'8' => 8,'9' => 9,
+        'A' => 10,'C' => 11,'D' => 12,'E' => 13,'F' => 14,'G' => 15,
+        'H' => 16,'J' => 17,'K' => 18,'L' => 19,'M' => 20,'N' => 21,
+        'P' => 22,'R' => 23,'T' => 24,'U' => 25,'V' => 26,'W' => 27,
+        'X' => 28,'Y' => 29}
       
       decimal = 0
       num.to_s.gsub(@@separator, '').split('').reverse.each_with_index do |n, i|
@@ -585,7 +588,7 @@ module Utils
 
       single_attributes = ['birthdate', 'gender']
       addresses = ['current_residence','current_village','current_ta','current_district','home_village','home_ta','home_district',]
-      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number']
+      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number', 'office_phone_number']
 
       single_attributes.each do |metric|
         if personA[metric] != personB[metric]
