@@ -631,11 +631,22 @@ class AdministrationController < ApplicationController
   def ajax_search
     results = []
     
-    results = Person.search.keys(
+    results = []
+    
+    Person.search.keys(
         [[params["first_name"].soundex, 
         params["last_name"].soundex, 
         params["gender"]]]).page(params["page"].to_i).per(params["pagesize"].to_i).rows.collect{|person|
-          {
+        
+          id = person["id"]
+        
+          person = {"value" => {}}
+          
+          person["value"] = Person.find_by__id(id) rescue nil
+          
+          next if person["value"].nil?
+        
+          results << {
             name: "#{person["value"]["names"]["given_name"] rescue nil} #{person["value"]["names"]["family_name"] rescue nil}",
             gender: "#{(!person["value"]["gender"].blank? ? (person["value"]["gender"].strip.downcase == "f" ? "Female" : "Male") : "")}",
             dob: "#{(((person["value"]["birthdate_estimated"] and person["value"]["birthdate"].to_date.month == 7 and (person["value"]["birthdate"].to_date.day == 15 or person["value"]["birthdate"].to_date.day == 10 or person["value"]["birthdate"].to_date.day == 5)) ? "?" : person["value"]["birthdate"].to_date.day) rescue nil)}/#{(((person["value"]["birthdate_estimated"] and person["value"]["birthdate"].to_date.month == 7 and (person["value"]["birthdate"].to_date.day == 15 or person["value"]["birthdate"].to_date.day == 10)) ? "?" : person["value"]["birthdate"].to_date.strftime("%b")) rescue nil)}/#{(person["value"]["birthdate"].to_date.year rescue '?')}",
