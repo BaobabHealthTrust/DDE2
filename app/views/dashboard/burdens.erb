@@ -85,7 +85,7 @@
     </style>
   </head>
   <body onresize="resizeSVG()">
-      <div id="main" style="padding: 0px; text-align: center; height: 1056px; overflow: hidden; width: 100%;"></div>
+      <div id="main" style="padding: 0px; text-align: center; height: 100%; overflow: hidden; width: 100%;"></div>
       <script src="/javascripts/d3.js" charset="utf-8"></script>
       <script>
             
@@ -162,7 +162,7 @@
                 .attr("y", -15)  
           
         var lsvg = svg.append("g")
-            .attr("transform", "translate(5,855)")
+            .attr("transform", "translate(5,755)")
             
         lsvg.append("rect")
                 .style("stroke", "green")
@@ -533,6 +533,7 @@
       }
            
       function resizeSVG(){
+		  return;
         if(d3.select("#region").node() != null){
           var height = d3.select("#region").node().height.baseVal.value;
           
