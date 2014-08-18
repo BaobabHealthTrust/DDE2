@@ -475,7 +475,7 @@
                   ntype: connections[i]["target"]["type"]
                 },
                 label: connections[i]["label"],
-                data: (parseInt(connections[i]["status"]["person"]["progress"]) / 100)
+                data: (connections[i]["status"]["npid"] != undefined ? (parseInt(connections[i]["status"]["npid"]["progress"]) / 100) : 0)
               }
            );
          }
