@@ -85,7 +85,9 @@
     </style>
   </head>
   <body onresize="resizeSVG()">
-      <div id="main" style="height: 100%; width: 100%"></div>
+	  
+	  <div id="main" style="padding: 0px; text-align: center; height: 100%; overflow: hidden; width: 100%;"></div>
+	  
       <script src="/javascripts/d3.js" charset="utf-8"></script>
       <script src="/javascripts/bowser.js" charset="utf-8"></script>
       <script>
@@ -121,7 +123,7 @@
       var pollInterval = spacing * 1000;
       var timerHnd;
 
-      var loader = d3.xml("images/" + (bowser.firefox ? "mw" : "mw-chromium") + ".svg", function(xml) {
+      var loader = d3.xml("images/mw.svg", function(xml) {
         document.getElementById("main").appendChild(xml.documentElement);
           
         var svg = d3.select("#region")

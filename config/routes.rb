@@ -86,7 +86,7 @@ Rails.application.routes.draw do
 
   post '/ajax_log' => "process#ajax_log"
 
-  get '/dashboard' => "dashboard#dashboard"
+  get '/dashboard' => "dashboard#dual_display"
 
   get '/dashboard_person' => "dashboard#person_map"
 

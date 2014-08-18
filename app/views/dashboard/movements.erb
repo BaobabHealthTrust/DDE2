@@ -122,7 +122,7 @@
       var pollInterval = spacing * 1000;
       var timerHnd;
 
-      var loader = d3.xml("images/" + (bowser.firefox ? "mw" : "mw-chromium") + ".svg", function(xml) {
+      var loader = d3.xml("images/mw.svg", function(xml) {
         document.getElementById("main").appendChild(xml.documentElement);
           
         var svg = d3.select("#region")
