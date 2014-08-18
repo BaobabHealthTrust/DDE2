@@ -130,39 +130,6 @@ class DashboardController < ActionController::Base
   
     @sites = {sites: [], connections: []}
   
-    result = JSON.parse(RestClient.get("http://#{CONFIG["username"]}:#{CONFIG["password"]}@#{CONFIG["host"]}:5984/_active_tasks")) rescue []
-  
-    connections = {}
-    
-    result.each do |conn|
-    
-      src = conn["source"].strip.match(/(http\:\/\/(.+)\:\d+\/)?([^\/]+)/) # rescue nil
-      
-      tgt = conn["target"].strip.match(/(http\:\/\/(.+)\:\d+\/)?([^\/]+)/) # rescue nil
-      
-      connections[[
-            (!src[2].nil? ? src[2] : "127.0.0.1"),
-            src[3],
-            (!tgt[2].nil? ? tgt[2] : "127.0.0.1"),
-            tgt[3]
-          ]] = {
-              continuous:               conn["continuous"],
-              doc_write_failures:       conn["doc_write_failures"],
-              docs_read:                conn["docs_read"],
-              docs_written:             conn["docs_written"],
-              replication_id:           conn["replication_id"],
-              started_on:               conn["started_on"],
-              updated_on:               conn["updated_on"],
-              missing_revisions_found:  conn["missing_revisions_found"],
-              progress:                 conn["progress"],
-              revisions_checked:        conn["revisions_checked"],
-              source_seq:               conn["source_seq"],
-              checkpointed_source_seq:  conn["checkpointed_source_seq"],
-              pid:                      conn["pid"]
-            }
-      
-    end
-    
     Connection.all.rows.each do |row|
       src = row["key"].split("-") rescue []
     
@@ -172,6 +139,44 @@ class DashboardController < ActionController::Base
         target = Site.find_by__id(src[1]) rescue nil
                 
         if !source.nil? and !target.nil?
+        
+          # Start getting connections even from remote servers
+                          
+          result = JSON.parse(RestClient.get("http://#{source["username"]}:#{source["password"]}@#{source["ip_address"]}:5984/_active_tasks")) rescue []
+        
+          connections = {}
+          
+          result.each do |conn|
+          
+            src = conn["source"].strip.match(/(http\:\/\/(.+)\:\d+\/)?([^\/]+)/) # rescue nil
+            
+            tgt = conn["target"].strip.match(/(http\:\/\/(.+)\:\d+\/)?([^\/]+)/) # rescue nil
+            
+            connections[[
+                  (!src[2].nil? ? src[2] : "127.0.0.1"),
+                  src[3],
+                  (!tgt[2].nil? ? tgt[2] : "127.0.0.1"),
+                  tgt[3]
+                ]] = {
+                    continuous:               conn["continuous"],
+                    doc_write_failures:       conn["doc_write_failures"],
+                    docs_read:                conn["docs_read"],
+                    docs_written:             conn["docs_written"],
+                    replication_id:           conn["replication_id"],
+                    started_on:               conn["started_on"],
+                    updated_on:               conn["updated_on"],
+                    missing_revisions_found:  conn["missing_revisions_found"],
+                    progress:                 conn["progress"],
+                    revisions_checked:        conn["revisions_checked"],
+                    source_seq:               conn["source_seq"],
+                    checkpointed_source_seq:  conn["checkpointed_source_seq"],
+                    pid:                      conn["pid"]
+                  }
+            
+          end
+          
+          # End connections retrieval
+        
           site = {
             source: {
               sitecode: source.site_code,

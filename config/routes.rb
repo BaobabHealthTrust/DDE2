@@ -88,6 +88,8 @@ Rails.application.routes.draw do
 
   get '/dashboard' => "dashboard#dual_display"
 
+  get '/dashboard_old' => "dashboard#dashboard"
+
   get '/dashboard_person' => "dashboard#person_map"
 
   get '/dashboard_npids' => "dashboard#npids_map"

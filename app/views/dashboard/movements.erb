@@ -85,7 +85,9 @@
     </style>
   </head>
   <body onresize="resizeSVG()">
-      <div id="main" style="padding: 0px; text-align: center; height: 100%; overflow: hidden; width: 100%;"></div>
+      
+	  <div id="main" style="padding: 0px; text-align: center; height: 1000px; overflow: hidden;"></div>
+	  
       <script src="/javascripts/d3.js" charset="utf-8"></script>
       <script src="/javascripts/bowser.js" charset="utf-8"></script>
       <script>
@@ -726,38 +728,20 @@
           timerHnd = setTimeout("ajaxTasks()", pollInterval);           
         }
       }
-           
+     
+      function __$(id){
+		return document.getElementById(id);
+	  }
+      
       function resizeSVG(){
-		if(!bowser.firefox)
-			return;
+		  
+		if(__$("main")){
 			
-        if(d3.select("#region").node() != null){
-          var height = d3.select("#region").node().height.baseVal.value;
-          
-          var scale = window.innerHeight / height;
-          
-          d3.select("#region").transition().delay(0).attr("transform", "scale(" + scale + ")");
-        } 
+			__$("main").style.height = (window.innerHeight) + "px";
+			
+		} 
+		 
       }
-       
-      // timerHnd = setTimeout("ajaxTasks()", pollInterval);           
-
-      /*
-      d3.json("data.json")
-          .on("progress", function() {
-            var i = d3.interpolate(progress, d3.event.loaded / total);
-            d3.transition().tween("progress", function() {
-              return function(t) {
-                progress = i(t);
-                foreground.attr("d", arc.endAngle(twoPi * progress));
-                text.text(formatPercent(progress));
-              };
-            });
-          })
-          .get(function(error, data) {
-            // meter.transition().delay(250).attr("transform", "scale(0)");
-          });
-      */
       </script>
   </body>
 </html>
