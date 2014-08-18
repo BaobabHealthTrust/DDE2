@@ -2,6 +2,12 @@ module Utils
 
   class Proxy
     
+    def initialize
+      
+      @npid_mutex = Mutex.new
+    
+    end
+    
 =begin
   + check_if_npids_available():BOOLEAN
   
@@ -22,55 +28,59 @@ module Utils
 =end
     def self.assign_npid_to_person(json)
     
-      raise "First argument can only be a JSON Object" if !json.match(/\{(.+)?\}/)
-    
-      # result = Npid.unassigned_at_site.first rescue nil
-      
-      result = Npid.untaken_at_region.keys([CONFIG["sitecode"]]).first rescue nil
-      
-      if !result.nil?
-      
-        js = JSON.parse(json)
-      
-        result.update_attributes(assigned: true)
+      # @npid_mutex.synchronize do
         
-        # Keep current npid as a reference for later        
-        js["patient"] = {} if js["patient"].blank?
+        raise "First argument can only be a JSON Object" if !json.match(/\{(.+)?\}/)
+      
+        # result = Npid.unassigned_at_site.first rescue nil
         
-        js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
+        result = Npid.untaken_at_region.keys([CONFIG["sitecode"]]).first rescue nil
         
-        if js["patient"]["identifiers"].class.to_s.downcase == "hash"
+        if !result.nil?
+        
+          js = JSON.parse(json)
+        
+          result.update_attributes(assigned: true)
           
-          tmp = js["patient"]["identifiers"]
+          # Keep current npid as a reference for later        
+          js["patient"] = {} if js["patient"].blank?
           
-          js["patient"]["identifiers"] = []
+          js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
           
-          tmp.each do |key, value|
+          if js["patient"]["identifiers"].class.to_s.downcase == "hash"
             
-            js["patient"]["identifiers"] << {key => value}
+            tmp = js["patient"]["identifiers"]
             
-          end
-        
-        end 
-    
-        js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])} if !(js["national_id"] || js["_id"]).blank?
+            js["patient"]["identifiers"] = []
+            
+            tmp.each do |key, value|
               
-        js["national_id"] = result.national_id rescue nil
-        
-        js["assigned_site"] = Site.current.site_code rescue nil
-        
-        js["patient_assigned"] = true
+              js["patient"]["identifiers"] << {key => value}
+              
+            end
+          
+          end 
       
-        js["patient"]["identifiers"] = js["patient"]["identifiers"].uniq
-      
-        return js.to_json
+          js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])} if !(js["national_id"] || js["_id"]).blank?
+                
+          js["national_id"] = result.national_id rescue nil
+          
+          js["assigned_site"] = Site.current.site_code rescue nil
+          
+          js["patient_assigned"] = true
         
-      else 
-      
-        return {}.to_json
+          js["patient"]["identifiers"] = js["patient"]["identifiers"].uniq
         
-      end
+          return js.to_json
+          
+        else 
+        
+          return {}.to_json
+          
+        end
     
+      # end
+      
     end
    
 =begin

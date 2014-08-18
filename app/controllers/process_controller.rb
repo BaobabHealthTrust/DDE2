@@ -21,8 +21,14 @@ class ProcessController < ActionController::Base  # ApplicationController
     
     @results = []
     
+    if @json.class.to_s.downcase.strip != "string"
+    
+      @json = @json.to_json
+    
+    end
+    
     if !@json.blank?
-      @results = Utils::UPerson.process_person_data(@json.to_json, (params[:page].to_i rescue 1), (!params[:pagesize].blank? ? params[:pagesize].to_i : 10))
+      @results = Utils::UPerson.process_person_data(@json, (params[:page].to_i rescue 1), (!params[:pagesize].blank? ? params[:pagesize].to_i : 10))
     end
     
     render :text => @results.to_json
@@ -47,12 +53,18 @@ class ProcessController < ActionController::Base  # ApplicationController
     
     @results = []
     
+    if @json.class.to_s.downcase.strip != "string"
+    
+      @json = @json.to_json
+    
+    end
+    
     target = params[:target]
     
     target = "update" if target.blank?
     
     if !@json.blank?    
-      @results = Utils::UPerson.confirmed_person_to_create_or_update_or_select(@json.to_json, target)
+      @results = Utils::UPerson.confirmed_person_to_create_or_update_or_select(@json, target)
     end
     
     render :text => @results    # .to_json
