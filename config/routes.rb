@@ -24,9 +24,9 @@ Rails.application.routes.draw do
 
   get 'user/logout'
   
-  get "check_thresholds" => "services#check_thresholds"
+  get "/check_thresholds" => "services#check_thresholds"
   
-  get "process_queued_sites" => "services#process_queued_sites"
+  get "/process_queued_sites" => "services#process_queued_sites"
   
   post 'check_site_code' => "services#check_site_code"
 

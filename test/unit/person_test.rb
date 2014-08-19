@@ -198,7 +198,7 @@ class UtilsPersonTest < ActiveSupport::TestCase
     Utils::Master.add_site("Test Site", "TST", "Centre", 1, 1)
     
     # Check if region has npids
-    if !Utils::Master.check_if_region_npids_available()
+    if !Utils::Master.check_if_region_npids_available("Centre")
       Utils::Master.assign_npids_to_region("Centre", 10)
     end
     
@@ -226,7 +226,7 @@ class UtilsPersonTest < ActiveSupport::TestCase
     Utils::Master.add_site("Test Site", "TST", "Centre", 1, 1)
     
     # Check if region has npids
-    if !Utils::Master.check_if_region_npids_available()
+    if !Utils::Master.check_if_region_npids_available("Centre")
       Utils::Master.assign_npids_to_region("Centre", 10)
     end
     
