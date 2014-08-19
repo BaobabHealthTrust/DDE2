@@ -416,8 +416,40 @@ class AdministrationController < ApplicationController
       source = Site.find_by__id(params[:source]) rescue nil      
       sink = Site.find_by__id(params[:sink]) rescue nil
               
-      if !source.nil? and !sink.nil? 
+      if !source.nil? and !sink.nil?  
       
+        if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
+        
+          designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/Npid")) rescue nil
+          
+          if !designs["_id"].nil?
+    
+            if designs["filters"].nil?
+            
+              designs["filters"] = {}
+            
+            end
+    
+            if designs["filters"]["assigned_sites_only"].nil?
+            
+              designs["filters"]["assigned_sites_only"] = "function(doc,req){
+                  if(doc['type'] == 'Npid' && doc.assigned){
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }"
+            
+              post = RestClient.post("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_bulk_docs", {"docs" => [designs]}.to_json, {:content_type => :json})
+    
+              puts post
+    
+            end
+            
+          end
+          
+        end
+            
         at_least_one_db_to_sync = false
         
         if !source.site_db1.blank? and !sink.site_db1.blank?
@@ -437,6 +469,7 @@ class AdministrationController < ApplicationController
           result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
               source: "http://#{source.ip_address}:5984/#{source.site_db2}",
               target: "http://#{sink.ip_address}:5984/#{sink.site_db2}",
+              filter: "Npid/assigned_sites_only",
               connection_timeout: 60000,
               retries_per_request: 20,
               http_connections: 30,
@@ -491,23 +524,28 @@ class AdministrationController < ApplicationController
     end
   
     if !source.nil? and !sink.nil? 
-      if !connections[[source.ip_address, source.site_db1, sink.ip_address, sink.site_db1]].blank?
-        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-            replication_id: "#{connections[[source.ip_address, source.site_db1, sink.ip_address, sink.site_db1]][:replication_id]}",
-            cancel: true
-          }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
-      end
-      
-      if !connections[[source.ip_address, source.site_db2, sink.ip_address, sink.site_db2]].blank?
-        result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
-            replication_id: "#{connections[[source.ip_address, source.site_db2, sink.ip_address, sink.site_db2]][:replication_id]}",
-            cancel: true
-          }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
-      end
-                  
-      Connection.find_by__id(params[:connection]).destroy rescue nil
-    end
     
+      if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
+        
+        if !connections[[source.ip_address, source.site_db1, sink.ip_address, sink.site_db1]].blank?
+          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+              replication_id: "#{connections[[source.ip_address, source.site_db1, sink.ip_address, sink.site_db1]][:replication_id]}",
+              cancel: true
+            }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+        end
+        
+        if !connections[[source.ip_address, source.site_db2, sink.ip_address, sink.site_db2]].blank?
+          result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
+              replication_id: "#{connections[[source.ip_address, source.site_db2, sink.ip_address, sink.site_db2]][:replication_id]}",
+              cancel: true
+            }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
+        end
+                    
+        Connection.find_by__id(params[:connection]).destroy rescue nil
+      end
+    
+    end
+      
     redirect_to "/administration/connection_edit" and return
   end
 
