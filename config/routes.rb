@@ -96,6 +96,8 @@ Rails.application.routes.draw do
 
   get '/ajax_connections' => "dashboard#ajax_connections"
 
+  get '/ajax_person_connections' => "dashboard#ajax_person_connections"
+
   get '/ajax_npids_distribution' => "dashboard#ajax_npids_distribution"
 
   get '/dashboard_npids_distribution' => "dashboard#npids_distribution"

@@ -477,7 +477,7 @@
                   ntype: connections[i]["target"]["type"]
                 },
                 label: connections[i]["label"],
-                data: (connections[i]["status"]["npid"] != undefined ? (parseInt(connections[i]["status"]["npid"]["progress"]) / 100) : 0)
+                data: (connections[i]["status"]["person"] != undefined ? (parseInt(connections[i]["status"]["person"]["progress"]) / 100) : 0)
               }
            );
          }
@@ -758,7 +758,7 @@
       function ajaxTasks(){
          clearTimeout(timerHnd);
          
-         var url = "/ajax_connections";
+         var url = "/ajax_person_connections";
          
          var httpRequest = new XMLHttpRequest();
           httpRequest.onreadystatechange = function() {
