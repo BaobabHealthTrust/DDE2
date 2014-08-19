@@ -2,6 +2,14 @@ module Utils
 
   class Master
     
+    @@npid_mutex = nil
+    
+    def initialize
+      
+      @@npid_mutex = Mutex.new if @@npid_mutex.nil?
+    
+    end
+    
 =begin
   + assign_npids_to_site(
       site:String, quantity:Integer
@@ -19,37 +27,70 @@ module Utils
       
       raise "Second argument is supposed to be an integer" if !quantity.to_s.match(/^\d+$/)
     
-      i = 0 
+      @@npid_mutex = Mutex.new if @@npid_mutex.nil?
+    
+      @@npid_mutex.synchronize do
+        
+        i = 0 
+        
+        site = Site.find_by__id(code) rescue nil
+        
+        if !site.nil?
+          case site.region.downcase
+            when "centre"                     
+              npids = []
+              
+              Npid.unassigned_at_central_region.limit(quantity).include_docs.rows.each do |row| 
+              
+                row["doc"]["site_code"] = code
+                
+                npids << row["doc"]
+                
+              end
+            
+              result = RestClient.post("http://#{CONFIG["username"]}:#{CONFIG["password"]}@#{CONFIG["host"]}:#{CONFIG["port"]}/#{CONFIG["prefix"]}#{(CONFIG["suffix"].strip.length > 0 ? "_" + CONFIG["suffix"] : "")}/_bulk_docs", {"docs" => npids}.to_json, {:content_type => :json})
+              
+              puts result
+              
+              return true
+                
+            when "north"                    
+              npids = []
+              
+              Npid.unassigned_at_northern_region.limit(quantity).include_docs.rows.each do |row| 
+              
+                row["doc"]["site_code"] = code
+                
+                npids << row["doc"]
+                
+              end
+            
+              result = RestClient.post("http://#{CONFIG["username"]}:#{CONFIG["password"]}@#{CONFIG["host"]}:#{CONFIG["port"]}/#{CONFIG["prefix"]}#{(CONFIG["suffix"].strip.length > 0 ? "_" + CONFIG["suffix"] : "")}/_bulk_docs", {"docs" => npids}.to_json, {:content_type => :json})
+              
+              puts result
+              
+              return true
+                            
+            when "south"                    
+              npids = []
+              
+              Npid.unassigned_at_southern_region.limit(quantity).include_docs.rows.each do |row| 
+              
+                row["doc"]["site_code"] = code
+                
+                npids << row["doc"]
+                
+              end
+            
+              result = RestClient.post("http://#{CONFIG["username"]}:#{CONFIG["password"]}@#{CONFIG["host"]}:#{CONFIG["port"]}/#{CONFIG["prefix"]}#{(CONFIG["suffix"].strip.length > 0 ? "_" + CONFIG["suffix"] : "")}/_bulk_docs", {"docs" => npids}.to_json, {:content_type => :json})
+              
+              puts result
+              
+              return true
+              
+            end   
+        end
       
-      site = Site.find_by__id(code) rescue nil
-      
-      if !site.nil?
-        case site.region.downcase
-          when "centre"            
-            Npid.unassigned_at_central_region.each do |e| 
-              e.update_attributes(site_code: code, region: site.region) rescue nil
-              
-               i += 1
-               
-              return true if i == quantity.to_i
-            end 
-          when "north"
-            Npid.unassigned_at_northern_region.each do |e| 
-              e.update_attributes(site_code: code, region: site.region) rescue nil
-              
-               i += 1
-               
-              return true if i == quantity.to_i
-            end  
-          when "south"
-            Npid.unassigned_at_southern_region.each do |e| 
-              e.update_attributes(site_code: code, region: site.region) rescue nil
-              
-               i += 1
-               
-              return true if i == quantity.to_i
-            end  
-          end   
       end
       
       return false
@@ -182,20 +223,34 @@ module Utils
 =end
     def self.assign_npids_to_region(region, quantity)
     
-      raise "First argument cannot be blank" if region.to_s.strip.match(/^$/)
-      
-      raise "Second argument is supposed to be an integer" if !quantity.to_s.match(/^\d+$/)
+      @@npid_mutex = Mutex.new if @@npid_mutex.nil?
     
-      i = 0 
+      @@npid_mutex.synchronize do
       
-      Npid.unassigned_to_region.each do |r| 
-        r.update_attributes(region: region) 
+        raise "First argument cannot be blank" if region.to_s.strip.match(/^$/)
         
-         i += 1
-         
-        return true if i == quantity.to_i
+        raise "Second argument is supposed to be an integer" if !quantity.to_s.match(/^\d+$/)
+      
+        i = 0 
+        
+        npids = []
+        
+        Npid.unassigned_to_region.limit(quantity).include_docs.rows.each do |row| 
+        
+          row["doc"]["region"] = region
+          
+          npids << row["doc"]
+          
+        end
+      
+        result = RestClient.post("http://#{CONFIG["username"]}:#{CONFIG["password"]}@#{CONFIG["host"]}:#{CONFIG["port"]}/#{CONFIG["prefix"]}#{(CONFIG["suffix"].strip.length > 0 ? "_" + CONFIG["suffix"] : "")}/_bulk_docs", {"docs" => npids}.to_json, {:content_type => :json})
+        
+        puts result
+        
+        return true
+      
       end
-    
+      
       return false
     end
          
@@ -204,12 +259,12 @@ module Utils
   
   
 =end
-    def self.check_if_region_npids_available()
+    def self.check_if_region_npids_available(region)
       # result = Npid.assigned_at_this_region.count
       
       result = 0
       
-      case CONFIG["region"]
+      case region
         when "Centre"
           result = Npid.unassigned_at_central_region.count
         when "North"
