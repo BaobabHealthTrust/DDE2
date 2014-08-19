@@ -271,6 +271,22 @@ class DashboardController < ActionController::Base
   
     @sites = []
   
+    if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
+      
+      t = Thread.new {
+        RestClient.get("http://#{CONFIG["host"]}:#{CONFIG["host"]}/check_thresholds")
+      }
+      
+      t.join
+            
+      t = Thread.new {
+        RestClient.get("http://#{CONFIG["host"]}:#{CONFIG["host"]}/process_queued_sites")
+      }
+      
+      t.join
+      
+    end
+  
     Site.list.rows.each do |source|
     
       row = source.value
