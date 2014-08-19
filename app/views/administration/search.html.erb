@@ -20,9 +20,10 @@
     background-color: lightblue !important;
   }
   
-  #status tr.active {
+  .activated {
     background-color: lightblue !important;
   }
+  
 </style>
 <script src="/javascripts/d3.js" charset="utf-8"></script>
 <div class="container theme-showcase" role="main">
@@ -155,6 +156,7 @@
           var tr = document.createElement("tr");
           tr.id = patients[i]["national_id"];
           tr.style.cursor ="pointer";
+           
           tr.onclick = function(){
             var rows = __$("tbody").children;
             
@@ -165,7 +167,7 @@
             if(__$(this.id)){
               __$("map").setAttribute("src", "/footprint?npid=" + this.id);
               
-              __$(this.id).className = "active";
+              __$(this.id).className = "activated";
             }
           }
           
