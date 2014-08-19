@@ -273,17 +273,17 @@ class DashboardController < ActionController::Base
   
     if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
       
-      t = Thread.new {
-        RestClient.get("http://#{CONFIG["host"]}:#{CONFIG["host"]}/check_thresholds")
-      }
+      pid1 = spawn("curl 'http://#{request.env["HTTP_HOST"]}/check_thresholds'")
       
-      t.join
-            
-      t = Thread.new {
-        RestClient.get("http://#{CONFIG["host"]}:#{CONFIG["host"]}/process_queued_sites")
-      }
+      Process.detach(pid1)
+
+      pid2 = spawn("curl 'http://#{request.env["HTTP_HOST"]}/process_queued_sites'")
       
-      t.join
+      Process.detach(pid2)
+
+      # `curl "http://#{request.env["HTTP_HOST"]}/check_thresholds" &`
+         
+      # `curl "http://#{request.env["HTTP_HOST"]}/process_queued_sites" &`
       
     end
   

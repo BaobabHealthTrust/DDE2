@@ -165,11 +165,14 @@ module Utils
     def self.check_site_thresholds()
       sites = {} 
       
-      Npid.untaken_at_region.each do |e| 
-        if sites[e.site_code].nil? then 
-          sites[e.site_code] = 1 
+      Npid.untaken_at_region.include_docs.rows.each do |e| 
+        
+        site = e["doc"]
+        
+        if sites[site["site_code"]].nil? then 
+          sites[site["site_code"]] = 1 
         else 
-          sites[e.site_code] += 1 
+          sites[site["site_code"]] += 1 
         end
       end
       

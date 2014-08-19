@@ -14,9 +14,8 @@ class RequestsQue < CouchRest::Model::Base
     
     view :pending,
          :map => "function(doc){
-            if (doc['type'] == 'RequestsQue' && doc['request_processed'] == false && doc['region'] == '#{Site.current_region}'){
-                  emit(doc.site_code, {id: doc._id ,site_code: doc.site_code, 
-                      region: doc.region, threshold: doc.threshold, request_processed: doc.request_processed});
+            if (doc['type'] == 'RequestsQue' && doc['request_processed'] == false && doc['region'] != null){
+                  emit(doc.site_code, null);
             }
           }"
   end
