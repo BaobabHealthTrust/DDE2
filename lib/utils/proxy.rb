@@ -109,7 +109,7 @@ module Utils
       
       js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])} if !(js["national_id"] || js["_id"]).blank?
       
-      js["patient"]["identifiers"] << {"Temporary ID" => temporary_id}
+      # js["patient"]["identifiers"] << {"Temporary ID" => temporary_id}
       
       js["national_id"] = temporary_id
     
