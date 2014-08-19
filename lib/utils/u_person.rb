@@ -411,7 +411,7 @@ module Utils
       
       person = Person.find_by__id((input["national_id"] || input["_id"])) # rescue nil
       
-      result = person.update_attributes(input) # rescue false
+      result = person.update_attributes(input) rescue false
       
       identifiers = []
       
