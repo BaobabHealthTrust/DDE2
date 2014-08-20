@@ -3,7 +3,7 @@ require 'couchrest_model'
 class Person < CouchRest::Model::Base
 
   use_database "person"
-
+  
   before_save :set_name_codes
 
   def national_id
@@ -44,7 +44,7 @@ class Person < CouchRest::Model::Base
   property :birthdate_estimated,  TrueClass, :default => false
 
   property :addresses do
-    property :address1, String
+    property :landmark, String
     property :current_residence, String
     property :current_village, String
     property :current_ta, String
@@ -62,7 +62,7 @@ class Person < CouchRest::Model::Base
   design do
     view :by__id
     view :by_old_identification_number
-    view :by_patient_assigned_and_assigned_site
+    view :by_assigned_site
     view :by_gender
     view :by_gender_and_assigned_site 
   end
@@ -125,12 +125,6 @@ class Person < CouchRest::Model::Base
               	  		emit(doc['patient']['identifiers'][i][Object.keys(doc['patient']['identifiers'][i])[0]], 1);
 		          }		          
 	          }
-          }"
-    view :by_assigned_site,
-         :map => "function(doc){
-            if (doc['type'] == 'Person' ){
-              emit([doc._id, doc.assigned_site], null);
-            }
           }"
     
   end
