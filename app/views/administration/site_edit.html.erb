@@ -223,7 +223,7 @@
 <script defer="true">
   
   jQuery.validator.addMethod("sitecode", function(value, element) {
-    return this.optional(element) || /^[A-Z]{3}$/.test(value);
+    return this.optional(element) || /^[A-Z0-9]{3}$/.test(value);
   }, "Please 3 capital letters only.");
   
   jQuery.validator.addMethod("ipaddress", function(value, element) {
