@@ -418,11 +418,11 @@ class AdministrationController < ApplicationController
               
       if !source.nil? and !sink.nil?  
       
-        if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
+        # if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
         
-          designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/Npid")) rescue nil
+          designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter")) rescue nil
           
-          if !designs["_id"].nil?
+          if !designs.nil? and !designs["_id"].nil?
     
             if designs["filters"].nil?
             
@@ -432,15 +432,7 @@ class AdministrationController < ApplicationController
     
             if designs["filters"]["assigned_sites_only"].nil?
             
-              designs["filters"]["assigned_sites_only"] = "function(doc,req){
-                  if(doc['type'] == 'Npid' && doc.assigned){
-                    return true;
-                  } else {
-                    return false;
-                  }
-                }"
-            
-              post = RestClient.post("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_bulk_docs", {"docs" => [designs]}.to_json, {:content_type => :json})
+              post = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter",'{"filters":{"assigned_sites_only":"function(doc, req){if(doc.type == \'Npid\' && doc.assigned != null && doc.assigned == true){return true;} else {return false;}})"}}',{:content_type => :json})
     
               puts post
     
@@ -448,7 +440,7 @@ class AdministrationController < ApplicationController
             
           end
           
-        end
+        # end
             
         at_least_one_db_to_sync = false
         
@@ -469,7 +461,6 @@ class AdministrationController < ApplicationController
           result = %x[curl -H 'Content-Type: application/json' -X POST -d '#{{
               source: "http://#{source.ip_address}:5984/#{source.site_db2}",
               target: "http://#{sink.ip_address}:5984/#{sink.site_db2}",
-              filter: "Npid/assigned_sites_only",
               connection_timeout: 60000,
               retries_per_request: 20,
               http_connections: 30,

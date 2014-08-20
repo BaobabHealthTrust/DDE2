@@ -141,11 +141,11 @@ class DashboardController < ActionController::Base
         if !source.nil? and !target.nil?
               
           # Check if filters exist and create if not        
-          if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
+          # if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
       
-            designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/Npid")) rescue nil
+            designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter")) rescue nil
             
-            if !designs["_id"].nil?
+            if !designs.nil? and !designs["_id"].nil?
       
               if designs["filters"].nil?
               
@@ -155,23 +155,15 @@ class DashboardController < ActionController::Base
       
               if designs["filters"]["assigned_sites_only"].nil?
               
-                designs["filters"]["assigned_sites_only"] = "function(doc,req){
-                    if(doc['type'] == 'Npid' && doc.assigned){
-                      return true;
-                    } else {
-                      return false;
-                    }
-                  }"
-              
-                post = RestClient.post("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_bulk_docs", {"docs" => [designs]}.to_json, {:content_type => :json})
-      
+                post = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter",'{"filters":{"assigned_sites_only":"function(doc, req){if(doc.type == \'Npid\' && doc.assigned != null && doc.assigned == true){return true;} else {return false;}})"}}',{:content_type => :json})
+    
                 puts post
       
               end
               
             end
             
-          end
+          # end
         
           # Start getting connections even from remote servers
                           
@@ -276,7 +268,6 @@ class DashboardController < ActionController::Base
                 retries_per_request: 20,
                 http_connections: 30,
                 continuous: true,
-                filter: "Npid/assigned_sites_only"
               }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
             
             end
@@ -460,7 +451,7 @@ class DashboardController < ActionController::Base
                 retries_per_request: 20,
                 http_connections: 30,
                 continuous: true,
-                filter: "Npid/assigned_sites_only"
+                filter: "replicationFilter/assigned_sites_only"
               }.to_json}' "http://#{source.username}:#{source.password}@#{source.ip_address}:5984/_replicate"]
             
             end
