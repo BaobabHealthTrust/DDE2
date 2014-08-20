@@ -651,4 +651,10 @@ class DashboardController < ActionController::Base
   def movements  
   end
 
+  def dual_display
+    
+    @settings = YAML.load_file("#{Rails.root}/config/couchdb.yml")["networks"] rescue {}
+    
+  end
+
 end

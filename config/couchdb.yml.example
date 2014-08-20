@@ -33,3 +33,9 @@ production:
   pagesize: 10
   app_username:
   app_password:
+  
+networks:
+  username: username
+  password: password
+  host: ipaddress
+  path: /path
