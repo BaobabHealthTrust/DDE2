@@ -22,5 +22,5 @@ else
   puts "User already exists"
 end
 
-puts "Users : #{User.all.count}"
+puts "Users count : #{User.all.count}"
 
