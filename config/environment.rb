@@ -8,16 +8,18 @@ require "bantu_soundex"
 
 # Initialize all views if not initialized
 
-puts Person.all.count
+puts "Initializing views"
 
-puts Npid.all.count
+puts "People count : #{Person.all.count}"
 
-puts Connection.all.count
+puts "Npids count : #{Npid.all.count}"
 
-puts Footprint.all.count
+puts "Connections count : #{Connection.all.count}"
 
-puts RequestsQue.all.count
+puts "Footprints count : #{Footprint.all.count}"
 
-puts Site.all.count
+puts "RequestsQues count : #{RequestsQue.all.count}"
 
-puts User.all.count
+puts "Sites count : #{Site.all.count}"
+
+puts "Users count : #{User.all.count}"

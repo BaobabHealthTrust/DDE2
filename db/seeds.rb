@@ -5,6 +5,7 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+puts "Creating default user"
 user = User.find('admin')
 if user.blank?
 	user = User.new()
@@ -20,4 +21,6 @@ if user.blank?
 else
   puts "User already exists"
 end
+
+puts "Users : #{User.all.count}"
 
