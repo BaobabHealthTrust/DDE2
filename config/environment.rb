@@ -5,3 +5,19 @@ require File.expand_path('../application', __FILE__)
 Rails.application.initialize!
 
 require "bantu_soundex"
+
+# Initialize all views if not initialized
+
+puts Person.all.count
+
+puts Npid.all.count
+
+puts Connection.all.count
+
+puts Footprint.all.count
+
+puts RequestsQue.all.count
+
+puts Site.all.count
+
+puts User.all.count
