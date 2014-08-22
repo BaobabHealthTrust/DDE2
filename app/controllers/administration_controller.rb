@@ -418,30 +418,6 @@ class AdministrationController < ApplicationController
               
       if !source.nil? and !sink.nil?  
       
-        # if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
-        
-          designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter")) rescue nil
-          
-          if !designs.nil? and !designs["_id"].nil?
-    
-            if designs["filters"].nil?
-            
-              designs["filters"] = {}
-            
-            end
-    
-            if designs["filters"]["assigned_sites_only"].nil?
-            
-              post = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter",'{"filters":{"assigned_sites_only":"function(doc, req){if(doc.type == \'Npid\' && doc.assigned != null && doc.assigned == true){return true;} else {return false;}})"}}',{:content_type => :json})
-    
-              puts post
-    
-            end
-            
-          end
-          
-        # end
-            
         at_least_one_db_to_sync = false
         
         if !source.site_db1.blank? and !sink.site_db1.blank?

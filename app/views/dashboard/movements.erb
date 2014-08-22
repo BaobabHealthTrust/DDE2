@@ -303,7 +303,7 @@
               .text("Proxy Node")
               .attr("transform", "translate(30,192)");
              
-        ajaxTasks();  
+        setTimeout("ajaxTasks()", 500);    
           
         resizeSVG();
         
@@ -722,7 +722,6 @@
             loadProgress();
             
           } catch(e){
-            console.log(e);
           }
          
           timerHnd = setTimeout("ajaxTasks()", pollInterval);           
@@ -730,16 +729,16 @@
       }
      
       function __$(id){
-		return document.getElementById(id);
-	  }
+		    return document.getElementById(id);
+	    }
       
       function resizeSVG(){
-		  
-		if(__$("main")){
+		      
+		    if(__$("main")){
 			
-			__$("main").style.height = (window.innerHeight) + "px";
+			    __$("main").style.height = (window.innerHeight) + "px";
 			
-		} 
+		    } 
 		 
       }
       </script>

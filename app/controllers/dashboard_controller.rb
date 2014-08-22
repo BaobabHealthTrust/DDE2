@@ -139,32 +139,7 @@ class DashboardController < ActionController::Base
         target = Site.find_by__id(src[1]) rescue nil
                 
         if !source.nil? and !target.nil?
-              
-          # Check if filters exist and create if not        
-          # if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
-      
-            designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter")) rescue nil
-            
-            if !designs.nil? and !designs["_id"].nil?
-      
-              if designs["filters"].nil?
-              
-                designs["filters"] = {}
-              
-              end
-      
-              if designs["filters"]["assigned_sites_only"].nil?
-              
-                post = RestClient.put("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_design/replicationFilter",'{"filters":{"assigned_sites_only":"function(doc, req){if(doc.type == \'Npid\' && doc.assigned != null && doc.assigned == true){return true;} else {return false;}})"}}',{:content_type => :json})
-    
-                puts post
-      
-              end
-              
-            end
-            
-          # end
-        
+             
           # Start getting connections even from remote servers
                           
           result = JSON.parse(RestClient.get("http://#{source["username"]}:#{source["password"]}@#{source["ip_address"]}:5984/_active_tasks")) rescue []
@@ -315,39 +290,6 @@ class DashboardController < ActionController::Base
                 
         if !source.nil? and !target.nil?
               
-          # Check if filters exist and create if not        
-          if !CONFIG["master-master"].nil? and CONFIG["master-master"].to_s.downcase == "true"
-      
-            designs = JSON.parse(RestClient.get("http://#{source.ip_address}:5984/#{source.site_db2}/_design/Npid")) rescue nil
-            
-            if !designs["_id"].nil?
-      
-              if designs["filters"].nil?
-              
-                designs["filters"] = {}
-              
-              end
-      
-              if designs["filters"]["assigned_sites_only"].nil?
-              
-                designs["filters"]["assigned_sites_only"] = "function(doc,req){
-                    if(doc['type'] == 'Npid' && doc.assigned){
-                      return true;
-                    } else {
-                      return false;
-                    }
-                  }"
-              
-                post = RestClient.post("http://#{source.username}:#{source.password}@#{source.ip_address}:5984/#{source.site_db2}/_bulk_docs", {"docs" => [designs]}.to_json, {:content_type => :json})
-      
-                puts post
-      
-              end
-              
-            end
-            
-          end
-        
           # Start getting connections even from remote servers
                           
           result = JSON.parse(RestClient.get("http://#{source["username"]}:#{source["password"]}@#{source["ip_address"]}:5984/_active_tasks")) rescue []
