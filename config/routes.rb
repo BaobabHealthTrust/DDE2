@@ -109,6 +109,8 @@ Rails.application.routes.draw do
   get '/ajax_movements' => "dashboard#ajax_movements"
 
   get '/dashboard_movements' => "dashboard#movements"
+  
+  post '/merge_duplicates' => "process#merge_duplicates"
 
   namespace :ws do
     namespace :rest do

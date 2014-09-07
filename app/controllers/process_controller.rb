@@ -98,6 +98,78 @@ class ProcessController < ActionController::Base  # ApplicationController
     render :text => @results.to_json
   end
   
+  def merge_duplicates
+  
+    # {"data"=>{"Office Phone Number"=>"", "Citizenship"=>"", "Home District"=>"", "Race"=>"", "Cell Phone Number"=>"", "Birthdate Estimated"=>"0", "Birthdate"=>"1993/07/05", "Given Name"=>"John", "Home Phone Number"=>"", "Gender"=>"Male", "Home T/A"=>"", "Current Village"=>"", "Home Village"=>"", "Current T/A"=>"", "Family Name"=>"Banda", "Middle Name"=>"", "Occupation"=>"", "Current District"=>"", "Identifiers"=>{"Merged"=>{"National ID"=>"0003EG"}, "National ID"=>"0002FM"}}}
+  
+    merged = params["data"]["Identifiers"]["Merged"] rescue nil
+  
+    render :text => false and return if merged.nil?
+  
+    voided_npid = Npid.find_by_national_id(merged["National ID"]) rescue nil
+    
+    render :text => false and return if voided_npid.nil?
+    
+    voided_npid_original_site = voided_npid.site_code
+    
+    voided_npid_result = voided_npid.update_attributes(site_code: "???") rescue nil
+    
+    if voided_npid_result.nil?
+    
+      voided_npid.update_attributes(site_code: voided_npid_original_site) rescue nil
+    
+      render :text => false and return
+    
+    end
+    
+    voided_person = Person.find_by__id(merged["National ID"]) rescue nil
+    
+    if voided_person.nil?
+    
+      voided_npid.update_attributes(site_code: voided_npid_original_site) rescue nil
+    
+      render :text => false and return
+    
+    end
+    
+    voided_person_original_site = voided_person.assigned_site
+    
+    voided_person_result = voided_person.update_attributes(assigned_site: "???") rescue nil
+    
+    if voided_person_result.nil?
+    
+      voided_npid.update_attributes(site_code: voided_npid_original_site) rescue nil
+      
+      voided_person.update_attributes(assigned_site: voided_person_original_site) rescue nil
+    
+      render :text => false and return
+    
+    end
+    
+    person = Person.find_by__id(params["data"]["Identifiers"]["National ID"]) rescue nil
+  
+    if person.nil?
+    
+      voided_npid.update_attributes(site_code: voided_npid_original_site) rescue nil
+      
+      voided_person.update_attributes(assigned_site: voided_person_original_site) rescue nil
+    
+      render :text => false and return
+    
+    end
+    
+    person["patient"]["identifiers"] << {"Old Identification Number" => merged["National ID"]}
+    
+    merged["Identifiers"].each do |id|
+    
+      person["patient"]["identifiers"] << id
+    
+    end rescue nil
+    
+    render :text => true and return
+    
+  end
+  
   protected
 
   def check_login
