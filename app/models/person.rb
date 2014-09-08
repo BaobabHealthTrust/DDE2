@@ -18,6 +18,7 @@ class Person < CouchRest::Model::Base
   property :patient_assigned, TrueClass, :default => false
 
   property :person_attributes  do
+    property :country_of_residence, String
     property :citizenship, String
     property :occupation, String
     property :home_phone_number, String
