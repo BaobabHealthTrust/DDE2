@@ -102,13 +102,15 @@ class ProcessController < ActionController::Base  # ApplicationController
   
     # {"data"=>{"Office Phone Number"=>"", "Citizenship"=>"", "Home District"=>"", "Race"=>"", "Cell Phone Number"=>"", "Birthdate Estimated"=>"0", "Birthdate"=>"1993/07/05", "Given Name"=>"John", "Home Phone Number"=>"", "Gender"=>"Male", "Home T/A"=>"", "Current Village"=>"", "Home Village"=>"", "Current T/A"=>"", "Family Name"=>"Banda", "Middle Name"=>"", "Occupation"=>"", "Current District"=>"", "Identifiers"=>{"Merged"=>{"National ID"=>"0003EG"}, "National ID"=>"0002FM"}}}
   
-    merged = params["data"]["Identifiers"]["Merged"] rescue nil
+    data = JSON.parse(params["data"]) rescue {}
   
-    render :text => false and return if merged.nil?
+    merged = data["Identifiers"]["Merged"] rescue nil
+  
+    render :json => {error: "Merge data not available"} and return if merged.nil?
   
     voided_npid = Npid.find_by_national_id(merged["National ID"]) rescue nil
     
-    render :text => false and return if voided_npid.nil?
+    render :json => {error: "Merge target not found"} and return if voided_npid.nil?
     
     voided_npid_original_site = voided_npid.site_code
     
@@ -118,7 +120,7 @@ class ProcessController < ActionController::Base  # ApplicationController
     
       voided_npid.update_attributes(site_code: voided_npid_original_site) rescue nil
     
-      render :text => false and return
+      render :json => {error: "Merge target void failed"} and return
     
     end
     
@@ -128,7 +130,7 @@ class ProcessController < ActionController::Base  # ApplicationController
     
       voided_npid.update_attributes(site_code: voided_npid_original_site) rescue nil
     
-      render :text => false and return
+      render :json => {error: "Merge target not found"} and return
     
     end
     
@@ -142,11 +144,11 @@ class ProcessController < ActionController::Base  # ApplicationController
       
       voided_person.update_attributes(assigned_site: voided_person_original_site) rescue nil
     
-      render :text => false and return
+      render :json => {error: "Merge target person void failed"} and return
     
     end
     
-    person = Person.find_by__id(params["data"]["Identifiers"]["National ID"]) rescue nil
+    person = Person.find_by__id(data["Identifiers"]["National ID"]) rescue nil
   
     if person.nil?
     
@@ -154,7 +156,7 @@ class ProcessController < ActionController::Base  # ApplicationController
       
       voided_person.update_attributes(assigned_site: voided_person_original_site) rescue nil
     
-      render :text => false and return
+      render :json => {error: "Merge source person not found"} and return
     
     end
     
@@ -166,7 +168,93 @@ class ProcessController < ActionController::Base  # ApplicationController
     
     end rescue nil
     
-    render :text => true and return
+    fields = [
+          "Given Name", 
+					"Middle Name",
+					"Family Name", 
+					"Gender", 
+					"Birthdate",
+					"Birthdate Estimated",
+					"Current Village", 
+					"Current T/A", 
+					"Current District", 
+					"Home Village", 
+					"Home T/A", 
+					"Home District", 
+					"Occupation", 
+					"Home Phone Number", 
+					"Cell Phone Number", 
+					"Office Phone Number",
+					"Citizenship", 
+					"Race"
+				]
+    
+    fields.each do |field|
+    
+      case field
+        when "Given Name"
+          person["names"]["given_name"] = data[field]
+          person["names"]["given_name_code"] = data[field].soundex
+          
+        when "Middle Name"
+          person["names"]["middle_name"] = data[field]
+          
+        when "Family Name"
+          person["names"]["family_name"] = data[field]
+          person["names"]["family_name_code"] = data[field].soundex
+          
+        when "Gender"
+          person["gender"] = data[field][0] rescue nil
+          
+        when "Birthdate"
+          person["birthdate"] = data[field]
+          
+        when "Birthdate Estimated"
+          person["birthdate_estimated"] = data[field]
+          
+        when "Current Village"
+          person["addresses"]["current_village"] = data[field]
+          
+        when "Current T/A"
+          person["addresses"]["current_ta"] = data[field]
+          
+        when "Current District"
+          person["addresses"]["current_district"] = data[field]
+          
+        when "Home Village"
+          person["addresses"]["home_village"] = data[field]
+          
+        when "Home T/A"
+          person["addresses"]["home_ta"] = data[field]
+          
+        when "Home District"
+          person["addresses"]["home_district"] = data[field]
+          
+        when "Occupation"
+          person["person_attributes"]["occupation"] = data[field]
+          
+        when "Home Phone Number"
+          person["person_attributes"]["home_phone_number"] = data[field]
+          
+        when "Cell Phone Number"
+          person["person_attributes"]["cell_phone_number"] = data[field]
+          
+        when "Office Phone Number"
+          person["person_attributes"]["office_phone_number"] = data[field]
+          
+        when "Citizenship"
+          person["person_attributes"]["citizenship"] = data[field]
+          
+        when "Race"
+          person["person_attributes"]["race"] = data[field]
+          
+      end
+    
+    end
+    
+    person.save
+    
+    render :json => {success: "OK"} and return
     
   end
   
