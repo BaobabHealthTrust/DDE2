@@ -33,6 +33,7 @@ class Person < CouchRest::Model::Base
     property :given_name, String
     property :family_name, String
     property :middle_name, String
+    property :maiden_name, String
     property :given_name_code, String
     property :family_name_code, String
   end
