@@ -7,7 +7,7 @@ development: &development
   username:
   password:
   sitecode: MLS
-  region: Central  
+  region: Centre  
   mode: master  # master/proxy
   masterport: 3000  # Port where application is running from for background processes
   pagesize: 10
@@ -27,7 +27,7 @@ production:
   username: 
   password: 
   sitecode: MLS
-  region: Central   
+  region: Centre   
   mode: master  # master/proxy
   masterport: 3000  # Port where application is running from for background processes
   pagesize: 10

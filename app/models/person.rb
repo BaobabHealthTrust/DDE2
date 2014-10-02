@@ -46,7 +46,6 @@ class Person < CouchRest::Model::Base
   property :birthdate_estimated,  TrueClass, :default => false
 
   property :addresses do
-    property :landmark, String
     property :current_residence, String
     property :current_village, String
     property :current_ta, String
