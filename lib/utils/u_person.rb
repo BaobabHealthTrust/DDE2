@@ -38,7 +38,32 @@ module Utils
       if !identifier.blank? # and (self.is_valid_v4_npid(identifier) or self.is_valid_temporary_id(identifier))
         
         result = self.search_by_npid(json, page)
-        
+
+        # Check if match not found
+        if result.length <= 0
+
+          # Try advanced search
+          if !person["names"]["given_name"].blank? and !person["names"]["family_name"].blank? and !person["gender"].blank?
+            result = self.search_for_person_by_params(
+                person["names"]["given_name"],
+                person["names"]["family_name"],
+                person["gender"],
+                person["date_of_birth"],
+                (person["addresses"]["home_t_a"] rescue nil),
+                (person["addresses"]["home_district"] rescue nil),
+                page,
+                pagesize
+            )
+          end
+
+        end
+
+        if result.length <= 0
+
+          result = self.confirmed_person_to_create_or_update_or_select(json, "create")
+
+        end
+
       else
               
         if !person["names"]["given_name"].blank? and !person["names"]["family_name"].blank? and !person["gender"].blank?      
@@ -409,8 +434,10 @@ module Utils
       
       input = JSON.parse(json)
       
-      person = Person.find_by__id((input["national_id"] || input["_id"])) # rescue nil
-      
+      person = Person.find_by__id((input["national_id"] || input["_id"])) rescue nil
+
+      return false if person.nil?
+
       result = person.update_attributes(input) rescue false
       
       identifiers = []
@@ -435,7 +462,7 @@ module Utils
       
       end
       
-      result = person.update_attributes(patient: {identifiers: identifiers})
+      result = person.update_attributes(patient: {identifiers: identifiers}) rescue false
       
       return result
     end
