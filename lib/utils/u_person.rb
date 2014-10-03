@@ -48,19 +48,20 @@ module Utils
                 person["names"]["given_name"],
                 person["names"]["family_name"],
                 person["gender"],
-                person["date_of_birth"],
-                (person["addresses"]["home_t_a"] rescue nil),
+                person["birthdate"],
+                (person["addresses"]["home_ta"] rescue nil),
                 (person["addresses"]["home_district"] rescue nil),
                 page,
                 pagesize
             )
+
           end
 
         end
 
         if result.length <= 0
 
-          result = self.confirmed_person_to_create_or_update_or_select(json, "create")
+          result << self.confirmed_person_to_create_or_update_or_select(json, "create")
 
         end
 
@@ -71,8 +72,8 @@ module Utils
             person["names"]["given_name"],
             person["names"]["family_name"],
             person["gender"],
-            person["date_of_birth"],
-            (person["addresses"]["home_t_a"] rescue nil),
+            person["birthdate"],
+            (person["addresses"]["home_ta"] rescue nil),
             (person["addresses"]["home_district"] rescue nil),
             page,
             pagesize
@@ -161,7 +162,7 @@ module Utils
       
       Utils::FootprintUtil.log_application_and_site((obj["national_id"] || obj["_id"]), obj["application"], obj["site_code"]) rescue nil if !obj["application"].blank? and !obj["site_code"].blank?
     
-      return result      
+      return result
     end    
 
 =begin
@@ -236,13 +237,13 @@ module Utils
       last_name:String,
       gender:String,
       date_of_birth:String(OPTIONAL),
-      home_t_a:String(OPTIONAL),
+      home_ta:String(OPTIONAL),
       home_district:String(OPTIONAL)
     ):JSON
   
   
 =end
-    def self.search_for_person_by_params(first_name, last_name, gender, date_of_birth=nil, home_t_a=nil, home_district=nil, page=1, pagesize=@@page_size)
+    def self.search_for_person_by_params(first_name, last_name, gender, date_of_birth=nil, home_ta=nil, home_district=nil, page=1, pagesize=@@page_size)
 
       raise "First argument cannot be blank" unless !first_name.blank?
       raise "Second argument cannot be blank" unless !last_name.blank?
@@ -255,13 +256,13 @@ module Utils
        
       yr = ((date_of_birth.to_date.year rescue nil) || Date.today.year)
           
-      if !date_of_birth.nil? and !home_t_a.nil? and !home_district.nil?
+      if !date_of_birth.nil? and !home_ta.nil? and !home_district.nil?
       
         params = []
         
         ((yr - 5)..(yr + 5)).each do |y|
           
-          params << [fname_code, lname_code, gender, y, home_t_a, home_district]
+          params << [fname_code, lname_code, gender, y, home_ta, home_district]
           
         end
       
@@ -277,13 +278,13 @@ module Utils
         
         end
         
-      elsif !date_of_birth.nil? and !home_t_a.nil? and home_district.nil?
+      elsif !date_of_birth.nil? and !home_ta.nil? and home_district.nil?
       
         params = []
         
         ((yr - 5)..(yr + 5)).each do |y|
           
-          params << [fname_code, lname_code, gender, y, home_t_a]
+          params << [fname_code, lname_code, gender, y, home_ta]
           
         end
       
@@ -299,7 +300,7 @@ module Utils
         
         end
       
-      elsif !date_of_birth.nil? and home_t_a.nil? and !home_district.nil?
+      elsif !date_of_birth.nil? and home_ta.nil? and !home_district.nil?
       
         params = []
         
@@ -318,10 +319,12 @@ module Utils
             result << person.to_json
             
           end
+      raise result.inspect
+
         
         end
         
-      elsif !date_of_birth.nil? and home_t_a.nil? and home_district.nil?
+      elsif !date_of_birth.nil? and home_ta.nil? and home_district.nil?
       
         params = []
         
@@ -343,13 +346,13 @@ module Utils
         
         end
         
-      elsif !date_of_birth.nil? and !home_t_a.nil? and home_district.nil?
+      elsif !date_of_birth.nil? and !home_ta.nil? and home_district.nil?
       
         params = []
         
         ((yr - 5)..(yr + 5)).each do |y|
           
-          params << [fname_code, lname_code, gender, y, home_t_a]
+          params << [fname_code, lname_code, gender, y, home_ta]
           
         end
       
@@ -365,9 +368,9 @@ module Utils
         
         end
         
-      elsif date_of_birth.nil? and !home_t_a.nil? and home_district.nil?
+      elsif date_of_birth.nil? and !home_ta.nil? and home_district.nil?
       
-        (Person.search_with_home_ta.keys([[fname_code, lname_code, gender, home_t_a]]).page(page).per(pagesize).rows).each do |row|
+        (Person.search_with_home_ta.keys([[fname_code, lname_code, gender, home_ta]]).page(page).per(pagesize).rows).each do |row|
         
           person = Person.find_by__id(row["id"]) # rescue nil
           
@@ -394,7 +397,7 @@ module Utils
         end
       
       end
-              
+
       return result
     end
     

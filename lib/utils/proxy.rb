@@ -100,13 +100,27 @@ module Utils
       
       js = JSON.parse(json)
       
-      js["identifiers"] = [] if js["identifiers"].nil?
-      
-      # Keep current npid as a reference for later          
+      # js["identifiers"] = [] if js["identifiers"].nil?
+
+      # Keep current npid as a reference for later
       js["patient"] = {} if js["patient"].blank?
-      
+
       js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
-      
+
+      if js["patient"]["identifiers"].class.to_s.downcase == "hash"
+
+        tmp = js["patient"]["identifiers"]
+
+        js["patient"]["identifiers"] = []
+
+        tmp.each do |key, value|
+
+          js["patient"]["identifiers"] << {key => value}
+
+        end
+
+      end
+
       js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])} if !(js["national_id"] || js["_id"]).blank?
       
       # js["patient"]["identifiers"] << {"Temporary ID" => temporary_id}
