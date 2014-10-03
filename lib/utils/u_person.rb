@@ -61,7 +61,11 @@ module Utils
 
         if result.length <= 0
 
-          result << self.confirmed_person_to_create_or_update_or_select(json, "create")
+          obj = JSON.parse(self.confirmed_person_to_create_or_update_or_select(json, "create"))
+
+          obj["print_barcode"] = true
+
+          result << obj.to_json
 
         end
 
