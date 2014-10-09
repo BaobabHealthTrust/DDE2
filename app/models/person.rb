@@ -198,7 +198,7 @@ class Person < CouchRest::Model::Base
            		return decimal;                 
 	        };
 	        var decimal = doc._id.trim().toDecimal();	
-	        if(String(parseInt(decimal / 10)).checkDigit() != (decimal % 10)){
+	        if(String(parseInt(decimal / 10)).checkDigit() != (decimal % 10) && doc.type == 'Person'){
 		        emit(doc._id, null);
 	        }
         }"
