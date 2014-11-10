@@ -59,7 +59,7 @@ module Utils
 
         end
 
-        if result.length <= 0
+        if result.length <= 0 and !person["names"]["given_name"].blank? and !person["names"]["family_name"].blank? and !person["gender"].blank?
 
           obj = JSON.parse(self.confirmed_person_to_create_or_update_or_select(json, "create"))
 
