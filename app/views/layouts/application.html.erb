@@ -210,7 +210,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" >DDE <%= CONFIG["mode"].upcase rescue "?" %> @ 
+          <a class="navbar-brand" >DDE <%= CONFIG["mode"].upcase rescue "?" %>&nbsp;<span style="color: #ccc; font-style: italic;"><%= version_tag %></span>&nbsp;@
               <span style="color: #428BCA"><%= Site.find_by__id(CONFIG["sitecode"]).name rescue "?" %></span> 
               <%= (CONFIG["master-master"] ? " as CONTROL" : "") %> </a>
         </div>
