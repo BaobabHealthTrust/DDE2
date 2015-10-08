@@ -1,37 +1,32 @@
 Rails.application.routes.draw do
-  root 'administration#index'
+
+  # root 'administration#index'
   
-  get "check_thresholds" => "services#check_thresholds"
+  get 'process/process_data'
+
+  get 'process/search'
+
+  post 'user/create'
+
+  post 'user/edit'
+
+  get 'user/username_availability'
+
+  get 'user/view'
+
+  get 'user/new'
+
+  get 'user/settings'
+
+  get 'user/login'
+
+  post 'user/login'
+
+  get 'user/logout'
   
-  get "process_queued_sites" => "services#process_queued_sites"
+  get "/check_thresholds" => "services#check_thresholds"
   
-  get 'administration/site_add'
-
-  post 'administration/create_site'
-
-  get 'administration/site_edit'
-
-  post 'administration/update_site'
-
-  get 'administration/site_show'
-
-  get 'administration/region_add'
-
-  get 'administration/region_edit'
-
-  get 'administration/region_show'
-
-  get 'administration/user_add'
-
-  get 'administration/user_edit'
-
-  get 'administration/user_show'
-
-  get 'administration/master_people'
-
-  get 'administration/proxy_people'
-
-  get 'administration/index'
+  get "/process_queued_sites" => "services#process_queued_sites"
   
   post 'check_site_code' => "services#check_site_code"
 
@@ -67,12 +62,93 @@ Rails.application.routes.draw do
 
   get '/check_duplicate_connections' => "services#check_duplicate_connections"
 
-  resources :people do
-    collection do
-      post :create, :update, :destroy, :update_person
-      get :index, :new, :show, :edit, :confirm_demographics
+  get '/username_available' => "services#username_available"
+
+  get '/process_data' => "process#process_data"
+
+  post '/process_data' => "process#process_data"
+
+  get '/search' => "process#search"
+
+  post '/search' => "process#search"
+
+  post '/process_confirmation' => "process#process_confirmation"
+
+  post '/ajax_process_data' => "process#ajax_process_data"
+
+  post '/lost' => "process#lost"
+
+  get '/administration/search' => "administration#search"
+
+  get '/ajax_search' => "administration#ajax_search"
+
+  get '/footprint' => "administration#footprint"
+
+  post '/ajax_log' => "process#ajax_log"
+
+  get '/dashboard' => "dashboard#dual_display"
+
+  get '/dashboard_old' => "dashboard#dashboard"
+
+  get '/dashboard_person' => "dashboard#person_map"
+
+  get '/dashboard_npids' => "dashboard#npids_map"
+
+  get '/ajax_connections' => "dashboard#ajax_connections"
+
+  get '/ajax_person_connections' => "dashboard#ajax_person_connections"
+
+  get '/ajax_npids_distribution' => "dashboard#ajax_npids_distribution"
+
+  get '/dashboard_npids_distribution' => "dashboard#npids_distribution"
+
+  get '/dashboard_burdens' => "dashboard#burdens"
+
+  get '/ajax_burdens' => "dashboard#ajax_burdens"
+
+  get '/ajax_movements' => "dashboard#ajax_movements"
+
+  get '/dashboard_movements' => "dashboard#movements"
+  
+  post '/merge_duplicates' => "process#merge_duplicates"
+
+  namespace :ws do
+    namespace :rest do
+      resources :v1 do
+        
+        collection do
+          get :active_tasks
+        end
+        
+      end
     end
   end
+
+  resources :people do
+    collection do
+      post :find, :create, :create_footprint, :update_person, :find_demographics, :update_demographics
+      get :find, :confirm_demographics 
+    end
+  end
+
+
+  resource :login do
+    collection do
+      get :logout
+    end
+  end	
+
+
+  resources :administration do 
+    collection  do
+		  post :create_site, :update_site
+		  get :index, :site_add, :site_edit, :site_show, :site_assign, :region_edit,:region_show 
+    end
+  end
+
+																																														
+
+  root :to => 'logins#show'
 
 
   # The priority is based upon order of creation: first created -> highest priority.                              z

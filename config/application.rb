@@ -27,6 +27,15 @@ module DDE2
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     
+    # config.middleware.use Rack::Cors do |requests|
+    #  requests.allow do |allow|
+    #    allow.origins '*'
+    #    allow.resource '*', headers: :any, methods: [:get, :post, :put, :delete, :options]
+    #  end
+    # end
+    
     config.autoload_paths += %W(#{config.root}/lib)
+    
   end
+  #DDE2::Application.config.session_store :cookie_store, key: '_dde_session'
 end

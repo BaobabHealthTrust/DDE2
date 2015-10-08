@@ -2,7 +2,7 @@ require 'couchrest_model'
 
 class Connection < CouchRest::Model::Base
 
-  use_database "local"
+  use_database "person"
     
   # Combination of source site_code and sink site_code e.g. KCH-QEC for link between
   # site_code KCH and site_code QEC

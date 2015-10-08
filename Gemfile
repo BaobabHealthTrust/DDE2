@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.1.1'
+ruby '2.1.2'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.0'
 # Use SCSS for stylesheets
@@ -10,8 +10,9 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer',  platforms: :ruby
+gem 'therubyracer',  platforms: :ruby
 
+gem 'redirectr'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -26,9 +27,17 @@ gem 'spring',        group: :development
 
 gem 'couchrest_model'
 
-gem 'passenger'
+gem 'passenger', '~> 4.0.41' 
 
 gem 'rb-readline'
+
+gem "bcrypt-ruby", :require => "bcrypt"
+
+gem "cancancan", "~> 1.8"
+
+gem 'national_patient_id', '0.1.1'
+
+# gem "rack-cors", "~> 0.2.9"
 
 #gem 'bootstrap-sass', '>= 3.0.0.0'
 

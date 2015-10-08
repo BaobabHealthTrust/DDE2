@@ -4,10 +4,10 @@
  <office:meta><meta:initial-creator>Chimwemwe </meta:initial-creator><meta:creation-date>2014-04-14T10:50:04.991113104</meta:creation-date><dc:date>2014-04-17T08:43:13.840659545</dc:date><dc:creator>Chimwemwe </dc:creator><meta:editing-duration>PT20H39M32S</meta:editing-duration><meta:editing-cycles>237</meta:editing-cycles><meta:generator>LibreOffice/4.2.3.3$Linux_X86_64 LibreOffice_project/420m0$Build-3</meta:generator><meta:document-statistic meta:object-count="641"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="VisibleAreaTop" config:type="int">14203</config:config-item>
-   <config:config-item config:name="VisibleAreaLeft" config:type="int">-250</config:config-item>
-   <config:config-item config:name="VisibleAreaWidth" config:type="int">34013</config:config-item>
-   <config:config-item config:name="VisibleAreaHeight" config:type="int">19307</config:config-item>
+   <config:config-item config:name="VisibleAreaTop" config:type="int">19680</config:config-item>
+   <config:config-item config:name="VisibleAreaLeft" config:type="int">-4133</config:config-item>
+   <config:config-item config:name="VisibleAreaWidth" config:type="int">34009</config:config-item>
+   <config:config-item config:name="VisibleAreaHeight" config:type="int">19303</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
@@ -37,10 +37,10 @@
      <config:config-item config:name="EditModeStandard" config:type="int">0</config:config-item>
      <config:config-item config:name="EditModeNotes" config:type="int">0</config:config-item>
      <config:config-item config:name="EditModeHandout" config:type="int">1</config:config-item>
-     <config:config-item config:name="VisibleAreaTop" config:type="int">14203</config:config-item>
-     <config:config-item config:name="VisibleAreaLeft" config:type="int">-250</config:config-item>
-     <config:config-item config:name="VisibleAreaWidth" config:type="int">20312</config:config-item>
-     <config:config-item config:name="VisibleAreaHeight" config:type="int">11532</config:config-item>
+     <config:config-item config:name="VisibleAreaTop" config:type="int">19680</config:config-item>
+     <config:config-item config:name="VisibleAreaLeft" config:type="int">-4133</config:config-item>
+     <config:config-item config:name="VisibleAreaWidth" config:type="int">38882</config:config-item>
+     <config:config-item config:name="VisibleAreaHeight" config:type="int">22075</config:config-item>
      <config:config-item config:name="GridCoarseWidth" config:type="int">1270</config:config-item>
      <config:config-item config:name="GridCoarseHeight" config:type="int">1270</config:config-item>
      <config:config-item config:name="GridFineWidth" config:type="int">127</config:config-item>
@@ -92,7 +92,7 @@
    <config:config-item config:name="PrintQuality" config:type="int">0</config:config-item>
    <config:config-item config:name="PrinterIndependentLayout" config:type="string">low-resolution</config:config-item>
    <config:config-item config:name="PrinterName" config:type="string">Hewlett-Packard-HP-LaserJet-400-M401dw</config:config-item>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary">qQH+/0hld2xldHQtUGFja2FyZC1IUC1MYXNlckpldC00MDAtTTQwMWR3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ1VQUzpIZXdsZXR0LVBhY2thcmQtSFAtTGFzZXJKZQAWAAMAzwAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9SGV3bGV0dC1QYWNrYXJkLUhQLUxhc2VySmV0LTQwMC1NNDAxZHcKb3JpZW50YXRpb249UG9ydHJhaXQKY29waWVzPTEKY29sbGF0ZT1mYWxzZQptYXJnaW5kYWp1c3RtZW50PTAsMCwwLDAKY29sb3JkZXB0aD0yNApwc2xldmVsPTAKcGRmZGV2aWNlPTEKY29sb3JkZXZpY2U9MApQUERDb250ZXhEYXRhClBhZ2VTaXplOkxldHRlcgAAEgBDT01QQVRfRFVQTEVYX01PREUKAERVUExFWF9PRkY=</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">xAH+/0hld2xldHQtUGFja2FyZC1IUC1MYXNlckpldC00MDAtTTQwMWR3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ1VQUzpIZXdsZXR0LVBhY2thcmQtSFAtTGFzZXJKZQAWAAMA6gAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9SGV3bGV0dC1QYWNrYXJkLUhQLUxhc2VySmV0LTQwMC1NNDAxZHcKb3JpZW50YXRpb249UG9ydHJhaXQKY29waWVzPTEKY29sbGF0ZT1mYWxzZQptYXJnaW5kYWp1c3RtZW50PTAsMCwwLDAKY29sb3JkZXB0aD0yNApwc2xldmVsPTAKcGRmZGV2aWNlPTEKY29sb3JkZXZpY2U9MApQUERDb250ZXhEYXRhCklucHV0U2xvdDpBdXRvAER1cGxleDpOb25lAFBhZ2VTaXplOkxldHRlcgAAEgBDT01QQVRfRFVQTEVYX01PREUKAERVUExFWF9PRkY=</config:config-item>
    <config:config-item config:name="SaveVersionOnClose" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ScaleDenominator" config:type="int">1</config:config-item>
    <config:config-item config:name="ScaleNumerator" config:type="int">1</config:config-item>
@@ -4251,9 +4251,10 @@
     <draw:custom-shape draw:style-name="gr65" draw:text-style-name="P1" draw:layer="layout" svg:width="5.688cm" svg:height="11.303cm" svg:x="2.043cm" svg:y="29.194cm">
      <text:p text:style-name="P15"><text:span text:style-name="T17">JSON Object Definition</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18">{</text:span></text:p>
-     <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="4"/></text:span><text:span text:style-name="T18">&quot;npid&quot;:&quot;&quot;,</text:span></text:p>
+     <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="4"/></text:span><text:span text:style-name="T18">&quot;national_id&quot;:&quot;&quot;,</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="4"/></text:span><text:span text:style-name="T18">&quot;application&quot;:&quot;&quot;,</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="4"/></text:span><text:span text:style-name="T18">&quot;site_code&quot;:&quot;&quot;,</text:span></text:p>
+     <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="4"/>“</text:span><text:span text:style-name="T18">return_path”:””,</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="4"/></text:span><text:span text:style-name="T18">&quot;names&quot;:</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="8"/></text:span><text:span text:style-name="T18">{</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="12"/></text:span><text:span text:style-name="T18">&quot;family_name&quot;:&quot;&quot;,</text:span></text:p>
@@ -4266,9 +4267,7 @@
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="8"/></text:span><text:span text:style-name="T18">},</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="8"/></text:span><text:span text:style-name="T18">&quot;birthdate&quot;:&quot;YYYY-MM-DD&quot;,</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="8"/></text:span><text:span text:style-name="T18">&quot;patient&quot;:{</text:span></text:p>
-     <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="12"/></text:span><text:span text:style-name="T18">&quot;identifiers&quot;:{</text:span></text:p>
-     <text:p text:style-name="P15"><text:span text:style-name="T18"><text:tab/></text:span><text:span text:style-name="T18">“</text:span><text:span text:style-name="T18">other_identifier”:””</text:span></text:p>
-     <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="12"/></text:span><text:span text:style-name="T18">}</text:span></text:p>
+     <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="12"/></text:span><text:span text:style-name="T18">&quot;identifiers&quot;:[]</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="8"/></text:span><text:span text:style-name="T18">},</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="8"/></text:span><text:span text:style-name="T18">&quot;birthdate_estimated&quot;:&quot;0&quot;,</text:span></text:p>
      <text:p text:style-name="P15"><text:span text:style-name="T18"><text:s text:c="8"/></text:span><text:span text:style-name="T18">&quot;addresses&quot;:{</text:span></text:p>
@@ -4297,7 +4296,7 @@
       <draw:handle draw:handle-position="$0 top" draw:handle-switched="true" draw:handle-range-x-minimum="0" draw:handle-range-x-maximum="10800"/>
      </draw:enhanced-geometry>
     </draw:custom-shape>
-    <draw:custom-shape draw:style-name="gr66" draw:text-style-name="P16" draw:layer="layout" svg:width="3.583cm" svg:height="3.175cm" svg:x="5.672cm" svg:y="29.956cm">
+    <draw:custom-shape draw:style-name="gr66" draw:text-style-name="P16" draw:layer="layout" svg:width="3.583cm" svg:height="3.175cm" svg:x="5.672cm" svg:y="30.256cm">
      <text:p text:style-name="P15"><text:span text:style-name="T9">Note:</text:span></text:p>
      <text:p text:style-name="P1"><text:span text:style-name="T12">All missing fields</text:span></text:p>
      <text:p text:style-name="P1"><text:span text:style-name="T12">Can be left empty</text:span></text:p>
@@ -4419,7 +4418,7 @@
      </draw:frame>
      <draw:frame draw:style-name="gr72" draw:text-style-name="P7" draw:layer="layout" svg:width="12.821cm" svg:height="0.886cm" svg:x="2.19cm" svg:y="21.31cm">
       <draw:text-box>
-       <text:p><text:span text:style-name="T7">- confirm_person_to_update(JSON):Array(JSON)</text:span></text:p>
+       <text:p><text:span text:style-name="T7">- confirmed_person_to_update(JSON):Array(JSON)</text:span></text:p>
       </draw:text-box>
      </draw:frame>
      <draw:frame draw:style-name="gr73" draw:text-style-name="P7" draw:layer="layout" svg:width="11.255cm" svg:height="0.886cm" svg:x="2.19cm" svg:y="22.01cm">
@@ -4439,7 +4438,7 @@
      </draw:frame>
      <draw:frame draw:style-name="gr76" draw:text-style-name="P7" draw:layer="layout" svg:width="11.42cm" svg:height="0.886cm" svg:x="2.191cm" svg:y="23.81cm">
       <draw:text-box>
-       <text:p><text:span text:style-name="T7">+ search_by_npid(npid:String):Array(JSON)</text:span></text:p>
+       <text:p><text:span text:style-name="T7">+ search_by_npid(JSON):Array(JSON)</text:span></text:p>
       </draw:text-box>
      </draw:frame>
      <draw:frame draw:style-name="gr77" draw:text-style-name="P7" draw:layer="layout" svg:width="6.831cm" svg:height="0.886cm" svg:x="2.19cm" svg:y="14.71cm">

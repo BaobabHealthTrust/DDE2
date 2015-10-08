@@ -10,54 +10,75 @@ module Utils
     def self.process_person_data(json)
     
       raise "First argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
-     #check if json object is whole person data or just person national id 
+      js = JSON.parse(json)
+      old_national_id = js["person"]["data"]["patient"]["identifiers"]["old_identification_number"] rescue nil
 
-      json = Proxy.transpose_params(json) unless JSON.parse(json)["person"].blank?
+      if js["value"].blank? and js.length > 2 and js["action"] == "check_similarities"
+        people = search_for_person_by_params(js["person"]["names"]["given_name"].soundex,
+                                             js["person"]["names"]["family_name"].soundex ,
+                                             js["person"]["gender"],"",js["person"]["addresses"]["county_district"],
+                                             js["person"]["addresses"]["address2"])
+      elsif js["value"].blank? and js.length > 2 and old_national_id.blank? and js["action"] != "create"
+        people = search_for_person_by_params(js["given_name"].soundex,js["family_name"].soundex ,js["gender"])
+      elsif js["value"] and js.length <=2
+        person = search_by_npid(js)
+      elsif js["value"] and js.length > 2 and js["action"] == "find"
+        person = search_by_npid(js)
+      elsif js["value"].blank? and !old_national_id.blank? and js["action"] != "create"
+        person = create_person(json)
+      elsif js["value"].blank? and old_national_id.blank? and js.length > 2 and js["action"] == "create"
+        person = create_person(json)
+      else
+        return nil
+      end
+  end
 
-      person = nil
-		  if JSON.parse(json)["npid"].blank?
-          #create person
-          person = self.create_person(json)
-          return person
-		  else
-       	if JSON.parse(json).length == 6
-         #json object is only a npid
-         person = self.get_person(JSON.parse(json))
-         Utils::FootprintUtil.log_application_and_site(json) if person
-		     return person
-        else
-         #json object is person data
-          if self.person_has_v4_id(JSON.parse(json))
-           #json object has valid version 4 id
-		       person = self.get_person(json[:value])
-           return person
-		     	else
-           #json object has no valid version 4 id therefore create person and keep id
-           person = self.get_person(JSON.parse(json[:value]))
-           if person.blank?
-             person = self.create_person(json)
-           else
-             person = self.update_person(json)
-           end
-
-           return person
-		     	end
-        end  
-		  end      
-    end
-   
-   
 =begin
   + search_by_npid(npid:String):Array(JSON)
   
   
 =end
     def self.search_by_npid(json)
-       npid = json[:value]
-       return  self.get_person(npid)       
+       npid = json["value"]
+       person = self.get_person(npid)
+       unless person.blank?
+         person = convert_person(person)
+       end
+       return person   
     end
 
-   private
+   def self.convert_person(person)
+    person_hash = {:person => {:birthdate_estimated => person.birthdate_estimated}}
+    birthdate = { :birthdate => person.birthdate}
+    gender = {:gender => person.gender}
+    given_name = {:given_name => person.names.given_name}
+    family_name = {:family_name => person.names.family_name}
+    data_hash = {:data => {:addresses => {:address1 => person.addresses.current_residence,
+																					:address2 => person.addresses.current_village, 
+																					:address1 => person.addresses.current_ta,
+																					:city_village => person.addresses.current_district,
+																					:state_province => person.addresses.home_village,
+																					:county_district => person.addresses.home_ta,
+																					:neighborhood_cell => person.addresses.home_district},
+                           :attributes => {:home_phone_number => person.person_attributes.home_phone_number,
+																						:cell_phone_number => person.person_attributes.cell_phone_number,
+                                            :office_phone_number => person.person_attributes.office_phone_number,
+																						:occupation => person.person_attributes.occupation,
+																						:citizenship => person.person_attributes.citizenship,
+																						:race => person.person_attributes.race
+                                      }}} 
+
+    person_hash[:person].merge! birthdate
+    person_hash[:person].merge! gender
+    person_hash[:person].merge! given_name
+    person_hash[:person].merge! family_name
+    person_hash[:person].merge! data_hash
+
+    return person_hash 
+    
+  end
+
+    private
 =begin
   + person_has_v4_id(JSON):BOOLEAN
   
@@ -65,8 +86,9 @@ module Utils
 =end
     def self.person_has_v4_id(json)
 
-       unless json[:value].blank?
-           return true if json[:value].length == 6
+       unless json["value"].blank?
+            person = self.get_person(json["value"])
+        person.blank? ? false : true
 			 end
 
        return false
@@ -86,25 +108,30 @@ module Utils
   
 =end
     def self.search_for_person_by_params(first_name,last_name ,gender, date_of_birth=nil, home_t_a=nil, home_district=nil)
+
+      raise "First argument cannot be blank" unless !first_name.blank?
+      raise "Second argument cannot be blank" unless !last_name.blank?
+      raise "Third argument cannot be blank" unless !gender.blank?
+
       people = []
       if (date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
-        return Person.search.keys([[first_name,last_name ,gender]]).rows
+        return Person.search.keys([[first_name.soundex,last_name.soundex ,gender]]).rows
       elsif (!date_of_birth.blank? && home_t_a.blank? && home_district.blank?)
-        return Person.search_with_dob.keys([[first_name,last_name ,gender, date_of_birth]]).rows
+        return Person.search_with_dob.keys([[first_name.soundex,last_name.soundex ,gender, date_of_birth]]).rows
       elsif (date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
-        return Person.search_with_home_district.keys([[first_name,last_name ,gender,home_district]]).rows
+        return Person.search_with_home_district.keys([[first_name.soundex,last_name.soundex ,gender,home_district]]).rows
       elsif (date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
-        return Person.search_with_home_ta.keys([[first_name,last_name ,gender,home_t_a]]).rows
+        return Person.search_with_home_ta.keys([[first_name.soundex,last_name.soundex ,gender,home_t_a]]).rows
       elsif (date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
-        return Person.search_with_home_ta_district.keys([[first_name,last_name ,gender,home_t_a,home_district]]).rows
+        return Person.search_with_home_ta_district.keys([[first_name.soundex,last_name.soundex ,gender,home_t_a,home_district]]).rows
       elsif (!date_of_birth.blank? && !home_t_a.blank? && home_district.blank?)
-        return Person.search_with_dob_home_ta.keys([[first_name,last_name ,gender,date_of_birth,home_t_a]]).rows
+        return Person.search_with_dob_home_ta.keys([[first_name.soundex,last_name.soundex ,gender,date_of_birth,home_t_a]]).rows
       elsif (!date_of_birth.blank? && home_t_a.blank? && !home_district.blank?)
-        return Person.search_with_dob_home_district.keys([[first_name,last_name ,gender,date_of_birth, home_district]]).rows
+        return Person.search_with_dob_home_district.keys([[first_name.soundex,last_name.soundex ,gender,date_of_birth, home_district]]).rows
       elsif (!date_of_birth.blank? && !home_t_a.blank? && !home_district.blank?)
-        return Person.advanced_search.keys([[first_name,last_name ,gender,date_of_birth, home_t_a, home_district]]).rows
+        return Person.advanced_search.keys([[first_name.soundex,last_name.soundex ,gender,date_of_birth, home_t_a, home_district]]).rows
       end
-
+      return people
     end
   
 =begin
@@ -113,11 +140,16 @@ module Utils
   
 =end
     def self.confirm_person_to_update(json)
-      person = Person.get(json[:value])
+
+      raise "Argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil).nil?
+
+      js = JSON.parse(json) rescue nil
+
+      person = Person.get(js[:npid]) rescue nil
       results = []
       if !person.blank?
-        if compare_people(person, json)
-           results << json << person
+        if compare_people(person, js)
+           results << js << person
         end
       end
 
@@ -131,56 +163,59 @@ module Utils
 =end
     def self.create_person(json)
 
-       js = JSON.parse(Proxy.assign_npid_to_person(json))
+      raise "Argument can only be a JSON Object" if !json.match(/\{(.+)?\}/)
+    
+       js = Proxy.assign_npid_to_person(json)
+       person_js = JSON.parse(js)
+       
+       if person_js.blank?
+         person_js = Proxy.assign_temporary_npid(json)
+         person = JSON(person_js)
+       else
+         person = person_js
+       end
+       
+       unless person.blank?
+		     legacy_national_id = person["person"]["data"]["patient"]["identifiers"]["old_identification_number"]
+         national_id = person["national_id"]
+		     national_id = person["identifiers"]["temporary_id"] if national_id.blank?
+		     @person = Person.new(
+		    				 :national_id => national_id,
+								 :assigned_site =>  Site.current_code,
+								 :patient_assigned => true,
+								 :person_attributes => { :citizenship => person["person"]["data"]["attributes"]["citizenship"] || nil,
+																				 :occupation => person["person"]["data"]["attributes"]["occupation"] || nil,
+																				 :home_phone_number => person["person"]["data"]["attributes"]["home_phone_number"] || nil,
+																				 :cell_phone_number => person["person"]["data"]["attributes"]["cell_phone_number"] || nil,
+																				 :office_phone_number => person["person"]["data"]["attributes"]["office_phone_number"] || nil,
+                                         :race => person["person"]["data"]["attributes"]["race"] || nil
+												                },
 
-       js = JSON.parse(Proxy.assign_temporary_npid(json)) if js.blank?
+									:gender => person["person"]["data"]["gender"],
 
-       unless js.blank?
+									:names => { :given_name => person["person"]["data"]["names"]["given_name"],
+								 					    :family_name => person["person"]["data"]["names"]["family_name"],
+												    },
 
-       @person = Person.new(
-							 :assigned_site =>  Site.current_code,
-							 :patient_assigned => true,
+									:birthdate => person["person"]["data"]["birthdate"] || nil,
+									:birthdate_estimated => person["person"]["data"]["birthdate_estimated"] || nil,
 
-							 :person_attributes => { :citizenship => js["person"]["data"]["attributes"]["citizenship"] || nil,
-																			 :occupation => js['person']["data"]["attributes"]["occupation"] || nil,
-																			 :home_phone_number => js['person']["data"]["attributes"]["home_phone_number"] || nil,
-																			 :cell_phone_number => js['person']["data"]["attributes"]["cell_phone_number"] || nil,
-																			 :race => js['person']["data"]["attributes"]["race"] || nil
-										                  },
+									:addresses => {:current_residence => person["person"]["data"]["addresses"]["city_village"] || nil,
+														     :current_village => person["person"]["data"]["addresses"]["city_village"] || nil,
+														     :current_ta => person["person"]["data"]["addresses"]["state_province"] || nil,
+														     :current_district => person["person"]["data"]["addresses"]["state_province"] || nil,
+														     :home_village => person["person"]["data"]["addresses"]["neighbourhood_cell"] || nil,
+														     :home_ta => person["person"]["data"]["addresses"]["county_district"] || nil,
+														     :home_district => person["person"]["data"]["addresses"]["address2"] || nil
+		                            },
+                 :old_identification_number => legacy_national_id
+        )
 
-								:gender => js["person"]["data"]["gender"],
-
-								:names => { :given_name => js["person"]["data"]["names"]["given_name"],
-							 					    :family_name => js["person"]["data"]["names"]["family_name"]
-										      },
-
-								:birthdate => js["person"]["data"]["birthdate"] || nil,
-								:birthdate_estimated => js["person"]["data"]["birthdate_estimated"] || nil,
-
-								:addresses => {:current_residence => js["person"]["data"]["addresses"]["city_village"] || nil,
-												       :current_village => js["person"]["data"]["addresses"]["city_village"] || nil,
-												       :current_ta => js["person"]["data"]["addresses"]["state_province"] || nil,
-												       :current_district => js["person"]["data"]["addresses"]["state_province"] || nil,
-												       :home_village => js["person"]["data"]["addresses"]["neighbourhood_cell"] || nil,
-												       :home_ta => js["person"]["data"]["addresses"]["county_district"] || nil,
-												       :home_district => js["person"]["data"]["addresses"]["address2"] || nil
-                              }
-		 )
-
-
-      if js["national_id"].blank?
-        @person.national_id = js["identifiers"]["temporary_id"]
-      else
-        @person["npid"] =  {:value => js["national_id"]}
-        @person.national_id = js["national_id"]
+        person = @person.save 
+        return true
+      else 
+        return false
       end
-
-     person = @person.save 
-
-     return person
-
-     end
-
    end
          
 =begin
@@ -190,64 +225,69 @@ module Utils
 =end
     def self.update_person(json)
 
-      js = JSON.parse(json)
-      person = Person.get(js["npid"])
+      raise "Argument can only be a JSON Object" unless !(JSON.parse(json) rescue nil ).nil?
 
-      if person.blank?
-        person = create_person(json)
-      else
+      js = JSON.parse(json) rescue nil
 
-        if !self.compare_people(person, js)
-          person.gender = js['gender'] unless js['gender'].blank?
-          person.birthdate = js['birthdate'] unless js['birthdate'].blank?
-          person['names']['given_name'] = js['names']['given_name'] unless js['names']['given_name'].blank?
-          person['names']['family_name'] = js['names']['family_name'] unless js['names']['family_name'].blank?
+      unless js.blank?
+        person = Person.get(js["npid"])
 
-          unless js['addresses'].blank?
-            person['addresses'] = {} if person['addresses'].blank?
-            person['addresses']['current_residence'] = js['addresses']['current_residence'] unless js['addresses']['current_residence'].blank?
-            person['addresses']['current_village'] = js['addresses']['current_village'] unless js['addresses']['current_village'].blank?
-            person['addresses']['current_district'] = js['addresses']['current_district'] unless js['addresses']['current_district'].blank?
-            person['addresses']['current_ta'] = js['addresses']['current_ta'] unless js['addresses']['current_ta'].blank?
-            person['addresses']['home_district'] = js['addresses']['home_district'] unless js['addresses']['home_district'].blank?
-            person['addresses']['home_ta'] = js['addresses']['home_ta'] unless js['addresses']['home_ta'].blank?
-            person['addresses']['home_village'] = js['addresses']['home_village'] unless js['addresses']['home_village'].blank?
-          end
+        if person.blank?
+          person = create_person(json)
+          return person.blank?
+        else
 
-          unless js['person_attributes'].blank?
-            person['person_attributes'] = {} if person['person_attributes'].blank?
-            person['person_attributes']['citizenship'] = js['person_attributes']['citizenship'] unless js['person_attributes']['citizenship'].blank?
-            person['person_attributes']['occupation'] = js['person_attributes']['occupation'] unless js['person_attributes']['occupation'].blank?
-            person['person_attributes']['home_phone_number'] = js['person_attributes']['home_phone_number'] unless js['person_attributes']['home_phone_number'].blank?
-            person['person_attributes']['cell_phone_number'] = js['person_attributes']['cell_phone_number'] unless js['person_attributes']['cell_phone_number'].blank?
-            person['person_attributes']['race'] = js['person_attributes']['race'] unless js['person_attributes']['race'].blank?
-          end
+          has_new_id = person_has_v4_id(js)
 
+          if !has_new_id
+            if Proxy.check_if_npids_available()
 
-        end
-        raise person.inspect
-        person.save
+              new_person = create_person(json)
 
-        has_new_id = person_has_v4_id(js)
-
-        if !has_new_id
-          if Proxy.check_if_npids_available()
-
-            new_person = create_person(json)
-
-            new_person["patient"] = { "identifiers" => {} } if person["patient"].blank?
-            if new_person.national_id.first == "p"
-              new_person["patient"]["identifiers"]["legacy_npid"] = person.national_id
-            else
-              new_person["patient"]["identifiers"]["temporary_npid"] = person.national_id
+              new_person["patient"] = { "identifiers" => {} } if person["patient"].blank?
+              if new_person.national_id.first.upcase == "P"
+                new_person["patient"]["identifiers"]["legacy_npid"] = person.national_id
+              else
+                new_person["patient"]["identifiers"]["temporary_npid"] = person.national_id
+              end
+              return person.destroy if new_person.save
             end
-            person.destroy if new_person.save
+          end
+
+          if !self.compare_people(person, js)
+            person.gender = js['gender'] unless js['gender'].blank?
+            person.birthdate = js['birthdate'] unless js['birthdate'].blank?
+            person['names']['given_name'] = js['names']['given_name'] unless js['names']['given_name'].blank?
+            person['names']['family_name'] = js['names']['family_name'] unless js['names']['family_name'].blank?
+
+            unless js['addresses'].blank?
+              person['addresses'] = {} if person['addresses'].blank?
+              person['addresses']['current_residence'] = js['addresses']['current_residence'] unless js['addresses']['current_residence'].blank?
+              person['addresses']['current_village'] = js['addresses']['current_village'] unless js['addresses']['current_village'].blank?
+              person['addresses']['current_district'] = js['addresses']['current_district'] unless js['addresses']['current_district'].blank?
+              person['addresses']['current_ta'] = js['addresses']['current_ta'] unless js['addresses']['current_ta'].blank?
+              person['addresses']['home_district'] = js['addresses']['home_district'] unless js['addresses']['home_district'].blank?
+              person['addresses']['home_ta'] = js['addresses']['home_ta'] unless js['addresses']['home_ta'].blank?
+              person['addresses']['home_village'] = js['addresses']['home_village'] unless js['addresses']['home_village'].blank?
+            end
+
+            unless js['person_attributes'].blank?
+              person['person_attributes'] = {} if person['person_attributes'].blank?
+              person['person_attributes']['citizenship'] = js['person_attributes']['citizenship'] unless js['person_attributes']['citizenship'].blank?
+              person['person_attributes']['occupation'] = js['person_attributes']['occupation'] unless js['person_attributes']['occupation'].blank?
+              person['person_attributes']['home_phone_number'] = js['person_attributes']['home_phone_number'] unless js['person_attributes']['home_phone_number'].blank?
+              person['person_attributes']['cell_phone_number'] = js['person_attributes']['cell_phone_number'] unless js['person_attributes']['cell_phone_number'].blank?
+              person['person_attributes']['office_phone_number'] = js['person_attributes']['office_phone_number'] unless js['person_attributes']['office_phone_number'].blank?
+              person['person_attributes']['race'] = js['person_attributes']['race'] unless js['person_attributes']['race'].blank?
+            end
+            return person.save
           end
         end
 
+        return true
       end
-
-    end
+    return false
+  end
     
 =begin
   + get_person(npid:String):JSON
@@ -255,13 +295,23 @@ module Utils
   
 =end
     def self.get_person(npid)
-       person = Person.get(npid) rescue nil
+       person = Person.find(npid) rescue nil
        unless person.blank?
-          return person.to_json
+          return person
        else
-          return {}
+          self.get_person_by_old_national_id(npid)
        end
     end
+
+    def self.get_person_by_old_national_id(npid)
+       person = Person.by_old_identification_number.key(npid) rescue nil
+       unless person.blank?
+          return person
+       else
+          return nil
+       end
+    end
+ 
 =begin
     + compare_people(person_a:JSON, person_b:JSON):BOOLEAN
 =end
@@ -270,7 +320,7 @@ module Utils
 
       single_attributes = ['birthdate', 'gender']
       addresses = ['current_residence','current_village','current_ta','current_district','home_village','home_ta','home_district',]
-      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number']
+      attributes = ['citizenship', 'race', 'occupation','home_phone_number', 'cell_phone_number', 'office_phone_number']
 
       single_attributes.each do |metric|
         if personA[metric] != personB[metric]
@@ -294,6 +344,5 @@ module Utils
 
     end
   end
-
 
 end

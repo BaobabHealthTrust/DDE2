@@ -1,4 +1,4 @@
-class ServicesController < ApplicationController
+class ServicesController  < ActionController::Base  # < ApplicationController
 
   def check_thresholds
     result = Utils::Master.check_site_thresholds()
@@ -34,6 +34,8 @@ class ServicesController < ApplicationController
         ip_address: result.ip_address,
         username: result.username,
         password: result.password,
+        site_db1: result.site_db1,
+        site_db2: result.site_db2,
         description: result.description,
         region: result.region,
         threshold: result.threshold,
@@ -119,6 +121,11 @@ class ServicesController < ApplicationController
       render :text => (result <= 0) and return
     end
     render :text => false and return
+  end
+
+  def username_available  
+    user = Utils::UserUtil.get_active_user(params[:search_str]) rescue nil
+    render :text => user = user.blank? ? true : false and return
   end
 
 end

@@ -348,7 +348,7 @@
                       return tooltip.style("visibility", "hidden");
                     });
                              
-              var flip = {
+              /*var flip = {
                 source:{
                   x: lnData[i].target.x,
                   y: lnData[i].target.y
@@ -378,7 +378,7 @@
                     })
                   .on("mouseout", function(){
                       return tooltip.style("visibility", "hidden");
-                    });
+                    });*/
             }
              
        });
@@ -412,7 +412,7 @@
       }
     
       function resizeMap(){
-        zoomlevel = 0.65;
+        zoomlevel = 1.02;
         
         d3.select('#region').attr('transform','scale(' + zoomlevel + ')');
       }

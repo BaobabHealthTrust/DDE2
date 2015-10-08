@@ -6,6 +6,7 @@ config/site_config.yml
 config/database.yml
 config/email.yml
 config/couchdb.yml
+config/secrets.yml
 .DS_Store
 *.swp
 *.swo
@@ -21,3 +22,4 @@ rerun.txt
 nbproject
 Gemfile.lock
 .idea/*
+.ruby-version

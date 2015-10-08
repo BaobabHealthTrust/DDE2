@@ -1,0 +1,272 @@
+<style type="text/css">
+  #status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  #status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center !important;
+  }
+  
+  #status tr:hover {
+    background-color: orange !important;
+  }
+  
+  #status tr:active {
+    background-color: lightblue !important;
+  }
+  
+  .activated {
+    background-color: lightblue !important;
+  }
+  
+</style>
+<script src="/javascripts/d3.js" charset="utf-8"></script>
+<div class="container theme-showcase" role="main">
+  <div class="jumbotron head">
+    <h2>Person::Search</h2>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div style="float: right; margin-top: -8px; margin-right: 8px;">
+        <label>First Name :</label><input type="text" id="first_name" value="" style="margin-left: 3px; margin-right: 10px;" />
+        <label>Last Name :</label><input type="text" id="last_name" value="" style="margin-left: 3px; margin-right: 10px;" />
+        <label>Gender :</label>
+        <select id="gender" style="margin-left: 1px;">
+          <option></option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+        </select>
+        <button id="btnSearch">Search</button>
+      </div>
+      <h3 class="panel-title">
+        Patient Footprint Map&nbsp;
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div style="float: left; width: 27%;">
+        <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 100%; overflow: hidden !important; height: 710px;" src="/footprint"></iframe>
+      </div>
+      <div class="row" style="float: right; width: 71%; height: 580px; margin-right: 8px; oveflow: auto;">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Search Results</h3>
+          </div>
+          <div class="panel-body" style="height: 630px; overflow: auto; padding: 1px !important;">
+            <table width="100%" id="status">
+              <tbody>
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Gender
+                  </th>
+                  <th>
+                    Date of Birth
+                  </th>
+                  <th>
+                    Current Address
+                  </th>
+                  <th>
+                    Home Address
+                  </th>
+                  <th>
+                    NPID
+                  </th>
+                  <th>
+                    Other Identifiers
+                  </th>
+                </tr>
+              </tbody>              
+              <tbody id="tbody">                      
+              </tbody>
+            </table>
+          </div>
+          <div style="width: 100% !important; height: 42px !important; overflow: hidden; padding: 3px !important; text-align: center; border-top: solid 1px #428BCA">
+            <table width="100%">
+              <tbody>              
+                <tr>
+                  <td colspan="7">
+                    <button class="button_gray" id="btnFirst">
+                      |&larr;
+                    </button>
+                    <button class="button_gray" id="btnPrevious">
+                      &larr;
+                    </button>
+                    <input id="pageno" style="border: 1px solid #428BCA; background-image: text-align: center; width: 120px; height: 35px; text-align: center;" readonly=true;/>
+                    <button class="button_gray" id="btnNext">
+                      &rarr;
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  <!--
+  
+  var currentPage = 1;   
+  var pagesize = 24;
+  
+  function __$(id){
+    return document.getElementById(id);
+  }
+  
+  function ajaxSearch(page){
+       
+    var url = "/ajax_search?first_name=" + __$("first_name").value.trim() + 
+        "&last_name=" + __$("last_name").value.trim() + "&gender=" + 
+         __$("gender").value.trim() + "&page=" + page + "&pagesize=" + pagesize;
+           
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        handleAjaxRequest(httpRequest);
+    };
+    try {
+        httpRequest.open('GET', url, true);
+        httpRequest.send(null);
+    } catch(e){
+    }
+  }
+
+  function handleAjaxRequest(aXMLHttpRequest) {
+    if (!aXMLHttpRequest) return;                    
+
+    if (aXMLHttpRequest.readyState == 4 && aXMLHttpRequest.status == 200) {
+                  
+        var result = aXMLHttpRequest.responseText;
+        
+        patients = JSON.parse(result);
+        
+        __$("tbody").innerHTML = "";
+        
+        __$("pageno").value = "Page " + currentPage;
+        
+        for(var i = 0; i < patients.length; i++){
+          var tr = document.createElement("tr");
+          tr.id = patients[i]["national_id"];
+          tr.style.cursor ="pointer";
+           
+          tr.onclick = function(){
+            var rows = __$("tbody").children;
+            
+            for(var k = 0; k < rows.length; k++){
+              rows[k].removeAttribute("class");
+            }
+            
+            if(__$(this.id)){
+              __$("map").setAttribute("src", "/footprint?npid=" + this.id);
+              
+              __$(this.id).className = "activated";
+            }
+          }
+          
+          __$("tbody").appendChild(tr);
+          
+          var fields = ["name","gender","dob","current_address","home_address","national_id","other_identifiers"];
+          
+          for(var j = 0; j < fields.length; j++){
+            var td = document.createElement("td");
+            td.style.verticalAlign = "top";
+            td.innerHTML = patients[i][fields[j]];
+            
+            tr.appendChild(td);
+          }
+        }
+        
+        if(patients.length > 0){
+        
+          if(__$("btnNext")){
+            if(patients.length < pagesize){
+              __$("btnNext").className = "button_gray";
+              __$("btnNext").onclick = function(){};
+            } else {
+              __$("btnNext").className = "button_blue";
+              __$("btnNext").onclick = function(){
+                currentPage++;
+                ajaxSearch(currentPage);
+              };
+            }
+          }
+          
+          if(__$("btnPrevious")){
+            if(currentPage == 1){
+              __$("btnPrevious").className = "button_gray";
+              __$("btnPrevious").onclick = function(){};
+            } else {
+              __$("btnPrevious").className = "button_blue";
+              __$("btnPrevious").onclick = function(){
+                currentPage--;
+                ajaxSearch(currentPage);
+              };
+            }
+          }
+          
+          if(__$("btnFirst")){
+            __$("btnFirst").className = "button_blue";
+            __$("btnFirst").onclick = function(){
+              currentPage = 1;
+              ajaxSearch(currentPage);
+            };
+          }
+          
+        } else {
+        
+          if(__$("btnNext")){
+            if(patients.length < pagesize){
+              __$("btnNext").className = "button_gray";
+              __$("btnNext").onclick = function(){};
+            }
+          }
+          
+          if(__$("btnFirst")){
+            __$("btnFirst").className = "button_gray";
+            __$("btnFirst").onclick = function(){};
+          }
+          
+          if(__$("btnPrevious")){
+            __$("btnPrevious").className = "button_gray";
+            __$("btnPrevious").onclick = function(){};
+          }
+        }
+        
+    }
+    
+  }
+  
+  function checkSearch(){
+    if(__$("first_name") && __$("last_name") && __$("gender")){
+      if(__$("first_name").value.trim().length > 0 && __$("last_name").value.trim().length > 0 && __$("gender").value.trim().length > 0){
+        
+        __$("btnSearch").className = "button_green";
+        
+        __$("btnSearch").onclick = function(){
+          ajaxSearch(1);
+        }
+         
+      } else {
+        
+        __$("btnSearch").className = "button_gray";
+        
+        __$("btnSearch").onclick = function(){};
+        
+      }
+    }
+    
+    setTimeout("checkSearch()", 200);
+  }
+  
+  setTimeout("checkSearch()", 200);
+  
+  //-->
+</script>

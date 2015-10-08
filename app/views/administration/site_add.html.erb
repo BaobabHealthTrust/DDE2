@@ -23,8 +23,9 @@
     </div>
     <div class="panel-body">
       
-      <form novalidate="novalidate" id="site-form" class="form-horizontal" role="form" method="post" action="/administration/create_site" autocomplete="off">
-        
+      <%= form_tag('/administration/create_site', method: 'post', enctype: 'multipart/form-data', 
+          id: 'site-form', class: "form-horizontal", autocomplete: "off", role: "form", novalidate: "novalidate") do %>
+      
           <div class="form-control-group">
             <table style="width: 100%;">
               <tr>
@@ -97,6 +98,30 @@
                 </td>
                 <td>
                   <input name="password" class="form-control" placeholder="Site Node Password" id="password" required="" value="" type="password" />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Site First Sync Database:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input name="site_db1" class="form-control" placeholder="dde_person" id="site_db1" value="" type="text" />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Site Second Sync Database:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <input name="site_db2" class="form-control" placeholder="dde_npids" id="site_db2" value="" type="text" />
                 </td>
               </tr>
             </table>
@@ -180,7 +205,7 @@
             </tr>
           </table>
           
-      </form>
+      <% end %>
       
     </div>
   </div>
@@ -189,7 +214,7 @@
 <script defer="true">
   
   jQuery.validator.addMethod("sitecode", function(value, element) {
-    return this.optional(element) || /^[A-Z]{3}$/.test(value);
+    return this.optional(element) || /^[A-Z0-9]{3}$/.test(value);
   }, "Please 3 capital letters only.");
   
   jQuery.validator.addMethod("ipaddress", function(value, element) {
