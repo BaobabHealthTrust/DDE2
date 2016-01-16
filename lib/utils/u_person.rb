@@ -323,9 +323,7 @@ module Utils
             result << person.to_json
             
           end
-      raise result.inspect
 
-        
         end
         
       elsif !date_of_birth.nil? and home_ta.nil? and home_district.nil?
