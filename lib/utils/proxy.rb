@@ -17,7 +17,7 @@ module Utils
       # result = Npid.unassigned_at_site.count
       
       result = Npid.untaken_at_region.keys([CONFIG["sitecode"]]).count
-      
+      	
       return (result > 0)
     end
    
@@ -34,51 +34,63 @@ module Utils
       
         # result = Npid.unassigned_at_site.first rescue nil
         
-        result = Npid.untaken_at_region.keys([CONFIG["sitecode"]]).first rescue nil
+        js = JSON.parse(json)
         
-        if !result.nil?
+        national_id_valid = false
         
-          js = JSON.parse(json)
-        
-          result.update_attributes(assigned: true)
-          
-          # Keep current npid as a reference for later        
-          js["patient"] = {} if js["patient"].blank?
-          
-          js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
-          
-          if js["patient"]["identifiers"].class.to_s.downcase == "hash"
-            
-            tmp = js["patient"]["identifiers"]
-            
-            js["patient"]["identifiers"] = []
-            
-            tmp.each do |key, value|
-              
-              js["patient"]["identifiers"] << {key => value}
-              
-            end
-          
-          end 
-      
-          js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])} if !(js["national_id"] || js["_id"]).blank?
-                
-          js["national_id"] = result.national_id rescue nil
-          
-          js["assigned_site"] = Site.current.site_code rescue nil
-          
-          js["patient_assigned"] = true
-        
-          js["patient"]["identifiers"] = js["patient"]["identifiers"].uniq
-        
-          return js.to_json
-          
-        else 
-        
-          return {}.to_json
-          
+        if js['national_id'].present? && js['national_id'].length == 6
+             national_id_valid = NationalPatientId.valid?(NationalPatientId.to_decimal(js['national_id'])) rescue false
         end
-    
+        
+        # Keep current npid as a reference for later        
+        js["patient"] = {} if js["patient"].blank?
+        
+        js["patient"]["identifiers"] = [] if js["patient"]["identifiers"].blank?
+        
+        if js["patient"]["identifiers"].class.to_s.downcase == "hash"
+          
+          tmp = js["patient"]["identifiers"]
+          
+          js["patient"]["identifiers"] = []
+          
+          tmp.each do |key, value|
+            
+            js["patient"]["identifiers"] << {key => value}
+            
+          end
+        
+        end 
+        
+        if national_id_valid == true  
+        
+			      js["patient"]["identifiers"] << {"Old Identification Number" => (js["_id"])} if !(js["_id"]).blank?
+			                  
+        else
+        
+           js["patient"]["identifiers"] << {"Old Identification Number" => (js["national_id"] || js["_id"])} if !(js["national_id"] || js["_id"]).blank?
+           
+           result = Npid.untaken_at_region.keys([CONFIG["sitecode"]]).first rescue nil
+           
+           if result.present?
+	           result.update_attributes(assigned: true)
+	                  
+					   js["national_id"] = result.national_id rescue nil
+					 else
+					   return {}.to_json
+					 end  
+			      
+        
+        end
+        
+        js["assigned_site"] = Site.current.site_code rescue nil
+        
+        js["patient_assigned"] = true
+      
+        js["patient"]["identifiers"] = js["patient"]["identifiers"].uniq
+      
+        return js.to_json
+        
+        
       # end
       
     end
