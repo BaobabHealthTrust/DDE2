@@ -150,7 +150,7 @@ module Utils
         person = JSON.parse(json) rescue nil
           
         # If the presented NPID is not a valid version 4, try to recreate another one
-        if !person.nil? and !self.is_valid_v4_npid((person["national_id"] || person["_id"]))
+        if !person.nil? && !NationalPatientId.valid?(NationalPatientId.to_decimal(person["national_id"].upcase || person["_id"].upcase))
             
           result = self.update_npid(json)
             
