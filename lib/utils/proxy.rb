@@ -39,7 +39,8 @@ module Utils
         national_id_valid = false
         
         if js['national_id'].present? && js['national_id'].length == 6
-             national_id_valid = NationalPatientId.valid?(NationalPatientId.to_decimal(js['national_id'].upcase)) rescue false
+             js['national_id'] = js['national_id'].upcase
+             national_id_valid = NationalPatientId.valid?(NationalPatientId.to_decimal(js['national_id'])) rescue false
         end
         
         # Keep current npid as a reference for later        
