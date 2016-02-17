@@ -204,6 +204,40 @@ class Person < CouchRest::Model::Base
         }"
   end
 
+  ###################### the following views are designed to accomodate village listing app #######################
+  design do
+    view :home_district_ta_village,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.addresses.home_district ,doc.addresses.home_ta, doc.addresses.home_village], 1);
+            }
+          }"
+
+    view :home_district_ta,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.addresses.home_district ,doc.addresses.home_ta], 1);
+            }
+          }"
+
+    view :current_district_ta_village,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.addresses.current_district ,doc.addresses.current_ta, doc.addresses.current_village], 1);
+            }
+          }"
+
+    view :current_district_ta,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.addresses.current_district ,doc.addresses.current_ta], 1);
+            }
+          }"
+
+  end
+  ###################### end of village listing views ############################################################
+
+
   def set_name_codes
     self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
     self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?

@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   skip_before_filter :verify_authenticity_token, :if => Proc.new { |c| c.request.format == 'application/json' }
                                                                                 
-  before_filter :perform_basic_auth
+  before_filter :perform_basic_auth, :except => ['population_stats'] 
 
   rescue_from CanCan::AccessDenied,
       :with => :access_denied

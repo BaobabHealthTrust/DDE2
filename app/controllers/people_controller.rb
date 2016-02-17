@@ -75,4 +75,25 @@ class PeopleController < ApplicationController
     render :action =>"confirm_demographics" , :layout => false
   end
 
+  def population_stats
+    if params[:stat] == 'current_district_ta_village'
+      district = params[:district] ; ta = params[:ta] ; village = params[:village]
+      data = Person.current_district_ta_village.key([district,ta,village]).all.each
+      render :text => data.to_json and return
+    end
+
+    if params[:stat] == 'home_district_ta_village'
+      district = params[:district] ; ta = params[:ta] ; village = params[:village]
+      data = Person.home_district_ta_village.key([district,ta,village]).all.each
+      render :text => data.to_json and return
+    end
+
+    if params[:stat] == 'ta_population_tabulation'
+      district = params[:district] ; ta = params[:ta]
+      data = Person.current_district_ta.key([district,ta]).all.each
+      render :text => data.to_json and return
+    end
+
+  end
+
 end

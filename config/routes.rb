@@ -112,6 +112,10 @@ Rails.application.routes.draw do
   
   post '/merge_duplicates' => "process#merge_duplicates"
 
+
+  post '/population_stats' => 'people#population_stats'
+
+
   namespace :ws do
     namespace :rest do
       resources :v1 do
