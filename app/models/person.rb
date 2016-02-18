@@ -234,6 +234,20 @@ class Person < CouchRest::Model::Base
             }
           }"
 
+    view :given_name_code,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.names.given_name_code], 1);
+            }
+          }"
+
+    view :family_name_code,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.names.family_name_code], 1);
+            }
+          }"
+
   end
   ###################### end of village listing views ############################################################
 

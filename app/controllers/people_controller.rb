@@ -75,6 +75,7 @@ class PeopleController < ApplicationController
     render :action =>"confirm_demographics" , :layout => false
   end
 
+  #################################### Village listinng APIs starts ##############################
   def population_stats
     if params[:stat] == 'current_district_ta_village'
       district = params[:district] ; ta = params[:ta] ; village = params[:village]
@@ -95,5 +96,23 @@ class PeopleController < ApplicationController
     end
 
   end
-
+  
+  def person_names
+    if params[:name] == 'given_name'
+      names = []
+      Person.given_name_code.keys([[params[:given_name].soundex]]).all.each.map do |person|
+        names << person.names.given_name
+        names = names.uniq
+      end
+      render :text => names.to_json and return
+    elsif params[:name] == 'family_name'
+      names = []
+      Person.family_name_code.keys([[params[:family_name].soundex]]).all.each.map do |person|
+        names << person.names.family_name
+        names = names.uniq
+      end
+      render :text => names.to_json and return
+    end
+  end
+  #################################### Village listinng APIs ends ##############################
 end

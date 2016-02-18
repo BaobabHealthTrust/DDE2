@@ -112,8 +112,10 @@ Rails.application.routes.draw do
   
   post '/merge_duplicates' => "process#merge_duplicates"
 
-
+  ######################### links/routes to accomodate village listing app #################
   post '/population_stats' => 'people#population_stats'
+  post '/person_names' => 'people#person_names'
+  ######################### village apps links/routes ends #################
 
 
   namespace :ws do
