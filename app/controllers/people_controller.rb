@@ -97,7 +97,7 @@ class PeopleController < ApplicationController
 
     if params[:stat] == 'ta_population'
       district = params[:district] 
-      data = Person.current_district.key([district]).all.each
+      data = Person.current_district.key([district]).each
       render :text => data.to_json and return
     end
 
