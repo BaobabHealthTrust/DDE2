@@ -69,6 +69,10 @@ class Person < CouchRest::Model::Base
                 }"
                 
     view :by_old_identification_number
+  
+    view :by_updated_at
+     
+    view :by_created_at
     
     view :by_assigned_site,
          :map => "function(doc) {
@@ -245,6 +249,13 @@ class Person < CouchRest::Model::Base
          :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.addresses.current_district], 1);
+            }
+          }"
+    
+    view :current_empty_district,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' && doc.addresses.current_district == null && doc.addresses.current_ta != null && doc.addresses.current_village != null ){
+              emit([doc.addresses.current_ta, doc.addresses.current_village], 1);
             }
           }"
 
