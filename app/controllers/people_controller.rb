@@ -95,6 +95,12 @@ class PeopleController < ApplicationController
       render :text => data.to_json and return
     end
 
+    if params[:stat] == 'ta_population'
+      district = params[:district] 
+      data = Person.current_district.key([district]).all.each
+      render :text => data.to_json and return
+    end
+
   end
   
   def person_names

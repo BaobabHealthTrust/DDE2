@@ -220,6 +220,13 @@ class Person < CouchRest::Model::Base
             }
           }"
 
+    view :home_district,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.addresses.home_district], 1);
+            }
+          }"
+
     view :current_district_ta_village,
          :map => "function(doc){
             if (doc['type'] == 'Person'){
@@ -231,6 +238,13 @@ class Person < CouchRest::Model::Base
          :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.addresses.current_district ,doc.addresses.current_ta], 1);
+            }
+          }"
+
+    view :current_district,
+         :map => "function(doc){
+            if (doc['type'] == 'Person'){
+              emit([doc.addresses.current_district], 1);
             }
           }"
 
