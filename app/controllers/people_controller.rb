@@ -79,7 +79,13 @@ class PeopleController < ApplicationController
   def population_stats
     if params[:stat] == 'current_district_ta_village'
       district = params[:district] ; ta = params[:ta] ; village = params[:village]
-      data = Person.current_district_ta_village.key([district,ta,village]).all.each
+      data = [] 
+      Person.current_district_ta_village.key([district,ta,village]).all.each do |person|
+        outcome_record = Outcome.find_by_person(person['_id'])
+        person['outcome'] = outcome_record.outcome rescue nil
+        person['outcome_date'] = outcome.outcome_date rescue nil
+        data << person
+      end
       render :text => data.to_json and return
     end
 
