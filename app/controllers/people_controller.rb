@@ -101,6 +101,53 @@ class PeopleController < ApplicationController
       render :text => data.to_json and return
     end
 
+    if params[:stat] == 'update_outcome'
+      person = Person.find(params[:identifier])
+      if person.blank?
+        render :text => [].to_json and return
+      end
+
+      outcome_record = Outcome.find_by_person(person.id)
+      outcome_date = Date.today ; outcome_date_estimated = false
+
+      year = params[:outcome]['year'] ; month = params[:outcome]['month'] ; day = params[:outcome]['day'] 
+      if year != 'Unknown' and month == 'Unknown'
+        outcome_date = "#{year}/7/15".to_date
+        outcome_date_estimated = true
+      elsif year != 'Unknown' and month != 'Unknown' and day == 'Unknown'
+        outcome_date = "#{year}/#{month}/1".to_date
+        outcome_date_estimated = true
+      elsif year == 'Unknown'
+        outcome_date = "1900/1/1".to_date
+        outcome_date_estimated = true
+      else
+        outcome_date = "#{year}/#{month}/#{day}".to_date
+      end
+
+      if outcome_record.blank?
+        outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id, 
+          outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
+      else
+        outcome_record.update_attributes(outcome: params[:outcome]['outcome'], 
+          outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
+      end
+      render :text => outcome_record.to_json and return
+    end
+
+    if params[:stat] == 'fetch_outcome'
+      person = Person.find(params[:identifier])
+      if person.blank?
+        render :text => [].to_json and return
+      end
+
+      outcome_record = Outcome.find_by_person(person.id)
+      if outcome_record.blank?
+        render :text => [].to_json and return
+      else
+        render :text => outcome_record.to_json and return
+      end
+    end
+
   end
   
   def person_names

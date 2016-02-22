@@ -6,6 +6,8 @@ class Outcome < CouchRest::Model::Base
  
  property :person, String
  property :outcome, String 
+ property :outcome_date, Date 
+ property :outcome_date_estimated, TrueClass, :default => false 
  
  timestamps!
  
