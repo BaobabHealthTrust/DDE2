@@ -79,6 +79,7 @@ class PeopleController < ApplicationController
   def population_stats
     if params[:stat] == 'current_district_ta_village'
       district = params[:district] ; ta = params[:ta] ; village = params[:village]
+=begin
       data = [] 
       Person.current_district_ta_village.key([district,ta,village]).all.each do |person|
         outcome_record = Outcome.find_by_person(person['_id'])
@@ -87,6 +88,25 @@ class PeopleController < ApplicationController
         data << person
       end
       render :text => data.to_json and return
+=end
+      data = Person.current_district_ta_village.key([district,ta,village]).all.each 
+      render :text => data.to_json and return
+    end
+
+    if params[:stat] == 'current_village_outcomes'
+      district = params[:district] ; ta = params[:ta] ; village = params[:village]
+      data = Person.current_district_ta_village.key([district,ta,village]).all.each 
+      people_ids = data.map(&:id)
+      outcomes = Outcome.by_person.keys(people_ids).each
+      
+      died = 0 ; transfer_out = 0 
+      (outcomes || []).each do |outcome|
+        died += 1 if outcome['outcome'] == 'Died'
+        transfer_out += 1 if outcome['outcome'] == 'Transfer Out'
+      end
+      
+      alive = (data.count - (died + transfer_out))
+      render :text => { alive: alive, transfer_out: transfer_out , died: died }.to_json and return
     end
 
     if params[:stat] == 'home_district_ta_village'
