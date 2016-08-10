@@ -234,7 +234,6 @@ class PeopleController < ApplicationController
 
   def create_relation
     relationship_type = params["people"]["relationship_type"]
-    raise relationship_type.inspect
     site_code = params["people"]["site_code"]
     primary_person_national_id = params["people"]["primary"]["_id"]
     secondary_person_national_id = params["people"]["secondary"]["national_id"]

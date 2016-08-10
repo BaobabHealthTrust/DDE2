@@ -115,9 +115,13 @@ Rails.application.routes.draw do
   ######################### links/routes to accomodate village listing app #################
   post '/population_stats' => 'people#population_stats'
   post '/person_names' => 'people#person_names'
+
   ######################### village apps links/routes ends #################
 
-
+  post '/create_relation' => 'people#create_relation'
+  get '/retrieve_relations' => 'people#retrieve_relations'
+  post '/retrieve_relations' => 'people#retrieve_relations'
+  
   namespace :ws do
     namespace :rest do
       resources :v1 do
