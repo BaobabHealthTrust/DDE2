@@ -44,6 +44,7 @@ class Relationship < CouchRest::Model::Base
     relations.each do |relation|
       person = Person.by__id(:key => relation.secondary).last
       next if person.blank?
+      person[:relationship_type] = relation.relationship_type
       people << person
     end
     
