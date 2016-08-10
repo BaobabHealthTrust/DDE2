@@ -98,11 +98,16 @@ class PeopleController < ApplicationController
       data = Person.current_district_ta_village.key([district,ta,village]).all.each 
       people_ids = data.map(&:id)
       outcomes = Outcome.by_person.keys(people_ids).each
-      
+      transfer_out_data = Outcome.by_from_district_and_from_ta_and_from_village.key([district,ta,village]).each
+       
       died = 0 ; transfer_out = 0 
       (outcomes || []).each do |outcome|
         died += 1 if outcome['outcome'] == 'Died'
-        transfer_out += 1 if outcome['outcome'] == 'Transfer Out'
+      end
+      
+      (transfer_out_data || []).each do |outcome|
+        next if people_ids.include?(outcome.person)
+        transfer_out += 1 
       end
       
       alive = (data.count - (died + transfer_out))
@@ -151,13 +156,45 @@ class PeopleController < ApplicationController
       end
 
       if outcome_record.blank?
-        outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id, 
-          outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
+        if params[:outcome]['outcome'] == 'Died'
+          outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id, 
+            outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
+        else
+          outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id, 
+            outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated,
+            to_district: params[:outcome]['transfering_location']['district'],
+            to_ta: params[:outcome]['transfering_location']['ta'],
+            to_village: params[:outcome]['transfering_location']['village'],
+            from_district: person.addresses.current_district,
+            from_ta: person.addresses.current_ta,
+            from_village: person.addresses.current_village)
+          
+          person.addresses.current_district = outcome_record.to_district
+          person.addresses.current_ta = outcome_record.to_ta
+          person.addresses.current_village = outcome_record.to_village
+          person.save
+        end
       else
-        outcome_record.update_attributes(outcome: params[:outcome]['outcome'], 
-          outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
+        if params[:outcome]['outcome'] == 'Died'
+          outcome_record.update_attributes(outcome: params[:outcome]['outcome'], 
+            outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
+        else
+          outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id, 
+            outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated,
+            to_district: params[:outcome]['transfering_location']['district'],
+            to_ta: params[:outcome]['transfering_location']['ta'],
+            to_village: params[:outcome]['transfering_location']['village'],
+            from_district: person.addresses.current_district,
+            from_ta: person.addresses.current_ta,
+            from_village: person.addresses.current_village)
+          
+          person.addresses.current_district = outcome_record.to_district
+          person.addresses.current_ta = outcome_record.to_ta
+          person.addresses.current_village = outcome_record.to_village
+          person.save
+        end
       end
-      render :text => outcome_record.to_json and return
+      render :text => { person: person, outcome_data: outcome_record }.to_json and return
     end
 
     if params[:stat] == 'fetch_outcome'
@@ -170,7 +207,7 @@ class PeopleController < ApplicationController
       if outcome_record.blank?
         render :text => [].to_json and return
       else
-        render :text => outcome_record.to_json and return
+        render :text => {person: person, outcome_data: outcome_record}.to_json and return
       end
     end
 
