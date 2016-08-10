@@ -193,5 +193,23 @@ class PeopleController < ApplicationController
       render :text => names.to_json and return
     end
   end
+
+
+  def create_relation
+    relationship_type = params["people"]["relationship_type"]
+    raise relationship_type.inspect
+    site_code = params["people"]["site_code"]
+    primary_person_national_id = params["people"]["primary"]["_id"]
+    secondary_person_national_id = params["people"]["secondary"]["national_id"]
+    relation_status = Relationship.create_relation(primary_person_national_id, secondary_person_national_id, relationship_type, site_code)
+    render :text => relation_status and return
+  end
+
+  def retrieve_relations
+    primary_person_national_id = params["person"]["_id"]
+    people = Relationship.relations(primary_person_national_id)
+    render :text => people.to_json and return
+  end
+
   #################################### Village listinng APIs ends ##############################
 end
