@@ -236,7 +236,7 @@ class PeopleController < ApplicationController
     relationship_type = params["people"]["relationship_type"]
     site_code = params["people"]["site_code"]
     primary_person_national_id = params["people"]["primary"]["_id"]
-    secondary_person_national_id = params["people"]["secondary"]["national_id"]
+    secondary_person_national_id = (params["people"]["secondary"]["national_id"] || params["people"]["secondary"]["_id"])
     relation_status = Relationship.create_relation(primary_person_national_id, secondary_person_national_id, relationship_type, site_code)
     render :text => relation_status and return
   end
