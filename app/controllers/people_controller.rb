@@ -235,7 +235,7 @@ class PeopleController < ApplicationController
   def create_relation
     relationship_type = params["people"]["relationship_type"]
     site_code = params["people"]["site_code"]
-    primary_person_national_id = params["people"]["primary"]["_id"]
+    primary_person_national_id = (params["people"]["primary"]["_id"] || params["people"]["primary"]["national_id"])
     secondary_person_national_id = (params["people"]["secondary"]["national_id"] || params["people"]["secondary"]["_id"])
     relation_status = Relationship.create_relation(primary_person_national_id, secondary_person_national_id, relationship_type, site_code)
     render :text => relation_status and return
@@ -248,8 +248,9 @@ class PeopleController < ApplicationController
   end
 
   def person_relations
-    national_id = params["person"]["national_id"]
+    national_id = params["national_id"]
     person_relations = Relationship.get_person_relations(national_id)
+    raise person_relations.inspect
     render :text => person_relations.to_json and return
   end
 
