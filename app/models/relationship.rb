@@ -57,8 +57,8 @@ class Relationship < CouchRest::Model::Base
     father = "Father"
     
     relations_hash = {
-      :father => {:first_name => "", :last_name => ""},
-      :mother => {:first_name => "", :last_name => ""}
+      :father => {:first_name => "", :last_name => "", :name => ""},
+      :mother => {:first_name => "", :last_name => "", :name => ""}
     }
 
     mother_details = Relationship.by_primary_and_relationship_type.keys([[national_id, mother]]).last
@@ -72,6 +72,7 @@ class Relationship < CouchRest::Model::Base
       last_name = names.family_name
       relations_hash[:mother][:first_name] = first_name
       relations_hash[:mother][:last_name] = last_name
+      relations_hash[:mother][:name] = first_name.to_s + ' ' + last_name.to_s
     end
 
     unless father_details.blank?
@@ -82,6 +83,7 @@ class Relationship < CouchRest::Model::Base
       last_name = names.family_name
       relations_hash[:father][:first_name] = first_name
       relations_hash[:father][:last_name] = last_name
+      relations_hash[:father][:name] = first_name.to_s + ' ' + last_name.to_s
     end
 
     return relations_hash

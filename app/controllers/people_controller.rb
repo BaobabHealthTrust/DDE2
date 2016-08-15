@@ -250,7 +250,6 @@ class PeopleController < ApplicationController
   def person_relations
     national_id = params["national_id"]
     person_relations = Relationship.get_person_relations(national_id)
-    raise person_relations.inspect
     render :text => person_relations.to_json and return
   end
 
