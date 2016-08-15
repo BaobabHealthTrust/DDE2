@@ -16,10 +16,11 @@ class Relationship < CouchRest::Model::Base
     view :by_primary
     view :by_secondary
     view :by_primary_and_secondary
+    view :by_primary_and_relationship_type
     view :by_relationship_type
     view :by_site_code
     view :by_updated_at
-    view :by_created_atORe
+    view :by_created_at
   end
 
   def self.create_relation(primary_person_national_id, secondary_person_national_id, relationship_type, site_code)
@@ -49,6 +50,41 @@ class Relationship < CouchRest::Model::Base
     end
     
     return people
+  end
+
+  def self.get_person_relations(national_id)
+    mother = "Mother"
+    father = "Father"
+    
+    relations_hash = {
+      :father => {:first_name => "", :last_name => ""},
+      :mother => {:first_name => "", :last_name => ""}
+    }
+
+    mother_details = Relationship.by_primary_and_relationship_type.keys([[national_id, mother]]).last
+    father_details = Relationship.by_primary_and_relationship_type.keys([[national_id, father]]).last
+
+    unless mother_details.blank?
+      mothers_id = mother_details.secondary
+      person = Person.by__id(:key => mothers_id).last
+      names = person.names
+      first_name = names.given_name
+      last_name = names.family_name
+      relations_hash[:mother][:first_name] = first_name
+      relations_hash[:mother][:last_name] = last_name
+    end
+
+    unless father_details.blank?
+      fathers_id = father_details.secondary
+      person = Person.by__id(:key => fathers_id).last
+      names = person.names
+      first_name = names.given_name
+      last_name = names.family_name
+      relations_hash[:father][:first_name] = first_name
+      relations_hash[:father][:last_name] = last_name
+    end
+
+    return relations_hash
   end
 
 end

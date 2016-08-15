@@ -247,5 +247,11 @@ class PeopleController < ApplicationController
     render :text => people.to_json and return
   end
 
+  def person_relations
+    national_id = params["person"]["national_id"]
+    person_relations = Relationship.get_person_relations(national_id)
+    render :text => person_relations.to_json and return
+  end
+
   #################################### Village listinng APIs ends ##############################
 end

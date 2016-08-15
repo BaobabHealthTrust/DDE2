@@ -121,7 +121,10 @@ Rails.application.routes.draw do
   post '/create_relation' => 'people#create_relation'
   get '/retrieve_relations' => 'people#retrieve_relations'
   post '/retrieve_relations' => 'people#retrieve_relations'
-  
+
+  get '/person_relations' => 'people#person_relations'
+  post '/person_relations' => 'people#person_relations'
+
   namespace :ws do
     namespace :rest do
       resources :v1 do
