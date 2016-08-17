@@ -242,7 +242,7 @@ class PeopleController < ApplicationController
   end
 
   def retrieve_relations
-    primary_person_national_id = params["person"]["_id"]
+    primary_person_national_id = (params["person"]["_id"] || params["person"]["national_id"])
     people = Relationship.relations(primary_person_national_id)
     render :text => people.to_json and return
   end
