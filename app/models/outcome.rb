@@ -40,5 +40,11 @@ class Outcome < CouchRest::Model::Base
     
     return outcome
   end
-  
+
+  def self.retrieve_place_of_birth(national_id)
+    outcome = Outcome.by_person_and_outcome.keys([[national_id, 'Alive']]).last
+    return "" if outcome.blank?
+    return outcome.place_of_birth
+  end
+
 end

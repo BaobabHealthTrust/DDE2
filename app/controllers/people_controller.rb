@@ -259,6 +259,12 @@ class PeopleController < ApplicationController
     outcome = Outcome.add_place_of_birth(national_id, place_of_birth)
     render :text => outcome.to_json and return
   end
+
+  def retrieve_place_of_birth
+    national_id = params["national_id"]
+    place_of_birth = Outcome.retrieve_place_of_birth(national_id)
+    render :text => place_of_birth and return
+  end
   
   #################################### Village listinng APIs ends ##############################
 end
