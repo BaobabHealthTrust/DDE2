@@ -5,6 +5,7 @@ class Outcome < CouchRest::Model::Base
  use_database "outcome"
  
  property :person, String
+ property :place_of_birth, String
  property :outcome, String 
  property :outcome_date, Date 
  property :from_district, String 
@@ -27,4 +28,17 @@ class Outcome < CouchRest::Model::Base
      view :by_created_at
   end
 
+  def self.add_place_of_birth(national_id, place_of_birth)
+    outcome = Outcome.by_person_and_outcome.keys([[national_id, 'Alive']]).last
+    outcome_date = outcome.outcome_date rescue Date.today
+    outcome = Outcome.new if outcome.blank?
+    outcome.person = national_id if outcome.person.blank?
+    outcome.outcome_date = outcome_date
+    outcome.place_of_birth = place_of_birth
+    outcome.outcome = 'Alive'
+    outcome.save
+    
+    return outcome
+  end
+  
 end

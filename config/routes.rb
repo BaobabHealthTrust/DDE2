@@ -125,6 +125,10 @@ Rails.application.routes.draw do
   get '/person_relations' => 'people#person_relations'
   post '/person_relations' => 'people#person_relations'
 
+  #add_place_of_birth
+  get '/add_place_of_birth' => 'people#add_place_of_birth'
+  post '/add_place_of_birth' => 'people#add_place_of_birth'
+
   namespace :ws do
     namespace :rest do
       resources :v1 do
