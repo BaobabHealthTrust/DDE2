@@ -265,6 +265,12 @@ class PeopleController < ApplicationController
     place_of_birth = Outcome.retrieve_place_of_birth(national_id)
     render :text => place_of_birth and return
   end
-  
+
+  def retrieve_births
+    birth_date = params[:date].to_date.strftime("%d/%b/%Y") rescue params[:date]
+    people = Person.by_birthdate.key(birth_date).all.each
+    render :text => people.to_json and return
+  end
+
   #################################### Village listinng APIs ends ##############################
 end

@@ -132,6 +132,10 @@ Rails.application.routes.draw do
   #retrieve_place_of_birth
   get '/retrieve_place_of_birth' => 'people#retrieve_place_of_birth'
   post '/retrieve_place_of_birth' => 'people#retrieve_place_of_birth'
+
+  #retrieve_births
+  get '/retrieve_births' => 'people#retrieve_births'
+  post '/retrieve_births' => 'people#retrieve_births'
   
   namespace :ws do
     namespace :rest do
