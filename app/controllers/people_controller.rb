@@ -272,5 +272,11 @@ class PeopleController < ApplicationController
     render :text => people.to_json and return
   end
 
+	def retrieve_deaths
+    death_date = params[:date].to_date.strftime("%d/%b/%Y") rescue params[:date]
+    people = Person.by_deathdate.key(death_date).all.each
+    render :text => people.to_json and return
+  end
+
   #################################### Village listinng APIs ends ##############################
 end
