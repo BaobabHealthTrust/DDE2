@@ -219,6 +219,13 @@ class Person < CouchRest::Model::Base
             }
           }"
 
+    view :home_district_ta_village_birthdate,
+         :map => "function(doc){
+            if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
+              emit([doc.addresses.home_district ,doc.addresses.home_ta, doc.addresses.home_village, (new Date(doc.birthdate))], null);
+            }
+          }"
+
     view :home_district_ta,
          :map => "function(doc){
             if (doc['type'] == 'Person'){

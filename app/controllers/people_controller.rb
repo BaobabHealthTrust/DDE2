@@ -267,14 +267,26 @@ class PeopleController < ApplicationController
   end
 
   def retrieve_births
-    birth_date = params[:date].to_date.strftime("%d/%b/%Y") rescue params[:date]
+    m = params[:date].to_date.strftime("%m").to_i
+    birth_date = params[:date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '') rescue params[:date]
     people = Person.by_birthdate.key(birth_date).all.each
     render :text => people.to_json and return
   end
 
 	def retrieve_deaths
-    death_date = params[:date].to_date.strftime("%d/%b/%Y") rescue params[:date]
-    people = Person.by_deathdate.key(death_date).all.each
+    m = params[:date].to_date.strftime("%m").to_i
+    death_date = params[:date].to_date.strftime("%d/#{m}/%Y") rescue params[:date]
+    district = params[:district]
+    ta = params[:ta]
+    village = params[:village]
+
+    count = 0
+    data = Outcome.by_from_district_and_from_ta_and_from_village.key([district,ta,village])
+    data.each do |item|
+      next if item.outcome != "Died"
+      count += 1 if item.outcome_date == death_date.to_date
+    end
+
     render :text => people.to_json and return
   end
 
