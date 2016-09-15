@@ -273,22 +273,43 @@ class PeopleController < ApplicationController
     render :text => people.to_json and return
   end
 
-	def retrieve_deaths
-    m = params[:date].to_date.strftime("%m").to_i
-    death_date = params[:date].to_date.strftime("%d/#{m}/%Y") rescue params[:date]
-    district = params[:district]
-    ta = params[:ta]
-    village = params[:village]
+  def census
+    people = Person.all
+    data = {}
+    people.each do |person|
+      district = person.addresses.current_district
+      ta = person.addresses.current_ta
+      village = person.addresses.current_village
+      next if district.blank? || ta.blank? || village.blank?
 
-    count = 0
-    data = Outcome.by_from_district_and_from_ta_and_from_village.key([district,ta,village])
-    data.each do |item|
-      next if item.outcome != "Died"
-      count += 1 if item.outcome_date == death_date.to_date
+      data["#{district}"] = {} if data["#{district}"].blank?
+      data["#{district}"]["#{ta}"] = {} if data["#{district}"]["#{ta}"].blank?
+      data["#{district}"]["#{ta}"]["#{village}"] = 0 if  data["#{district}"]["#{ta}"]["#{village}"].blank?
+      data["#{district}"]["#{ta}"]["#{village}"] += 1
     end
+    render :text => data.to_json and return
+  end
+
+  def retrieve_births_month
+    m = params[:start_date].to_date.strftime("%m").to_i
+    startdate = params[:start_date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
+    enddate = params[:end_date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
+
+    people = Person.by_birthdate.startkey("#{startdate}").endkey("#{enddate}").each
 
     render :text => people.to_json and return
   end
 
-  #################################### Village listinng APIs ends ##############################
+	def retrieve_deaths_month
+    m = params[:start_date].to_date.strftime("%m").to_i
+    startdate = params[:start_date].to_date.strftime("%Y-%m-%d")
+    enddate = params[:end_date].to_date.strftime("%Y-%m-%d")
+    outcomes = Outcome.by_outcome_date.startkey("#{startdate}").endkey("#{enddate}").each.collect{|c|
+      Person.find(c.person) if c.outcome == "Died" and c.created_at.to_date == Date.today
+    }.compact.uniq
+
+    render :text => outcomes.to_json and return
+  end
+
+  #################################### Village listing APIs ends ##############################
 end

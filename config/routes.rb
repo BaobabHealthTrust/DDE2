@@ -136,7 +136,20 @@ Rails.application.routes.draw do
   #retrieve_births
   get '/retrieve_births' => 'people#retrieve_births'
   post '/retrieve_births' => 'people#retrieve_births'
-  
+
+  #retrieve_births
+  get '/retrieve_births_month' => 'people#retrieve_births_month'
+  post '/retrieve_births_month' => 'people#retrieve_births_month'
+
+  #retrieve_deaths
+  get '/retrieve_deaths' => 'people#retrieve_deaths_month'
+  post '/retrieve_deaths' => 'people#retrieve_deaths_month'
+
+  #retrieve_deaths
+  get '/village_counts' => 'people#census'
+  post '/village_counts' => 'people#census'
+
+
   namespace :ws do
     namespace :rest do
       resources :v1 do
