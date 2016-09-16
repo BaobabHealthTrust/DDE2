@@ -291,12 +291,22 @@ class PeopleController < ApplicationController
   end
 
   def retrieve_births_month
-    m = params[:start_date].to_date.strftime("%m").to_i
-    startdate = params[:start_date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
-    enddate = params[:end_date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
 
-    people = Person.by_birthdate.startkey("#{startdate}").endkey("#{enddate}").each
+    start = params[:start_date].to_date
+    endd = params[:end_date].to_date
+    people = []
+    (start .. endd).each do |date|
+      m = date.to_date.strftime("%m").to_i
+      d = date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
+      people_on_date = Person.by_birthdate.key("#{d}").all.each.to_a
+      if people_on_date.count > 0
+        people += people_on_date
+      end
+    end
 
+    #startdate = params[:start_date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
+    #enddate = params[:end_date].to_date.strftime("%Y/%#{m}/%d").gsub(/\s+/, '')
+    #people = Person.by_birthdate.startkey("#{startdate}").endkey("#{enddate}").all.each
     render :text => people.to_json and return
   end
 
