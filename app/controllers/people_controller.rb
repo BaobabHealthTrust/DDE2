@@ -1,5 +1,5 @@
 class PeopleController < ApplicationController
-  skip_before_filter :verify_authenticity_token
+
   def find
    json = JSON.parse(params.to_json)
    json = json.delete_if { |k, v| v.empty? }
@@ -274,19 +274,16 @@ class PeopleController < ApplicationController
   end
 
   def census
-    people = Person.all
+
+    villages = params[:villages] || []
     data = {}
-    people.each do |person|
-      district = person.addresses.current_district
-      ta = person.addresses.current_ta
-      village = person.addresses.current_village
+    (villages || []).each do |location|
+      district, ta, village = location.split("__")
       next if district.blank? || ta.blank? || village.blank?
 
-      data["#{district}"] = {} if data["#{district}"].blank?
-      data["#{district}"]["#{ta}"] = {} if data["#{district}"]["#{ta}"].blank?
-      data["#{district}"]["#{ta}"]["#{village}"] = 0 if  data["#{district}"]["#{ta}"]["#{village}"].blank?
-      data["#{district}"]["#{ta}"]["#{village}"] += 1
+      data["#{location}"] = Person.current_district_ta_village.key([district.humanize, ta.humanize, village.humanize]).each.count
     end
+
     render :text => data.to_json and return
   end
 
