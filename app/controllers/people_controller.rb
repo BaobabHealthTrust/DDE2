@@ -1,5 +1,5 @@
 class PeopleController < ApplicationController
-
+  skip_before_filter :verify_authenticity_token
   def find
    json = JSON.parse(params.to_json)
    json = json.delete_if { |k, v| v.empty? }
