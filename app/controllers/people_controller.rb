@@ -114,7 +114,7 @@ class PeopleController < ApplicationController
 			render :text => { alive: alive, transfer_out: transfer_out , died: died }.to_json and return
 		end
 		
-		if params[:stat] == 'death_outcomes'
+		if params[:stat] == 'current_death_outcomes'
 			district = params[:district] ; ta = params[:ta] ; village = params[:village]
 			data = Person.current_district_ta_village.key([district,ta,village]).all.each
 			people_ids = data.map(&:id)
