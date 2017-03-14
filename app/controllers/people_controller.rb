@@ -119,20 +119,24 @@ class PeopleController < ApplicationController
 			data = Person.current_district_ta_village.key([district,ta,village]).all.each
 			people_ids = data.map(&:id)
 			outcomes = Outcome.by_person.keys(people_ids).each
-			transfer_out_data = Outcome.by_from_district_and_from_ta_and_from_village.key([district,ta,village]).each
+			cause_of_death_data = Outcome.by_from_district_and_from_ta_and_from_village_and_outcome_cause.key([district,ta,village]).each
+			#cause_of_death_data = Outcome.by_from_district_and_from_ta_and_from_village.key([district,ta,village]).each
 			
-			died = 0 ; transfer_out = 0
+			died = 0 ; cause_of_death = 0; anadwala_kwa_nthawi_yochepa_mwezi_sunakwane = 0;
 			(outcomes || []).each do |outcome|
 				died += 1 if outcome['outcome'] == 'Died'
 			end
 			
-			(transfer_out_data || []).each do |outcome|
+			(cause_of_death_data || []).each do |outcome|
 				next if people_ids.include?(outcome.person)
-				transfer_out += 1
+				#cause_of_death += 1
+				cause_of_death = outcome
+				anadwala_kwa_nthawi_yochepa_mwezi_sunakwane += 1
 			end
 			
-			alive = (data.count - (died + transfer_out))
-			render :text => { alive: alive, transfer_out: transfer_out , died: died }.to_json and return
+			render :text => { cause_of_death: cause_of_death ,
+			                  anadwala_kwa_nthawi_yochepa_mwezi_sunakwane: anadwala_kwa_nthawi_yochepa_mwezi_sunakwane,
+			                  died: died }.to_json and return
 		end
 		
 		if params[:stat] == 'home_district_ta_village'
@@ -179,9 +183,11 @@ class PeopleController < ApplicationController
 			if outcome_record.blank?
 				if params[:outcome]['outcome'] == 'Died'
 					outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id,
+					                                outcome_cause: params[:outcome]['cause_of_death'],
 					                                outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
 				else
 					outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id,
+					                                outcome_cause: params[:outcome]['cause_of_death'],
 					                                outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated,
 					                                to_district: params[:outcome]['transfering_location']['district'],
 					                                to_ta: params[:outcome]['transfering_location']['ta'],
@@ -198,9 +204,11 @@ class PeopleController < ApplicationController
 			else
 				if params[:outcome]['outcome'] == 'Died'
 					outcome_record.update_attributes(outcome: params[:outcome]['outcome'],
+					                                 outcome_cause: params[:outcome]['cause_of_death'],
 					                                 outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated)
 				else
 					outcome_record = Outcome.create(outcome: params[:outcome]['outcome'], person: person.id,
+					                                outcome_cause: params[:outcome]['cause_of_death'],
 					                                outcome_date: outcome_date, outcome_date_estimated: outcome_date_estimated,
 					                                to_district: params[:outcome]['transfering_location']['district'],
 					                                to_ta: params[:outcome]['transfering_location']['ta'],
