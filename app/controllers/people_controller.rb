@@ -118,25 +118,28 @@ class PeopleController < ApplicationController
 			district = params[:district] ; ta = params[:ta] ; village = params[:village]
 			data = Person.current_district_ta_village.key([district,ta,village]).all.each
 			people_ids = data.map(&:id)
-			outcomes = Outcome.by_person.keys(people_ids).each
-			cause_of_death_data = Outcome.by_from_district_and_from_ta_and_from_village_and_outcome_cause.key([district,ta,village]).each
-			#cause_of_death_data = Outcome.by_from_district_and_from_ta_and_from_village.key([district,ta,village]).each
+			outcome_cause = Outcome.by_person.keys(people_ids).each
 			
-			died = 0 ; cause_of_death = 0; anadwala_kwa_nthawi_yochepa_mwezi_sunakwane = 0;
-			(outcomes || []).each do |outcome|
-				died += 1 if outcome['outcome'] == 'Died'
+			ngozi = 0;
+			adadzipha = 0;
+			adaphedwa = 0;
+			anadwala_kwa_nthawi_yochepa_mwezi_sunakwane = 0;
+			anadwala_kwa_nthawi_yayitali_kudutsa_mwezi = 0
+			
+			(outcome_cause || []).each do |outcome|
+				ngozi += 1 if outcome['outcome_cause'] == 'Ngozi'
+				adadzipha += 1 if outcome['outcome_cause'] == 'Adadzipha'
+				adaphedwa += 1 if outcome['outcome_cause'] == 'Adaphedwa'
+				anadwala_kwa_nthawi_yayitali_kudutsa_mwezi += 1 if outcome['outcome_cause'] == 'Anadwala kwa nthawi yayitali (kudutsa mwezi)'
+				anadwala_kwa_nthawi_yochepa_mwezi_sunakwane += 1 if outcome['outcome_cause'] == 'Anadwala kwa nthawi yochepa (mwezi sunakwane)'
 			end
 			
-			(cause_of_death_data || []).each do |outcome|
-				next if people_ids.include?(outcome.person)
-				#cause_of_death += 1
-				cause_of_death = outcome
-				anadwala_kwa_nthawi_yochepa_mwezi_sunakwane += 1
-			end
-			
-			render :text => { cause_of_death: cause_of_death ,
+			render :text => { ngozi: ngozi,
+			                  adadzipha: adadzipha,
+			                  adaphedwa: adaphedwa,
 			                  anadwala_kwa_nthawi_yochepa_mwezi_sunakwane: anadwala_kwa_nthawi_yochepa_mwezi_sunakwane,
-			                  died: died }.to_json and return
+			                  anadwala_kwa_nthawi_yayitali_kudutsa_mwezi: anadwala_kwa_nthawi_yayitali_kudutsa_mwezi
+			}.to_json and return
 		end
 		
 		if params[:stat] == 'home_district_ta_village'
