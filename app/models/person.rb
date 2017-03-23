@@ -70,19 +70,20 @@ class Person < CouchRest::Model::Base
                 
     view :by_old_identification_number
   
-    view :by_updated_at
+    # view :by_updated_at
      
-    view :by_created_at
+    # view :by_created_at
 
     view :by_birthdate
 
+=begin
     view :by_assigned_site,
          :map => "function(doc) {
                   if ((doc['type'] == 'Person') && (doc['assigned_site'] != null) && doc['assigned_site'] != '???') {
                     emit(doc['assigned_site'], 1);
                   }
                 }"
-                
+
     view :by_gender,
          :map => "function(doc) {
                   if ((doc['type'] == 'Person') && (doc['gender'] != null) && doc['assigned_site'] != '???') {
@@ -96,6 +97,7 @@ class Person < CouchRest::Model::Base
                     emit([doc['gender'], doc['assigned_site']], 1);
                   }
                 }"
+=end
   end
 
   design do
@@ -157,12 +159,14 @@ class Person < CouchRest::Model::Base
 		          }		          
 	          }
           }"
+=begin
     view :by_voided,
          :map => "function(doc) {
               if(doc.assigned_site == '???'){
                 emit(doc._id, null);
               }
             }"
+
     view :by_temporary_id,
          :map => "function(doc) {
           	String.prototype.checkDigit = function(){
@@ -208,6 +212,7 @@ class Person < CouchRest::Model::Base
 		        emit(doc._id, null);
 	        }
         }"
+=end
   end
 
   ###################### the following views are designed to accomodate village listing app #######################
@@ -218,7 +223,7 @@ class Person < CouchRest::Model::Base
               emit([doc.addresses.home_district ,doc.addresses.home_ta, doc.addresses.home_village], 1);
             }
           }"
-
+=begin
     view :home_district_ta_village_birthdate,
          :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
@@ -239,7 +244,7 @@ class Person < CouchRest::Model::Base
               emit([doc.addresses.home_district], 1);
             }
           }"
-
+=end
     view :current_district_ta_village,
          :map => "function(doc){
             if (doc['type'] == 'Person'){
@@ -260,14 +265,14 @@ class Person < CouchRest::Model::Base
               emit([doc.addresses.current_district], 1);
             }
           }"
-    
+=begin
     view :current_empty_district,
          :map => "function(doc){
             if (doc['type'] == 'Person' && doc.addresses.current_district == null && doc.addresses.current_ta != null && doc.addresses.current_village != null ){
               emit([doc.addresses.current_ta, doc.addresses.current_village], 1);
             }
           }"
-
+=end
     view :given_name_code,
          :map => "function(doc){
             if (doc['type'] == 'Person'){

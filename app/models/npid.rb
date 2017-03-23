@@ -104,11 +104,11 @@ class Npid < CouchRest::Model::Base
   end
 
   design do
-        view :by__id
-        view :by_national_id
-        view :by_site_code
-        view :by_site_code_and_assigned
-        view :by_assigned
+        # view :by__id
+        # view :by_national_id
+        # view :by_site_code
+        # view :by_site_code_and_assigned
+        # view :by_assigned
     
         # Site views
         view :unassigned_to_site,
@@ -117,12 +117,14 @@ class Npid < CouchRest::Model::Base
                       emit(doc.national_id, null);
                 }
               }"
+=begin
         view :unassigned_at_site,
              :map => "function(doc){
                 if (doc['type'] == 'Npid' && doc['site_code'] == 'KCH' && !doc.assigned ){
                   emit(doc.national_id, null);
                 }
               }"
+=end
         view :assigned_at_site,
              :map => "function(doc){
                 if (doc['type'] == 'Npid' && doc['site_code'] == 'KCH' && doc.assigned ){
