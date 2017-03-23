@@ -77,6 +77,21 @@ class PeopleController < ApplicationController
 	
 	#################################### Village listinng APIs starts ##############################
 	def population_stats
+		if params[:stat] == 'current_district_ta_village_outcome_cause'
+			district = params[:district] ; ta = params[:ta] ; village = params[:village] ; outcome = params[:outcome]
+			data = []
+			Person.current_district_ta_village.key([district,ta,village]).all.each do |person|
+				outcome_record = Outcome.find_by_person(person['_id'])
+				person['outcome'] = outcome_record.outcome rescue nil
+				person['outcome_cause'] = outcome_record.outcome_cause rescue nil
+				person['outcome_date'] = outcome_record.outcome_date rescue nil
+				if !person['outcome_cause'].nil? and person['outcome_cause'].gsub(' ','_').gsub('(','').gsub(')','').downcase == outcome
+					data << person
+				end
+			end
+			render :text => data.to_json and return
+		end
+		
 		if params[:stat] == 'current_district_ta_village'
 			district = params[:district] ; ta = params[:ta] ; village = params[:village]
 =begin
