@@ -149,8 +149,12 @@ class PeopleController < ApplicationController
 				ngozi += 1 if outcome['outcome_cause'] == 'Ngozi'
 				adadzipha += 1 if outcome['outcome_cause'] == 'Adadzipha'
 				adaphedwa += 1 if outcome['outcome_cause'] == 'Adaphedwa'
-				anadwala_kwa_nthawi_yayitali_kudutsa_mwezi += 1 if outcome['outcome_cause'] == 'Anadwala kwa nthawi yayitali (kudutsa mwezi)'
-				anadwala_kwa_nthawi_yochepa_mwezi_sunakwane += 1 if outcome['outcome_cause'] == 'Anadwala kwa nthawi yochepa (mwezi sunakwane)'
+				if outcome['outcome_cause'] == 'Anadwala kwa nthawi yayitali (kudutsa mwezi)'
+					anadwala_kwa_nthawi_yayitali_kudutsa_mwezi += 1
+				end
+				if outcome['outcome_cause'] == 'Anadwala kwa nthawi yochepa (mwezi sunakwane)'
+					anadwala_kwa_nthawi_yochepa_mwezi_sunakwane += 1
+				end
 			end
 			
 			render :text => { unknown: unknown,
