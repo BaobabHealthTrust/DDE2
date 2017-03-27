@@ -81,6 +81,7 @@ class PeopleController < ApplicationController
 			district = params[:district] ; ta = params[:ta] ; village = params[:village] ; outcome = params[:outcome]
 			data = []
 			Person.current_district_ta_village.key([district,ta,village]).all.each do |person|
+				
 				outcome_record = Outcome.find_by_person(person['_id'])
 				person['outcome'] = outcome_record.outcome rescue nil
 				person['outcome_cause'] = outcome_record.outcome_cause rescue nil
@@ -89,6 +90,7 @@ class PeopleController < ApplicationController
 					data << person
 				end
 			end
+			
 			render :text => data.to_json and return
 		end
 		
@@ -135,6 +137,7 @@ class PeopleController < ApplicationController
 			people_ids = data.map(&:id)
 			outcome_cause = Outcome.by_person.keys(people_ids).each
 			
+			unknown = 0;
 			ngozi = 0;
 			adadzipha = 0;
 			adaphedwa = 0;
@@ -142,6 +145,7 @@ class PeopleController < ApplicationController
 			anadwala_kwa_nthawi_yayitali_kudutsa_mwezi = 0
 			
 			(outcome_cause || []).each do |outcome|
+				unknown += 1 if outcome['outcome_cause'] == '' || outcome['outcome_cause'].nil?
 				ngozi += 1 if outcome['outcome_cause'] == 'Ngozi'
 				adadzipha += 1 if outcome['outcome_cause'] == 'Adadzipha'
 				adaphedwa += 1 if outcome['outcome_cause'] == 'Adaphedwa'
@@ -149,7 +153,8 @@ class PeopleController < ApplicationController
 				anadwala_kwa_nthawi_yochepa_mwezi_sunakwane += 1 if outcome['outcome_cause'] == 'Anadwala kwa nthawi yochepa (mwezi sunakwane)'
 			end
 			
-			render :text => { ngozi: ngozi,
+			render :text => { unknown: unknown,
+			                  ngozi: ngozi,
 			                  adadzipha: adadzipha,
 			                  adaphedwa: adaphedwa,
 			                  anadwala_kwa_nthawi_yochepa_mwezi_sunakwane: anadwala_kwa_nthawi_yochepa_mwezi_sunakwane,
