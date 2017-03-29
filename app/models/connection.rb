@@ -18,7 +18,7 @@ class Connection < CouchRest::Model::Base
   property :sink, String    # Connection destination
  
   timestamps!
-=begin
+
   design do
     view :by__id
     
@@ -29,5 +29,5 @@ class Connection < CouchRest::Model::Base
             }
           }"
   end
-=end
+
 end

@@ -72,7 +72,7 @@ class Site < CouchRest::Model::Base
     
     result
   end
-=begin
+
   design do
     view :by__id
     
@@ -86,5 +86,5 @@ class Site < CouchRest::Model::Base
             }
           }"
   end
-=end
+
 end
