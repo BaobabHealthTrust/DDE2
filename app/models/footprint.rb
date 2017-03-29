@@ -8,7 +8,7 @@ class Footprint < CouchRest::Model::Base
   property :origin, String
   
   timestamps!
-
+=begin
   design do
     view :by__id
 
@@ -48,5 +48,5 @@ class Footprint < CouchRest::Model::Base
           }"
 
   end
-
+=end
 end

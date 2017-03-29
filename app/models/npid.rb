@@ -103,6 +103,7 @@ class Npid < CouchRest::Model::Base
     [result, params[:start], limit]
   end
 
+=begin
   design do
         view :by__id
         view :by_national_id
@@ -249,6 +250,6 @@ class Npid < CouchRest::Model::Base
     
   end
   
-  
+=end
 
 end

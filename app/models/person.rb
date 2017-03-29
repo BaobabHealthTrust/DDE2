@@ -59,7 +59,7 @@ class Person < CouchRest::Model::Base
 
   timestamps!
 
-
+=begin
   design do
     view :by__id,
          :map => "function(doc) {
@@ -212,5 +212,6 @@ class Person < CouchRest::Model::Base
     self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
     self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?
   end
+=end
 
 end
