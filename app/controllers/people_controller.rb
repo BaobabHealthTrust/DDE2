@@ -30,8 +30,13 @@ class PeopleController < ApplicationController
   end
 
   def create_footprint
-    json = params   
-    footprint = Utils::FootprintUtil.log_application_and_site(json) if params
+    json = params
+
+    npid = params["value"] rescue nil
+    application = params["application_name"] rescue nil
+    site = params["site"] rescue nil
+
+    footprint = Utils::FootprintUtil.log_application_and_site(npid, application, site) if params
     render :text => footprint.to_s and return
   end
 
