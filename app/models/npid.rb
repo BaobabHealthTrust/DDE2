@@ -107,7 +107,12 @@ class Npid < CouchRest::Model::Base
     view :by__id
     view :by_national_id
     view :by_site_code
-    view :by_site_code_and_assigned
+    view :by_site_code_and_assigned,
+         :map => "function(doc) {
+                  if ((doc['type'] == 'Npid') && (doc['site_code'] != null)) {
+                    emit([doc['site_code'], doc['assigned']], 1);
+                  }
+                }"
     view :by_assigned
 
     # Site views
