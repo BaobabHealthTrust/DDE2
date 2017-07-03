@@ -255,7 +255,9 @@ class Person < CouchRest::Model::Base
     view :current_district_ta,
          :map => "function(doc){
             if (doc['type'] == 'Person'){
-              emit([doc.addresses.current_district ,doc.addresses.current_ta], 1);
+              if(doc['created_at'] >= '2016-04-01'){
+                emit([doc.addresses.current_district ,doc.addresses.current_ta], 1);
+              }
             }
           }"
 
