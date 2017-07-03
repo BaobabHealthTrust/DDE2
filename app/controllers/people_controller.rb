@@ -86,8 +86,9 @@ class PeopleController < ApplicationController
 				person['outcome'] = outcome_record.outcome rescue nil
 				person['outcome_cause'] = outcome_record.outcome_cause rescue nil
 				person['outcome_date'] = outcome_record.outcome_date rescue nil
-				if !person['outcome_cause'].nil? and person['outcome_cause'].gsub(' ','_').gsub('(','').gsub(')','').downcase == outcome
-					data << person
+				#if !person['outcome_cause'].nil? and person['outcome_cause'].gsub(' ','_').gsub('(','').gsub(')','').downcase == outcome
+				if person['outcome'] == 'Died' && person['outcome_date'].to_datetime.strftime('%F') >= '2016-04-01' && person['outcome_date'].to_datetime.strftime('%F') <= '2017-03-31'
+						data << person
 				end
 			end
 			
