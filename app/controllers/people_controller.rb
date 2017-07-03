@@ -80,15 +80,23 @@ class PeopleController < ApplicationController
 		if params[:stat] == 'current_district_ta_village_outcome_cause'
 			district = params[:district] ; ta = params[:ta] ; village = params[:village] ; outcome = params[:outcome]
 			data = []
-			Person.current_district_ta.key([district,ta]).all.each do |person|
-				
-				outcome_record = Outcome.find_by_person(person['_id'])
-				person['outcome'] = outcome_record.outcome rescue nil
-				person['outcome_cause'] = outcome_record.outcome_cause rescue nil
-				person['outcome_date'] = outcome_record.outcome_date rescue nil
-				#if !person['outcome_cause'].nil? and person['outcome_cause'].gsub(' ','_').gsub('(','').gsub(')','').downcase == outcome
-				if person['outcome'] == 'Died' && person['outcome_date'].to_datetime.strftime('%F') >= '2016-04-01' && person['outcome_date'].to_datetime.strftime('%F') <= '2017-03-31'
-						data << person
+			# Person.current_district_ta.key([district,ta]).all.each do |person|
+			#
+			# 	outcome_record = Outcome.find_by_person(person['_id'])
+			# 	person['outcome'] = outcome_record.outcome rescue nil
+			# 	person['outcome_cause'] = outcome_record.outcome_cause rescue nil
+			# 	person['outcome_date'] = outcome_record.outcome_date rescue nil
+			# 	#if !person['outcome_cause'].nil? and person['outcome_cause'].gsub(' ','_').gsub('(','').gsub(')','').downcase == outcome
+			# 	if person['outcome'] == 'Died' && person['outcome_date'].to_datetime.strftime('%F') >= '2016-04-01' && person['outcome_date'].to_datetime.strftime('%F') <= '2017-03-31'
+			# 			data << person
+			# 	end
+			# end
+			
+			Outcome.all.each do |outcome|
+				person = Person.find_by__id(outcome['person'])
+				outcome['person_record'] = person
+				if outcome['outcome_date'].to_datetime.strftime('%F') >= '2016-04-01' && outcome['outcome_date'].to_datetime.strftime('%F') <= '2017-03-31'
+					data << outcome
 				end
 			end
 			
