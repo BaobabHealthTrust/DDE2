@@ -80,7 +80,7 @@ class PeopleController < ApplicationController
 		if params[:stat] == 'current_district_ta_village_outcome_cause'
 			district = params[:district] ; ta = params[:ta] ; village = params[:village] ; outcome = params[:outcome]
 			data = []
-			Person.current_district_ta_village.key([district,ta,village]).all.each do |person|
+			Person.current_district_ta.key([district,ta]).all.each do |person|
 				
 				outcome_record = Outcome.find_by_person(person['_id'])
 				person['outcome'] = outcome_record.outcome rescue nil
