@@ -140,6 +140,34 @@ class PeopleController < ApplicationController
 			render :text => { alive: alive, transfer_out: transfer_out , died: died }.to_json and return
 		end
 		
+		if params[:stat] == 'bloomberg_union'
+			this_month = Date.today.month
+			this_year = Date.today.year
+			district = params[:district] ; ta = params[:ta]
+			data = Person.current_district_ta.key([district,ta]).all.each
+			people_ids = data.map(&:id)
+			outcome_cause = Outcome.by_person.keys(people_ids).each
+			people_results = Person.by__id.keys(people_ids).each
+			
+			births = 0
+			deaths = 0
+			total_census = 0
+			
+			(people_results || []).each do |person|
+				births += 1 if person['birthdate'].to_date.month.to_i == this_month && person['birthdate'].to_date.year.to_i == this_year
+				total_census += 1
+			end
+			
+			(outcome_cause || []).each do |outcome|
+				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == this_month && outcome['outcome_date'].to_date.year.to_i == this_year
+			end
+			
+			render :text => { deaths: deaths,
+			                  births: births,
+			                  total_census: total_census
+			}.to_json and return
+		end
+		
 		if params[:stat] == 'current_death_outcomes'
 			district = params[:district] ; ta = params[:ta] ; village = params[:village]
 			data = Person.current_district_ta_village.key([district,ta,village]).all.each
