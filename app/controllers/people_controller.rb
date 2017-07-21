@@ -147,24 +147,24 @@ class PeopleController < ApplicationController
 			data = Person.current_district_ta.key([district,ta]).all.each
 			people_ids = data.map(&:id)
 			outcome_cause = Outcome.by_person.keys(people_ids).each
-			people_results = Person.by__id.keys(people_ids).each
+			# people_results = Person.by__id.keys(people_ids).each
 			
 			births = 0
 			deaths = 0
 			total_census = 0
 			
-			(people_results || []).each do |person|
-				births += 1 if person['birthdate'].to_date.month.to_i == this_month && person['birthdate'].to_date.year.to_i == this_year
-				total_census += 1
-			end
-			
-			File.open("bloomberg_births.json","w") do |f|
-				f.write(births)
-			end
-			
-			File.open("bloomberg_total.json","w") do |f|
-				f.write(total_census)
-			end
+			# (people_results || []).each do |person|
+			# 	births += 1 if person['birthdate'].to_date.month.to_i == this_month && person['birthdate'].to_date.year.to_i == this_year
+			# 	total_census += 1
+			# end
+			#
+			# File.open("bloomberg_births.json","w") do |f|
+			# 	f.write(births)
+			# end
+			#
+			# File.open("bloomberg_total.json","w") do |f|
+			# 	f.write(total_census)
+			# end
 			(outcome_cause || []).each do |outcome|
 				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == this_month && outcome['outcome_date'].to_date.year.to_i == this_year
 			end
