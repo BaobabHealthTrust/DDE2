@@ -158,8 +158,19 @@ class PeopleController < ApplicationController
 				total_census += 1
 			end
 			
+			File.open("bloomberg_births.json","w") do |f|
+				f.write(births)
+			end
+			
+			File.open("bloomberg_total.json","w") do |f|
+				f.write(total_census)
+			end
 			(outcome_cause || []).each do |outcome|
 				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == this_month && outcome['outcome_date'].to_date.year.to_i == this_year
+			end
+			
+			File.open("bloomberg_deaths.json","w") do |f|
+				f.write(deaths)
 			end
 			
 			render :text => { deaths: deaths,
