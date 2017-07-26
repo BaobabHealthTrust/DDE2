@@ -103,7 +103,14 @@ class PeopleController < ApplicationController
 					end
 				end
 			elsif parameter == 'births'
-					data = Person.by_birthdate.startkey(start_date).endkey(end_date).all.each
+				start_date = month_beginning.strftime('%Y/%-m/%d')
+				end_date = month_ending.strftime('%Y/%-m/%d')
+				
+				Person.by_birthdate.startkey(start_date).endkey(end_date).each do |outcome|
+					person = Person.find_by__id(outcome['_id'])
+					outcome['person_record'] = person
+					data << outcome
+				end
 			end
 			
 			render :text => data.to_json and return
