@@ -102,11 +102,8 @@ class PeopleController < ApplicationController
 						data << outcome
 					end
 				end
-				elsif parameter == 'births'
-					month_births = Person.by_birthdate.startkey(start_date).endkey(end_date)
-					(month_births || []).all.each do |month_birth|
-						data << month_birth
-					end
+			elsif parameter == 'births'
+					data = Person.by_birthdate.startkey(start_date).endkey(end_date).all.each
 			end
 			
 			render :text => data.to_json and return
