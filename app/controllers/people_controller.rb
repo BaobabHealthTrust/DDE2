@@ -147,13 +147,12 @@ class PeopleController < ApplicationController
 			data = Person.current_district_ta.key([district,ta]).all.each
 			people_ids = data.map(&:id)
 			outcome_cause = Outcome.by_person.keys(people_ids).each
-			people_results = Person.by__id.keys(people_ids).each
 			
 			births = 0
 			deaths = 0
 			total_census = 0
 			
-			(people_results || []).each do |person|
+			(data || []).each do |person|
 				births += 1 if person['birthdate'].to_date.month.to_i == Date::MONTHNAMES.index(month).to_i && person['birthdate'].to_date.year.to_i == year
 				total_census += 1
 			end
