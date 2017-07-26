@@ -157,14 +157,16 @@ class PeopleController < ApplicationController
 			
 			births = month_births.count
 			deaths = 0
+			overall_deaths = 0
 	
 			(outcome_cause || []).each do |outcome|
 				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == month_to_i && outcome['outcome_date'].to_date.year.to_i == year
+				overall_deaths += 1
 			end
 			
 			render :text => { deaths: deaths,
 			                  births: births,
-			                  total_census: data.count
+			                  total_census: (data.count - overall_deaths),
 			}.to_json and return
 		end
 		
