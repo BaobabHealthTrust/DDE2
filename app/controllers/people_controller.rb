@@ -77,20 +77,44 @@ class PeopleController < ApplicationController
 	
 	#################################### Village listinng APIs starts ##############################
 	def population_stats
+		if params[:stat] == 'current_district_ta_parameter'
+			
+			month = params[:month_period]
+			year = Date.today.year
+			
+			month_to_i = Date::MONTHNAMES.index(month).to_i
+			month_beginning = Date.new(year, month_to_i)
+			month_ending = month_beginning.end_of_month
+
+			start_date = month_beginning.strftime('%Y-%m-%d')
+			end_date = month_ending.strftime('%Y-%m-%d')
+			
+			district = params[:district]
+			ta = params[:ta]
+			parameter = params[:parameter]
+			data = []
+			
+			if parameter == 'deaths'
+				Outcome.all.each do |outcome|
+					person = Person.find_by__id(outcome['person'])
+					outcome['person_record'] = person
+					if outcome['outcome_date'].to_datetime.strftime('%F') >= start_date && outcome['outcome_date'].to_datetime.strftime('%F') <= end_date
+						data << outcome
+					end
+				end
+				elsif parameter == 'births'
+					month_births = Person.by_birthdate.startkey(start_date).endkey(end_date)
+					(month_births || []).all.each do |month_birth|
+						data << month_birth
+					end
+			end
+			
+			render :text => data.to_json and return
+		end
+		
 		if params[:stat] == 'current_district_ta_village_outcome_cause'
 			district = params[:district] ; ta = params[:ta] ; village = params[:village] ; outcome = params[:outcome]
 			data = []
-			# Person.current_district_ta.key([district,ta]).all.each do |person|
-			#
-			# 	outcome_record = Outcome.find_by_person(person['_id'])
-			# 	person['outcome'] = outcome_record.outcome rescue nil
-			# 	person['outcome_cause'] = outcome_record.outcome_cause rescue nil
-			# 	person['outcome_date'] = outcome_record.outcome_date rescue nil
-			# 	#if !person['outcome_cause'].nil? and person['outcome_cause'].gsub(' ','_').gsub('(','').gsub(')','').downcase == outcome
-			# 	if person['outcome'] == 'Died' && person['outcome_date'].to_datetime.strftime('%F') >= '2016-04-01' && person['outcome_date'].to_datetime.strftime('%F') <= '2017-03-31'
-			# 			data << person
-			# 	end
-			# end
 			
 			Outcome.all.each do |outcome|
 				person = Person.find_by__id(outcome['person'])
