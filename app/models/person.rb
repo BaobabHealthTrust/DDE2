@@ -69,35 +69,9 @@ class Person < CouchRest::Model::Base
                 }"
                 
     view :by_old_identification_number
-  
-    # view :by_updated_at
-     
-    # view :by_created_at
 
     view :by_birthdate
 
-=begin
-    view :by_assigned_site,
-         :map => "function(doc) {
-                  if ((doc['type'] == 'Person') && (doc['assigned_site'] != null) && doc['assigned_site'] != '???') {
-                    emit(doc['assigned_site'], 1);
-                  }
-                }"
-
-    view :by_gender,
-         :map => "function(doc) {
-                  if ((doc['type'] == 'Person') && (doc['gender'] != null) && doc['assigned_site'] != '???') {
-                    emit(doc['gender'], 1);
-                  }
-                }"
-                
-    view :by_gender_and_assigned_site, 
-         :map => "function(doc) {
-                  if ((doc['type'] == 'Person') && (doc['gender'] != null) && (doc['assigned_site'] != null) && doc['assigned_site'] != '???') {
-                    emit([doc['gender'], doc['assigned_site']], 1);
-                  }
-                }"
-=end
   end
 
   design do
@@ -159,60 +133,6 @@ class Person < CouchRest::Model::Base
 		          }		          
 	          }
           }"
-=begin
-    view :by_voided,
-         :map => "function(doc) {
-              if(doc.assigned_site == '???'){
-                emit(doc._id, null);
-              }
-            }"
-
-    view :by_temporary_id,
-         :map => "function(doc) {
-          	String.prototype.checkDigit = function(){
-          		var digits = this.trim().replace(/-/,'').split('').reverse();         
-          		var sum = 0;          
-          		for(var i = 0; i < digits.length; i++){          
-            			var digit = parseInt(digits[i]);            
-            			if(i % 2 > 0){            
-              				digit *= 2;              
-              				if(digit > 9){              
-                				var num = String(digit).split('');                
-                				digit = 0;                
-                				for(var j = 0; j < num.length; j++){                  
-                  					digit += parseInt(num[j]);                
-                				}              
-              				}            
-            			}            
-            			sum += digit;          
-          		}          
-          		return (sum * 9) % 10;
-	        };
-	        String.prototype.toDecimal = function(){
-          		var separator = '-'
-          		// we are taking out letters B, I, O, Q, S, Z because they might be
-          		// mistaken for 8, 1, 0, 0, 5, 2 respectively
-          		var base_map = ['0','1','2','3','4','5','6','7','8','9','A','C','D','E','F','G',
-                        	'H','J','K','L','M','N','P','R','T','U','V','W','X','Y'];                      
-          		var reverse_map = {'0' : 0,'1' : 1,'2' : 2,'3' : 3,'4' : 4,'5' : 5,
-                           '6' : 6,'7' : 7,'8' : 8,'9' : 9,
-                           'A' : 10,'C' : 11,'D' : 12,'E' : 13,'F' : 14,'G' : 15,
-                           'H' : 16,'J' : 17,'K' : 18,'L' : 19,'M' : 20,'N' : 21,
-                           'P' : 22,'R' : 23,'T' : 24,'U' : 25,'V' : 26,'W' : 27,
-                           'X' : 28,'Y' : 29};                           
-           		var decimal = 0;           
-           		var num = this.replace(/-/,'').split('').reverse();           
-           		for(var i = 0; i < num.length; i++){           
-              			decimal += reverse_map[num[i]] * Math.pow(30, i);            
-           		}             
-           		return decimal;                 
-	        };
-	        var decimal = doc._id.trim().toDecimal();	
-	        if(String(parseInt(decimal / 10)).checkDigit() != (decimal % 10) && doc.type == 'Person'){
-		        emit(doc._id, null);
-	        }
-        }"
-=end
   end
 
   ###################### the following views are designed to accomodate village listing app #######################
@@ -223,28 +143,6 @@ class Person < CouchRest::Model::Base
               emit([doc.addresses.home_district ,doc.addresses.home_ta, doc.addresses.home_village], 1);
             }
           }"
-=begin
-    view :home_district_ta_village_birthdate,
-         :map => "function(doc){
-            if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
-              emit([doc.addresses.home_district ,doc.addresses.home_ta, doc.addresses.home_village, (new Date(doc.birthdate))], null);
-            }
-          }"
-
-    view :home_district_ta,
-         :map => "function(doc){
-            if (doc['type'] == 'Person'){
-              emit([doc.addresses.home_district ,doc.addresses.home_ta], 1);
-            }
-          }"
-
-    view :home_district,
-         :map => "function(doc){
-            if (doc['type'] == 'Person'){
-              emit([doc.addresses.home_district], 1);
-            }
-          }"
-=end
     view :current_district_ta_village,
          :map => "function(doc){
             if (doc['type'] == 'Person'){
@@ -255,9 +153,7 @@ class Person < CouchRest::Model::Base
     view :current_district_ta,
          :map => "function(doc){
             if (doc['type'] == 'Person'){
-              if(doc['created_at'] >= '2016-04-01'){
                 emit([doc.addresses.current_district ,doc.addresses.current_ta], 1);
-              }
             }
           }"
 
@@ -267,14 +163,6 @@ class Person < CouchRest::Model::Base
               emit([doc.addresses.current_district], 1);
             }
           }"
-=begin
-    view :current_empty_district,
-         :map => "function(doc){
-            if (doc['type'] == 'Person' && doc.addresses.current_district == null && doc.addresses.current_ta != null && doc.addresses.current_village != null ){
-              emit([doc.addresses.current_ta, doc.addresses.current_village], 1);
-            }
-          }"
-=end
     view :given_name_code,
          :map => "function(doc){
             if (doc['type'] == 'Person'){

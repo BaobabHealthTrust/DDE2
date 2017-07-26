@@ -157,11 +157,6 @@ class PeopleController < ApplicationController
 			
 			births = month_births.count
 			deaths = 0
-			
-			# (data || []).each do |person|
-			# 	births += 1 if person['birthdate'].to_date.month.to_i == Date::MONTHNAMES.index(month).to_i && person['birthdate'].to_date.year.to_i == year
-			# 	total_census += 1
-			# end
 	
 			(outcome_cause || []).each do |outcome|
 				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == month_to_i && outcome['outcome_date'].to_date.year.to_i == year
