@@ -142,28 +142,34 @@ class PeopleController < ApplicationController
 		
 		if params[:stat] == 'bloomberg_union'
 			month = params[:month_period]
+			month_to_i = Date::MONTHNAMES.index(month).to_i
+			
 			year = Date.today.year
 			district = params[:district] ; ta = params[:ta]
 			data = Person.current_district_ta.key([district,ta]).all.each
 			people_ids = data.map(&:id)
 			outcome_cause = Outcome.by_person.keys(people_ids).each
 			
-			births = 0
-			deaths = 0
-			total_census = 0
+			start_day = "#{year}/#{month_to_i}/01"
+			end_day = "#{year}/#{month_to_i}/31"
 			
-			(data || []).each do |person|
-				births += 1 if person['birthdate'].to_date.month.to_i == Date::MONTHNAMES.index(month).to_i && person['birthdate'].to_date.year.to_i == year
-				total_census += 1
-			end
+			month_births = Person.by_birthdate.startkey(start_day).endkey(end_day).all.each
+			
+			births = month_births.count
+			deaths = 0
+			
+			# (data || []).each do |person|
+			# 	births += 1 if person['birthdate'].to_date.month.to_i == Date::MONTHNAMES.index(month).to_i && person['birthdate'].to_date.year.to_i == year
+			# 	total_census += 1
+			# end
 	
 			(outcome_cause || []).each do |outcome|
-				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == Date::MONTHNAMES.index(month).to_i && outcome['outcome_date'].to_date.year.to_i == year
+				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == month_to_i && outcome['outcome_date'].to_date.year.to_i == year
 			end
 			
 			render :text => { deaths: deaths,
 			                  births: births,
-			                  total_census: total_census
+			                  total_census: data.count
 			}.to_json and return
 		end
 		
