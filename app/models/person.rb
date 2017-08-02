@@ -76,6 +76,13 @@ class Person < CouchRest::Model::Base
                     emit(doc['birthdate'], 1);
                 }
             }"
+		
+		view :by_created_at,
+		     :map => "function(doc) {
+                if(doc['type'] == 'Person') {
+                    emit(doc['created_at'], 1);
+                }
+            }"
 	
 	end
 	

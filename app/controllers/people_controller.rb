@@ -181,19 +181,25 @@ class PeopleController < ApplicationController
 			start_day = "#{year}/#{month_to_i}/01"
 			end_day = "#{year}/#{month_to_i}/31"
 			
+			census_start_day = "#{year}-#{month_to_i}-01"
+			census_end_day = "#{year}-#{month_to_i}-31"
+			
 			month_births = Person.by_birthdate.startkey(start_day).endkey(end_day).all.each
 			
+			month_census = Person.by_created_at.endkey(census_end_day).all.each
+			
 			births = month_births.count
-			deaths = 0
+			month_deaths = 0
 			overall_deaths = 0
 	
 			(outcome_cause || []).each do |outcome|
-				deaths += 1 if outcome['outcome_date'].to_date.month.to_i == month_to_i && outcome['outcome_date'].to_date.year.to_i == year
+				month_deaths += 1 if outcome['outcome_date'].to_date.month.to_i == month_to_i && outcome['outcome_date'].to_date.year.to_i == year
 				overall_deaths += 1
 			end
 			
-			render :text => { deaths: deaths,
+			render :text => { deaths: month_deaths,
 			                  births: births,
+			                  month_census: (month_census.count - month_deaths),
 			                  total_census: (data.count - overall_deaths),
 			}.to_json and return
 		end
