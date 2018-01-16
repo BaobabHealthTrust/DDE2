@@ -172,7 +172,7 @@ class PeopleController < ApplicationController
 			month = params[:month_period]
 			month_to_i = Date::MONTHNAMES.index(month).to_i
 			
-			year = Date.today.year
+			year = params[:year] #Date.today.year
 			district = params[:district] ; ta = params[:ta]
 			data = Person.current_district_ta.key([district,ta]).all.each
 			people_ids = data.map(&:id)
