@@ -192,6 +192,17 @@ class Person < CouchRest::Model::Base
 	end
 	###################### end of village listing views ############################################################
 	
+	###################### for evr Dashboard #######################################################################
+	design do
+		view :month_births,
+		     :map => "function(doc) {
+				if((doc['birthdate'] >= '2018/1/01') && (doc['birthdate'] <= '2018/1/31')){
+					emit(doc['birthdate'], 1);
+				}
+			 };",
+	         :reduce => "function(keys, values, rereduce) {};"
+	end
+	################################################################################################################
 	
 	def set_name_codes
 		self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?

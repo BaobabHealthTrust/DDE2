@@ -448,4 +448,38 @@ class PeopleController < ApplicationController
 	end
 	
 	#################################### Village listing APIs ends ##############################
+	
+	#################################### for evr Dashboard ######################################
+	def dashboard_births
+		
+		start = params[:start_date].to_date
+		endd = params[:end_date].to_date
+		people = []
+		(start .. endd).each do |date|
+			m = date.to_date.strftime("%m").to_i
+			d = date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
+			people_on_date = Person.by_birthdate.key("#{d}").all.each.to_a
+			if people_on_date.count > 0
+				people += people_on_date
+			end
+		end
+		
+		#startdate = params[:start_date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
+		#enddate = params[:end_date].to_date.strftime("%Y/%#{m}/%d").gsub(/\s+/, '')
+		#people = Person.by_birthdate.startkey("#{startdate}").endkey("#{enddate}").all.each
+		render :text => people.to_json and return
+	end
+	
+	def dashboard_deaths
+		m = params[:start_date].to_date.strftime("%m").to_i
+		startdate = params[:start_date].to_date.strftime("%Y-%m-%d")
+		enddate = params[:end_date].to_date.strftime("%Y-%m-%d")
+		outcomes = Outcome.by_outcome_date.startkey("#{startdate}").endkey("#{enddate}").each.collect{|c|
+			Person.find(c.person) if c.outcome == "Died" and c.created_at.to_date == Date.today
+		}.compact.uniq
+		
+		render :text => outcomes.to_json and return
+	end
+	#############################################################################################
+	
 end

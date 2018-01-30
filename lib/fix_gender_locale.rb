@@ -4,10 +4,13 @@ def run_gender_fix
 			people = []
 			people << person
 			self.update_person(people.to_json)
+			
+			puts 'updated'
 		end
 	end
 end
 
+# find person and update gender details if in chichewa
 def self.update_person(json)
 	
 	js = JSON.parse(json) rescue nil
