@@ -1,22 +1,22 @@
 require 'couchrest_model'
 
 class Person < CouchRest::Model::Base
-	
+
 	use_database "person"
-	
+
 	before_save :set_name_codes
-	
+
 	def national_id
 		self['_id']
 	end
-	
+
 	def national_id=(value)
 		self['_id']=value
 	end
-	
+
 	property :assigned_site, String
 	property :patient_assigned, TrueClass, :default => false
-	
+
 	property :person_attributes  do
 		property :country_of_residence, String
 		property :citizenship, String
@@ -26,9 +26,9 @@ class Person < CouchRest::Model::Base
 		property :office_phone_number, String
 		property :race, String
 	end
-	
+
 	property :gender, String
-	
+
 	property :names do
 		property :given_name, String
 		property :family_name, String
@@ -37,14 +37,14 @@ class Person < CouchRest::Model::Base
 		property :given_name_code, String
 		property :family_name_code, String
 	end
-	
+
 	property :patient do
 		property :identifiers, []
 	end
-	
+
 	property :birthdate, String
 	property :birthdate_estimated,  TrueClass, :default => false
-	
+
 	property :addresses do
 		property :current_residence, String
 		property :current_village, String
@@ -54,12 +54,12 @@ class Person < CouchRest::Model::Base
 		property :home_ta, String
 		property :home_district, String
 	end
-	
+
 	property :old_identification_number, String
-	
+
 	timestamps!
-	
-	
+
+
 	design do
 		view :by__id,
 		     :map => "function(doc) {
@@ -67,25 +67,25 @@ class Person < CouchRest::Model::Base
                     emit(doc['_id'], 1);
                   }
                 }"
-		
+
 		view :by_old_identification_number
-		
+
 		view :by_birthdate,
 		     :map => "function(doc) {
                 if(doc['type'] == 'Person') {
                     emit(doc['birthdate'], 1);
                 }
             }"
-		
+
 		view :by_created_at,
 		     :map => "function(doc) {
                 if(doc['type'] == 'Person') {
                     emit(doc['created_at'], 1);
                 }
             }"
-	
+
 	end
-	
+
 	design do
 		view :search,
 		     :map => "function(doc){
@@ -93,14 +93,14 @@ class Person < CouchRest::Model::Base
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender], null);
             }
           }"
-		
+
 		view :advanced_search,
 		     :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear(),doc.addresses.home_ta ,doc.addresses.home_district], null);
             }
           }"
-		
+
 		view :search_with_dob,
 		     :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
@@ -146,7 +146,7 @@ class Person < CouchRest::Model::Base
 	          }
           }"
 	end
-	
+
 	###################### the following views are designed to accomodate village listing app #######################
 	design do
 		view :home_district_ta_village,
@@ -161,14 +161,14 @@ class Person < CouchRest::Model::Base
               emit([doc.addresses.current_district ,doc.addresses.current_ta, doc.addresses.current_village], 1);
             }
           }"
-		
+
 		view :current_district_ta,
 		     :map => "function(doc){
             if (doc['type'] == 'Person'){
                 emit([doc.addresses.current_district ,doc.addresses.current_ta], 1);
             }
           }"
-		
+
 		view :current_district,
 		     :map => "function(doc){
             if (doc['type'] == 'Person'){
@@ -181,17 +181,17 @@ class Person < CouchRest::Model::Base
               emit([doc.names.given_name_code], 1);
             }
           }"
-		
+
 		view :family_name_code,
 		     :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.names.family_name_code], 1);
             }
           }"
-	
+
 	end
 	###################### end of village listing views ############################################################
-	
+
 	###################### for evr Dashboard #######################################################################
 	design do
 		view :month_births,
@@ -203,10 +203,14 @@ class Person < CouchRest::Model::Base
 	         :reduce => "function(keys, values, rereduce) {};"
 	end
 	################################################################################################################
-	
+
 	def set_name_codes
 		self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
 		self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?
+	end
+
+	def selupdate_attributes(doc)
+		  raise doc.inspect
 	end
 
 end
