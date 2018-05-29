@@ -434,9 +434,9 @@ module Utils
 
 =end
     def self.validate_record(rec)
-    #//<summary>
-    #// Purpose: strips out all nill value keys from the object
-    #//</summary>
+      #//<summary>
+      #// Purpose: strips out all nill value keys from the object
+      #//</summary>
 
         rec.each {|key,value|
         if(value.is_a?(Hash))
