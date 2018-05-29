@@ -56,8 +56,6 @@ class Person < CouchRest::Model::Base
   end
 
   property :encounter_date, String
-  property :creator, String
-  property :updated_by, String
 
   property :old_identification_number, String
 
