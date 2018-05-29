@@ -56,6 +56,8 @@ class Person < CouchRest::Model::Base
   end
 
   property :encounter_date, String
+  property :creator, String
+  property :updated_by, String
 
   property :old_identification_number, String
 
@@ -146,6 +148,7 @@ class Person < CouchRest::Model::Base
 		          }
 	          }
           }"
+
   end
 
   ###################### the following views are designed to accomodate village listing app #######################
@@ -197,7 +200,7 @@ class Person < CouchRest::Model::Base
   design do
     view :month_births,
          :map => "function(doc) {
-				if((doc['birthdate'] >= '2018/1/01') && (doc['birthdate'] <= '2018/1/31')){
+				if((doc['birthdate'] >= '') && (doc['birthdate'] <= '')){
 					emit(doc['birthdate'], 1);
 				}
 			 };",
@@ -209,5 +212,9 @@ class Person < CouchRest::Model::Base
     self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
     self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?
   end
+
+	def self.update_attributes(doc)
+		  raise doc.inspect
+	end
 
 end
