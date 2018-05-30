@@ -50,7 +50,7 @@ class ProcessController < ActionController::Base  # ApplicationController
   def process_confirmation
 
     @json = params[:person] rescue {}
-
+    
     @results = []
 
     if @json.class.to_s.downcase.strip != "string"

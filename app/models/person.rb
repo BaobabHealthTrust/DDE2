@@ -55,6 +55,8 @@ class Person < CouchRest::Model::Base
 		property :home_district, String
 	end
 
+	property :creator, String
+	property :updated_by, String
 	property :old_identification_number, String
 
 	timestamps!
