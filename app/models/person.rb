@@ -2,6 +2,7 @@ require 'couchrest_model'
 
 class Person < CouchRest::Model::Base
 
+<<<<<<< HEAD
 	use_database "person"
 
 	before_save :set_name_codes
@@ -70,148 +71,149 @@ class Person < CouchRest::Model::Base
                   }
                 }"
 
-		view :by_old_identification_number
+    view :by_old_identification_number
 
-		view :by_birthdate,
-		     :map => "function(doc) {
+    view :by_birthdate,
+         :map => "function(doc) {
                 if(doc['type'] == 'Person') {
                     emit(doc['birthdate'], 1);
                 }
             }"
 
-		view :by_created_at,
-		     :map => "function(doc) {
+    view :by_created_at,
+         :map => "function(doc) {
                 if(doc['type'] == 'Person') {
                     emit(doc['created_at'], 1);
                 }
             }"
 
-	end
+  end
 
-	design do
-		view :search,
-		     :map => "function(doc){
+  design do
+    view :search,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender], null);
             }
           }"
 
-		view :advanced_search,
-		     :map => "function(doc){
+    view :advanced_search,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear(),doc.addresses.home_ta ,doc.addresses.home_district], null);
             }
           }"
 
-		view :search_with_dob,
-		     :map => "function(doc){
+    view :search_with_dob,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear()], null);
             }
           }"
-		view :search_with_home_district,
-		     :map => "function(doc){
+    view :search_with_home_district,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_district], null);
             }
           }"
-		view :search_with_home_ta,
-		     :map => "function(doc){
+    view :search_with_home_ta,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta], null);
             }
           }"
-		view :search_with_home_ta_district,
-		     :map => "function(doc){
+    view :search_with_home_ta_district,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, doc.addresses.home_ta, doc.addresses.home_district], null);
             }
           }"
-		view :search_with_dob_home_ta,
-		     :map => "function(doc){
+    view :search_with_dob_home_ta,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender,(new Date(doc.birthdate)).getFullYear() ,doc.addresses.home_ta], null);
             }
           }"
-		view :search_with_dob_home_district,
-		     :map => "function(doc){
+    view :search_with_dob_home_district,
+         :map => "function(doc){
             if (doc['type'] == 'Person' && doc['assigned_site'] != '???' ){
               emit([doc.names.given_name_code ,doc.names.family_name_code, doc.gender, (new Date(doc.birthdate)).getFullYear(),doc.addresses.home_district], null);
             }
           }"
-		view :search_by_all_identifiers,
-		     :map => "function(doc) {
+    view :search_by_all_identifiers,
+         :map => "function(doc) {
 	          if ((doc['type'] == 'Person' && doc['assigned_site'] != '???' && doc['patient']['identifiers'].length > 0)) {
 		          for(var i in doc['patient']['identifiers']){
               	  		emit(doc['patient']['identifiers'][i][Object.keys(doc['patient']['identifiers'][i])[0]], 1);
 		          }
 	          }
           }"
-	end
 
-	###################### the following views are designed to accomodate village listing app #######################
-	design do
-		view :home_district_ta_village,
-		     :map => "function(doc){
+  end
+
+  ###################### the following views are designed to accomodate village listing app #######################
+  design do
+    view :home_district_ta_village,
+         :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.addresses.home_district ,doc.addresses.home_ta, doc.addresses.home_village], 1);
             }
           }"
-		view :current_district_ta_village,
-		     :map => "function(doc){
+    view :current_district_ta_village,
+         :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.addresses.current_district ,doc.addresses.current_ta, doc.addresses.current_village], 1);
             }
           }"
 
-		view :current_district_ta,
-		     :map => "function(doc){
+    view :current_district_ta,
+         :map => "function(doc){
             if (doc['type'] == 'Person'){
                 emit([doc.addresses.current_district ,doc.addresses.current_ta], 1);
             }
           }"
 
-		view :current_district,
-		     :map => "function(doc){
+    view :current_district,
+         :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.addresses.current_district], 1);
             }
           }"
-		view :given_name_code,
-		     :map => "function(doc){
+    view :given_name_code,
+         :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.names.given_name_code], 1);
             }
           }"
 
-		view :family_name_code,
-		     :map => "function(doc){
+    view :family_name_code,
+         :map => "function(doc){
             if (doc['type'] == 'Person'){
               emit([doc.names.family_name_code], 1);
             }
           }"
 
-	end
-	###################### end of village listing views ############################################################
+  end
+  ###################### end of village listing views ############################################################
 
-	###################### for evr Dashboard #######################################################################
-	design do
-		view :month_births,
-		     :map => "function(doc) {
-				if((doc['birthdate'] >= '2018/1/01') && (doc['birthdate'] <= '2018/1/31')){
+  ###################### for evr Dashboard #######################################################################
+  design do
+    view :month_births,
+         :map => "function(doc) {
+				if((doc['birthdate'] >= '') && (doc['birthdate'] <= '')){
 					emit(doc['birthdate'], 1);
 				}
 			 };",
-	         :reduce => "function(keys, values, rereduce) {};"
-	end
-	################################################################################################################
+         :reduce => "function(keys, values, rereduce) {};"
+  end
+  ################################################################################################################
 
-	def set_name_codes
-		self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
-		self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?
-	end
+  def set_name_codes
+    self.names.given_name_code = self.names.given_name.soundex unless self.names.given_name.blank?
+    self.names.family_name_code = self.names.family_name.soundex unless self.names.family_name.blank?
+  end
 
-	def selupdate_attributes(doc)
+	def self.update_attributes(doc)
 		  raise doc.inspect
 	end
 
