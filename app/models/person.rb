@@ -2,7 +2,6 @@ require 'couchrest_model'
 
 class Person < CouchRest::Model::Base
 
-<<<<<<< HEAD
 	use_database "person"
 
 	before_save :set_name_codes
