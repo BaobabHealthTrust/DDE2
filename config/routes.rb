@@ -137,7 +137,7 @@ Rails.application.routes.draw do
 	get '/retrieve_births' => 'people#retrieve_births'
 	post '/retrieve_births' => 'people#retrieve_births'
 	
-	#retrieve_births
+	#retrieve_births_month
 	get '/retrieve_births_month' => 'people#retrieve_births_month'
 	post '/retrieve_births_month' => 'people#retrieve_births_month'
 	
@@ -148,7 +148,10 @@ Rails.application.routes.draw do
 	#retrieve_deaths
 	get '/village_counts' => 'people#census'
 	post '/village_counts' => 'people#census'
-	
+
+	#retrieve_new_registrations
+	get '/retrieve_new_registrations' => 'people#retrieve_new_registrations'
+	post '/retrieve_new_registrations' => 'people#retrieve_new_registrations'
 	
 	namespace :ws do
 		namespace :rest do

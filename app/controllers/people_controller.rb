@@ -75,7 +75,7 @@ class PeopleController < ApplicationController
 		render :action =>"confirm_demographics" , :layout => false
 	end
 	
-	#################################### Village listinng APIs starts ##############################
+	#################################### Village listing APIs starts ##############################
 	def population_stats
 		if params[:stat] == 'current_district_ta_parameter'
 			
@@ -107,6 +107,15 @@ class PeopleController < ApplicationController
 				end_date = month_ending.strftime('%Y/%-m/%d')
 				
 				Person.by_birthdate.startkey(start_date).endkey(end_date).each do |outcome|
+					person = Person.find_by__id(outcome['_id'])
+					outcome['person_record'] = person
+					data << outcome
+				end
+			elsif parameter == 'new_resgistrations'
+				start_date = month_beginning.strftime('%Y/%-m/%d')
+				end_date = month_ending.strftime('%Y/%-m/%d')
+				
+				Person.by_created_at.startkey(start_date).endkey(end_date).each do |outcome|
 					person = Person.find_by__id(outcome['_id'])
 					outcome['person_record'] = person
 					data << outcome
@@ -401,7 +410,7 @@ class PeopleController < ApplicationController
 		people = Person.by_birthdate.key(birth_date).all.each
 		render :text => people.to_json and return
 	end
-	
+
 	def census
 		
 		villages = params[:villages] || []
@@ -433,6 +442,32 @@ class PeopleController < ApplicationController
 		#startdate = params[:start_date].to_date.strftime("%Y/#{m}/%d").gsub(/\s+/, '')
 		#enddate = params[:end_date].to_date.strftime("%Y/%#{m}/%d").gsub(/\s+/, '')
 		#people = Person.by_birthdate.startkey("#{startdate}").endkey("#{enddate}").all.each
+		render :text => people.to_json and return
+	end
+
+		
+	def retrieve_new_registrations
+		
+		current_district = params[:current_district]
+		current_ta = params[:current_ta]
+		start_date = params[:start_date].to_date.strftime("%Y-%m-%d")
+		end_date = params[:end_date].to_date.strftime("%Y-%m-%d")
+		people = []
+
+		Person.current_district_ta.key([current_district,current_ta]).each do |person|
+			if person[:created_at].to_date.strftime("%Y-%m-%d") >= start_date && person[:created_at].to_date.strftime("%Y-%m-%d") <= end_date
+				people << person
+			end
+		end
+		# (start .. endd).each do |date|
+		# 	m = date.to_date.strftime("%m").to_i
+		# 	d = date.strftime("%Y-#{m}-%d").gsub(/\s+/, '')
+		# 	people_on_date = Person.by_created_at.key("#{d}").all.each.to_a
+		# 	if people_on_date.count > 0
+		# 		people += people_on_date
+		# 	end
+		# end
+		
 		render :text => people.to_json and return
 	end
 	
