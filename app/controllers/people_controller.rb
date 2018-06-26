@@ -178,39 +178,70 @@ class PeopleController < ApplicationController
 		end
 		
 		if params[:stat] == 'bloomberg_union'
-			month = params[:month_period]
-			month_to_i = Date::MONTHNAMES.index(month).to_i
+			# month = params[:month_period]
+			# month_to_i = Date::MONTHNAMES.index(month).to_i
 			
-			year = params[:year] #Date.today.year
-			district = params[:district] ; ta = params[:ta]
-			data = Person.current_district_ta.key([district,ta]).all.each
-			people_ids = data.map(&:id)
-			outcome_cause = Outcome.by_person.keys(people_ids).each
+			# year = params[:year] #Date.today.year
+			# district = params[:district] ; ta = params[:ta]
+			# data = Person.current_district_ta.key([district,ta]).all.each
+			# people_ids = data.map(&:id)
+			# outcome_cause = Outcome.by_person.keys(people_ids).each
 			
-			start_day = "#{year}/#{month_to_i}/01"
-			end_day = "#{year}/#{month_to_i}/31"
+			# start_day = "#{year}/#{month_to_i}/01"
+			# end_day = "#{year}/#{month_to_i}/31"
 			
-			census_start_day = "#{year}-#{month_to_i}-01"
-			census_end_day = "#{year}-#{month_to_i}-31"
+			# census_start_day = "#{year}-#{month_to_i}-01"
+			# census_end_day = "#{year}-#{month_to_i}-31"
 			
-			month_births = Person.by_birthdate.startkey(start_day).endkey(end_day).all.each
+			# month_births = Person.by_birthdate.startkey(start_day).endkey(end_day).all.each
 			
-			month_census = Person.by_created_at.endkey(census_end_day).all.each
+			# month_census = Person.by_created_at.endkey(census_end_day).all.each
 			
-			births = month_births.count
-			month_deaths = 0
-			overall_deaths = 0
+			# births = month_births.count
+			# month_deaths = 0
+			# overall_deaths = 0
 	
-			(outcome_cause || []).each do |outcome|
-				month_deaths += 1 if outcome['outcome_date'].to_date.month.to_i == month_to_i && outcome['outcome_date'].to_date.year.to_i == year
-				overall_deaths += 1
-			end
+			# (outcome_cause || []).each do |outcome|
+			# 	month_deaths += 1 if outcome['outcome_date'].to_date.month.to_i == month_to_i && outcome['outcome_date'].to_date.year.to_i == year
+			# 	overall_deaths += 1
+			# end
 			
-			render :text => { deaths: month_deaths,
-			                  births: births,
-			                  month_census: (month_census.count - month_deaths),
-			                  total_census: (data.count - overall_deaths),
+			# render :text => { deaths: month_deaths,
+			#                   births: births,
+			#                   month_census: (month_census.count - month_deaths),
+			#                   total_census: (data.count - overall_deaths),
+			# }.to_json and return
+
+			#---- testing
+			current_district = params[:current_district]
+			current_ta = params[:current_ta]
+			start_date = params[:start_date].to_date.strftime("%Y/%m/%d")
+			end_date = params[:end_date].to_date.strftime("%Y/%m/%d")
+			mtema_people = [] rescue 0
+			people_birthdate = [] rescue 0
+	
+			Person.current_district_ta.key([current_district,current_ta]).each do |person|
+				mtema_people << person
+				if person[:birthdate].to_date.strftime("%Y/%m/%d") >= start_date && person[:birthdate].to_date.strftime("%Y/%m/%d") <= end_date
+					people_birthdate << person
+				end
+			end
+			# (start .. endd).each do |date|
+			# 	m = date.to_date.strftime("%m").to_i
+			# 	d = date.strftime("%Y-#{m}-%d").gsub(/\s+/, '')
+			# 	people_on_date = Person.by_created_at.key("#{d}").all.each.to_a
+			# 	if people_on_date.count > 0
+			# 		people += people_on_date
+			# 	end
+			# end
+			
+			#render :text => people.to_json and return
+			render :text => { deaths: 0,
+			                  births: people_birthdate.count,
+			                  month_census: 0, #(month_census.count - month_deaths),
+			                  total_census: mtema_people.count
 			}.to_json and return
+			#---- end testing
 		end
 		
 		if params[:stat] == 'current_death_outcomes'
@@ -454,11 +485,14 @@ class PeopleController < ApplicationController
 		end_date = params[:end_date].to_date.strftime("%Y-%m-%d")
 		people = []
 
-		Person.current_district_ta.key([current_district,current_ta]).each do |person|
-			if person[:created_at].to_date.strftime("%Y-%m-%d") >= start_date && person[:created_at].to_date.strftime("%Y-%m-%d") <= end_date
-				people << person
+		#File.open("registrations_#{start_date}_#{end_date}.txt",'w') do |f|
+			Person.current_district_ta.key([current_district,current_ta]).each do |person|
+				if person[:created_at].to_date.strftime("%Y-%m-%d") >= start_date && person[:created_at].to_date.strftime("%Y-%m-%d") <= end_date
+					#f.write(person)
+					people << person
+				end
 			end
-		end
+		#end
 		# (start .. endd).each do |date|
 		# 	m = date.to_date.strftime("%m").to_i
 		# 	d = date.strftime("%Y-#{m}-%d").gsub(/\s+/, '')
@@ -476,7 +510,7 @@ class PeopleController < ApplicationController
 		startdate = params[:start_date].to_date.strftime("%Y-%m-%d")
 		enddate = params[:end_date].to_date.strftime("%Y-%m-%d")
 		outcomes = Outcome.by_outcome_date.startkey("#{startdate}").endkey("#{enddate}").each.collect{|c|
-			Person.find(c.person) if c.outcome == "Died" and c.created_at.to_date == Date.today
+			Person.find(c.person) if c.outcome == "Died" #and c.created_at.to_date == Date.today
 		}.compact.uniq
 		
 		render :text => outcomes.to_json and return
