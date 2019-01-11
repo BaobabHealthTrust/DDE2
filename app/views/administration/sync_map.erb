@@ -1,0 +1,423 @@
+<html>
+  <head>
+    <title>SVG</title>
+    <style>
+
+      .link {
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+      }
+      
+      path.link {
+          fill: none;
+          stroke: #666;
+          stroke-width: 1.5px;
+      }
+      marker#licensing {
+          fill: green;
+      }
+      path.link.licensing {
+          stroke: green;
+      }
+      path.link.resolved {
+          stroke-dasharray: 0, 2 1;
+      }
+      circle {
+          fill: #ccc;
+          stroke: #333;
+          stroke-width: 1.5px;
+      }
+      text {
+          font: 10px sans-serif;
+          pointer-events: none;
+      }
+      text.shadow {
+          stroke: #fff;
+          stroke-width: 3px;
+          stroke-opacity: .8;
+      }
+
+    </style>
+  </head>
+  <body onload="resizeMap()" style="margin: 0px; padding: 5px;">
+    <div id="main" style="padding: 0px; text-align: center; height: 672px; overflow: hidden;"></div>
+    <div id="controls" style="position: absolute; right: 10px; top: 10px; 
+        background-color: #eee; padding-top: 5px; padding-left: 5px; padding-right: 5px; border-radius: 5px;">
+      <img src="/images/zoomin.gif" alt="+" style="cursor: pointer; margin: 5px;" 
+          onclick="zoomlevel += 0.1; d3.select('#region').attr('transform','scale(' + zoomlevel + ')');" />
+      <img src="/images/zoomout.gif" alt="-" style="cursor: pointer; margin: 5px;" 
+          onclick="if(zoomlevel - 0.1 > 0) zoomlevel -= 0.1; d3.select('#region').attr('transform','scale(' + zoomlevel + ')');" />
+    </div>
+  
+    <script src="/javascripts/d3.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      
+      var zoomlevel = 1;
+      
+      var lineData = [];
+      var lnData = [];
+      
+      var loader = d3.xml("/images/mw.svg", function(xml) {
+       document.getElementById("main").appendChild(xml.documentElement);
+             
+        <% @sites.each do |site| %>
+            
+            <%
+              xs = -10
+              ys = -10
+              
+              xt = -10
+              yt = -10
+              
+              if !site[:source][:x].nil? and !site[:source][:y].nil?
+                if site[:source][:region].downcase == "centre"
+                  
+                  xs = site[:source][:x].to_i
+                  ys = site[:source][:y].to_i + 373                
+                  
+                elsif site[:source][:region].downcase == "north"
+                
+                  xs = site[:source][:x].to_i + 39
+                  ys = site[:source][:y].to_i                
+                  
+                elsif site[:source][:region].downcase == "south"
+                
+                  xs = site[:source][:x].to_i + 212
+                  ys = site[:source][:y].to_i + 552                
+                  
+                end
+              end
+            
+              if !site[:target][:x].nil? and !site[:target][:y].nil?
+                if site[:target][:region].downcase == "centre"
+                  
+                  xt = site[:target][:x].to_i
+                  yt = site[:target][:y].to_i + 373                
+                  
+                elsif site[:target][:region].downcase == "north"
+                
+                  xt = site[:target][:x].to_i + 39
+                  yt = site[:target][:y].to_i                
+                  
+                elsif site[:target][:region].downcase == "south"
+                
+                  xt = site[:target][:x].to_i + 212
+                  yt = site[:target][:y].to_i + 552                
+                  
+                end
+              end
+            
+            %>
+            
+            <% if site[:source][:type].downcase == "master" %>
+            
+              if(d3.select("#<%= site[:source][:sitecode].downcase %>")[0][0] == null){
+                d3.select("#region").append("rect")
+                  .style("stroke", "black")
+                  .style("stroke-width", "1px")
+                  .style("fill", "red")
+                  .style("margin", "auto")
+                  .attr("width", 15)
+                  .attr("height", 15)
+                  .attr("x", "<%= xs - 7.5 %>")
+                  .attr("y", "<%= ys - 7.5 %>")
+                  .attr("id", "<%= site[:source][:sitecode].downcase %>")
+                  .attr("tag", "<%= site[:source][:name] %>")
+                  .on("mouseover", function(){
+                      d3.select("#" + this.id).attr("r", 6).style("z-index", "100")
+                          .style("fill", "#537ee0"); 
+                      return tooltip.style("visibility", "visible");
+                    })
+                  .on("mousemove", function(){
+                      return tooltip.style("top", 
+                          (d3.event.pageY-10)+"px")
+                            .style("left", (d3.event.pageX+20)+"px")
+                            .text(getSiteInfo(this.id));
+                    })
+                  .on("mouseout", function(){
+                      d3.select("#" + this.id).attr("r", 6).style("z-index", "10")
+                          .style("fill", "red"); 
+                      return tooltip.style("visibility", "hidden");
+                    }); 
+                }                   
+            
+            <% else %>
+            
+              if(d3.select("#<%= site[:source][:sitecode].downcase %>")[0][0] == null){
+                d3.select("#region").append("circle")
+                  .style("stroke", "white")
+                  .style("stroke-width", "1px")
+                  .style("fill", "red")
+                  .style("margin", "auto")
+                  .attr("r", 6)
+                  .attr("cx", "<%= xs %>")
+                  .attr("cy", "<%= ys %>")
+                  .attr("id", "<%= site[:source][:sitecode].downcase %>")
+                  .attr("tag", "<%= site[:source][:name] %>")
+                  .on("mouseover", function(){
+                      d3.select("#" + this.id).attr("r", 6).style("z-index", "100")
+                          .style("fill", "#537ee0"); 
+                      return tooltip.style("visibility", "visible");
+                    })
+                  .on("mousemove", function(){
+                      return tooltip.style("top", 
+                          (d3.event.pageY-10)+"px")
+                            .style("left", (d3.event.pageX+20)+"px")
+                            .text(getSiteInfo(this.id));
+                    })
+                  .on("mouseout", function(){
+                      d3.select("#" + this.id).attr("r", 6).style("z-index", "10")
+                          .style("fill", "red"); 
+                      return tooltip.style("visibility", "hidden");
+                    });
+               }
+                    
+            <% end %>
+                  
+            
+            <% if site[:target][:type].downcase == "master" %>
+            
+              if(d3.select("#<%= site[:target][:sitecode].downcase %>")[0][0] == null){
+                d3.select("#region").append("rect")
+                  .style("stroke", "black")
+                  .style("stroke-width", "1px")
+                  .style("fill", "red")
+                  .style("margin", "auto")
+                  .attr("width", 15)
+                  .attr("height", 15)
+                  .attr("x", "<%= xt - 7.5 %>")
+                  .attr("y", "<%= yt - 7.5 %>")
+                  .attr("id", "<%= site[:target][:sitecode].downcase %>")
+                  .attr("tag", "<%= site[:target][:name] %>")
+                  .on("mouseover", function(){
+                      d3.select("#" + this.id).attr("r", 6).style("z-index", "100")
+                          .style("fill", "#537ee0"); 
+                      return tooltip.style("visibility", "visible");
+                    })
+                  .on("mousemove", function(){
+                      return tooltip.style("top", 
+                          (d3.event.pageY-10)+"px")
+                            .style("left", (d3.event.pageX+20)+"px")
+                            .text(getSiteInfo(this.id));
+                    })
+                  .on("mouseout", function(){
+                      d3.select("#" + this.id).attr("r", 6).style("z-index", "10")
+                          .style("fill", "red"); 
+                      return tooltip.style("visibility", "hidden");
+                    });  
+                }                  
+            
+            <% else %>
+            
+              if(d3.select("#<%= site[:target][:sitecode].downcase %>")[0][0] == null){
+                d3.select("#region").append("circle")
+                .style("stroke", "white")
+                .style("stroke-width", "1px")
+                .style("fill", "red")
+                .style("margin", "auto")
+                .attr("r", 6)
+                .attr("cx", "<%= xt %>")
+                .attr("cy", "<%= yt %>")
+                .attr("id", "<%= site[:target][:sitecode].downcase %>")
+                .attr("tag", "<%= site[:target][:name] %>")
+                .on("mouseover", function(){
+                    d3.select("#" + this.id).attr("r", 6).style("z-index", "100")
+                        .style("fill", "#537ee0"); 
+                    return tooltip.style("visibility", "visible");
+                  })
+                .on("mousemove", function(){
+                    return tooltip.style("top", 
+                        (d3.event.pageY-10)+"px")
+                          .style("left", (d3.event.pageX+20)+"px")
+                          .text(getSiteInfo(this.id));
+                  })
+                .on("mouseout", function(){
+                    d3.select("#" + this.id).attr("r", 6).style("z-index", "10")
+                        .style("fill", "red"); 
+                    return tooltip.style("visibility", "hidden");
+                  });
+              }
+                   
+            <% end %>
+               
+            lnData.push(
+                {
+                  source:{
+                    x: "<%= xs %>",
+                    y: "<%= ys %>",
+                    ntype: "<%= site[:source][:type] %>"
+                  },
+                  target:{
+                    x: "<%= xt %>",
+                    y: "<%= yt %>",
+                    ntype: "<%= site[:target][:type] %>"
+                  },
+                  label: "<%= site[:label] %>"
+                }
+             )
+                       
+        <% end %>
+           
+             var svg = d3.select("#region");
+              
+             svg.append("svg:marker")
+              .attr("id", "arrow")
+              .attr("viewBox", "0 0 10 10")
+              .attr("refX", 12)
+              .attr("refY", 5)
+              .attr("markerUnits", "strokeWidth")
+              .attr("markerWidth", 8)
+              .attr("markerHeight", 6)
+              .attr("orient", "auto")
+              .append("svg:path")
+              .attr("d", "M 0 0 L 10 5 L 0 10 z");
+  
+             svg.append("svg:marker")
+              .attr("id", "arrow-crimson")
+              .attr("viewBox", "0 0 10 10")
+              .attr("refX", 12)
+              .attr("refY", 5)
+              .attr("markerUnits", "strokeWidth")
+              .attr("markerWidth", 4)
+              .attr("markerHeight", 6)
+              .attr("orient", "auto")
+              .append("svg:path")
+              .attr("d", "M 0 0 L 10 5 L 0 10 z")
+              .attr("fill", "crimson");
+  
+             svg.append("svg:marker")
+              .attr("id", "arrow-olivedrab")
+              .attr("viewBox", "0 0 10 10")
+              .attr("refX", 12)
+              .attr("refY", 5)
+              .attr("markerUnits", "strokeWidth")
+              .attr("markerWidth", 4)
+              .attr("markerHeight", 6)
+              .attr("orient", "auto")
+              .append("svg:path")
+              .attr("d", "M 0 0 L 10 5 L 0 10 z")
+              .attr("fill", "olivedrab");
+  
+             svg.append("svg:marker")
+              .attr("id", "arrow-orange")
+              .attr("viewBox", "0 0 10 10")
+              .attr("refX", 12)
+              .attr("refY", 5)
+              .attr("markerUnits", "strokeWidth")
+              .attr("markerWidth", 4)
+              .attr("markerHeight", 6)
+              .attr("orient", "auto")
+              .append("svg:path")
+              .attr("d", "M 0 0 L 10 5 L 0 10 z")
+              .attr("fill", "#db810d");
+  
+             svg.append("svg:marker")
+              .attr("id", "arrow-blue")
+              .attr("viewBox", "0 0 10 10")
+              .attr("refX", 12)
+              .attr("refY", 5)
+              .attr("markerUnits", "strokeWidth")
+              .attr("markerWidth", 4)
+              .attr("markerHeight", 6)
+              .attr("orient", "auto")
+              .append("svg:path")
+              .attr("d", "M 0 0 L 10 5 L 0 10 z")
+              .attr("fill", "#3666d4");
+  
+            for(var i = 0; i < lnData.length; i++){
+              //The line SVG Path we draw
+              var lineGraph = svg.append("path")
+                  .attr("d", linkArc(lnData[i]))   // lineFunction(lineData))
+                  .attr("stroke", (lnData[i].source.ntype == "master" && lnData[i].target.ntype != "master" ? "olivedrab" : "#db810d"))
+                  .attr("stroke-width", (lnData[i].source.ntype == "master" && lnData[i].target.ntype == "master" ? 6 : 2))
+                  .attr("fill", "none")
+                  .attr("marker-end", "url(#arrow-" + (lnData[i].source.ntype == "master" && lnData[i].target.ntype != "master" ? "olivedrab" : "orange") + ")")
+                  .attr("id", lnData[i].label.toLowerCase() + "_down")
+                  .attr("tag", lnData[i].label + " Downstream Connection")
+                  .on("mouseover", function(){
+                      return tooltip.style("visibility", "visible");
+                    })
+                  .on("mousemove", function(){
+                      return tooltip.style("top", 
+                          (d3.event.pageY-10)+"px")
+                            .style("left", (d3.event.pageX+20)+"px")
+                            .text(getSiteInfo(this.id));
+                    })
+                  .on("mouseout", function(){
+                      return tooltip.style("visibility", "hidden");
+                    });
+                             
+              /*var flip = {
+                source:{
+                  x: lnData[i].target.x,
+                  y: lnData[i].target.y
+                },
+                target:{
+                  x: lnData[i].source.x,
+                  y: lnData[i].source.y
+                }
+              }; 
+                               
+              var lineGraph = svg.append("path")
+                  .attr("d", linkArc(flip))   // lineFunction(lineData))
+                  .attr("stroke", (lnData[i].source.ntype == "master" && lnData[i].target.ntype != "master" ? "crimson" : "#3666d4"))
+                  .attr("stroke-width", (lnData[i].source.ntype == "master" && lnData[i].target.ntype == "master" ? 6 : 2))
+                  .attr("fill", "none")
+                  .attr("marker-end", "url(#arrow-" + (lnData[i].source.ntype == "master" && lnData[i].target.ntype != "master" ? "crimson" : "blue") + ")")
+                  .attr("id", lnData[i].label.toLowerCase() + "_up")
+                  .attr("tag", lnData[i].label + " Upstream Connection")
+                  .on("mouseover", function(){
+                      return tooltip.style("visibility", "visible");
+                    })
+                  .on("mousemove", function(){
+                      return tooltip.style("top", 
+                          (d3.event.pageY-10)+"px")
+                            .style("left", (d3.event.pageX+20)+"px")
+                            .text(getSiteInfo(this.id));
+                    })
+                  .on("mouseout", function(){
+                      return tooltip.style("visibility", "hidden");
+                    });*/
+            }
+             
+       });
+        
+      function linkArc(d) {
+        var dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y,
+            dr = Math.sqrt(dx * dx + dy * dy);
+        return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+      }
+         
+      var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .style("background", "#f6f3d7")
+        .style("padding", "5px")
+        .style("border", "1px solid #000")
+        .style("border-radius", "5px")
+        .text("Tooltip");
+    
+      function getSiteInfo(id){
+        var result = id;
+        
+        if(document.getElementById(id)){
+          result = document.getElementById(id).getAttribute("tag");
+        } 
+        
+        return result;
+      }
+    
+      function resizeMap(){
+        zoomlevel = 1.02;
+        
+        d3.select('#region').attr('transform','scale(' + zoomlevel + ')');
+      }
+      
+    </script>
+    
+  </body>
+</html>

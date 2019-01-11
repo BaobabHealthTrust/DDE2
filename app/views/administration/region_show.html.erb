@@ -1,0 +1,248 @@
+<style type="text/css">
+  .status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  .status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center;
+  }
+  .left td {
+    text-align: left !important;
+  }
+</style>
+
+  <div class="container theme-showcase" role="main">
+    <div class="jumbotron head">
+      <h2>Region::View</h2>
+      <div class="form-control-group" style="float: right; margin-top: -45px; margin-right: -55px; width: 300px;">
+        <select id="region" name="region" class="form-control" placeholder="Region" required="" onchange="switchRegion(this.value)" style="width: 90%; float: left" >
+          <option value="">[ - Select site region in Malawi - ]</option>
+          <option value="Centre" <%= (!params["region"].nil? and params["region"].downcase.strip == "centre" ? "selected" : "") %> >Central Region</option>
+          <option value="North" <%= (!params["region"].nil? and params["region"].downcase.strip == "north" ? "selected" : "") %> >Northern Region</option>
+          <option value="South" <%= (!params["region"].nil? and params["region"].downcase.strip == "south" ? "selected" : "") %> >Southern Region</option>
+        </select>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          NPID Distribution By Regional Sites
+        </h3>
+      </div>
+      <div class="panel-body">
+        <div style="float: left; width: 50%;">
+          <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 100%; overflow: hidden !important; height: 710px;" src="/map?region"></iframe>
+        </div>
+      
+        <div class="row" style="float: right; width: 48%; height: 710px; margin-right: 8px; oveflow: auto;">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title" id="section">&nbsp;</h3>
+            </div>
+            <div class="panel-body" style="height: 555px; overflow: auto; padding: 1px !important;" id="sites">                
+              &nbsp;    
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title" id="section">Region NPID Status</h3>
+            </div>
+            <div class="panel-body" style="height: 53px; overflow: hidden; padding: 1px !important;">
+              
+              <table width="100%" class="status">
+                <tr>
+                  <th>
+                    Sites
+                  </th>
+                  <th>
+                    Allocated
+                  </th>
+                  <th>
+                    Assigned
+                  </th>
+                  <th>
+                    Available
+                  </th>
+                  <th>
+                    Status
+                  </th>
+                </tr>
+                <tr>
+                  <td id="region_sites">
+                    &nbsp;
+                  </td>
+                  <td id="region_allocated">
+                    &nbsp;
+                  </td>
+                  <td id="region_assigned">
+                    &nbsp;
+                  </td>
+                  <td id="region_available">
+                    &nbsp;
+                  </td>
+                  <td id="region_status">
+                    &nbsp;
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>         
+      </div>    
+    </div>
+  </div>
+
+<script type="text/javascript">
+  <!--
+      
+  var sites = {
+      "Centre":{
+        "data":[],
+        allocated: "<%= @sites["Centre"][:allocated] %>",
+        assigned: "<%= @sites["Centre"][:assigned] %>",
+        available: "<%= @sites["Centre"][:available] %>",
+        unassigned: "<%= @sites["Centre"][:unassigned] %>",
+        status: null        
+      },
+      "North":{
+        "data":[],
+        allocated: "<%= @sites["North"][:allocated] %>",
+        assigned: "<%= @sites["North"][:assigned] %>",
+        available: "<%= @sites["North"][:available] %>",
+        unassigned: "<%= @sites["North"][:unassigned] %>",
+        status: null        
+      },
+      "South":{
+        "data":[],
+        allocated: "<%= @sites["South"][:allocated] %>",
+        assigned: "<%= @sites["South"][:assigned] %>",
+        available: "<%= @sites["South"][:available] %>",
+        unassigned: "<%= @sites["South"][:unassigned] %>",
+        status: null        
+      }
+    };
+  
+  <% @sites.each do |region, sites| %>
+    
+    <% sites[:data].each do |site| %>
+    
+      sites["<%= region %>"]["data"].push(
+        {
+          "sitecode":"<%= site[:sitecode] %>",
+          "name":"<%= site[:name] %>",
+          "count":"<%= site[:count] %>",
+          "threshold":"<%= site[:threshold] %>",
+          "batchsize":"<%= site[:batchsize] %>",
+          "region":"<%= site[:region] %>",
+          "x":"<%= site[:x] %>",
+          "y":"<%= site[:y] %>",
+          "allocated":"<%= site[:allocated] %>",
+          "assigned":"<%= site[:assigned] %>",
+          "available":"<%= site[:available] %>",
+          "status":"<%= site[:status] %>"
+        }
+      );
+    
+    <% end %>
+    
+  <% end %>
+   
+  function switchRegion(region){
+    document.getElementById("section").innerHTML = "&nbsp;";
+    document.getElementById("sites").innerHTML = "&nbsp;";
+    $("#region_sites")[0].innerHTML = "";
+    
+    if(region.trim().length == 0){
+      document.getElementById("map").setAttribute("src", "/map?region");
+      return;
+    } else {    
+      document.getElementById("map").setAttribute("src", "/region/" + region.trim());
+      
+      switch(region.trim().toLowerCase()){
+        case "centre":
+          document.getElementById("section").innerHTML = "Central Region Sites Summaries (" + sites["Centre"]["data"].length + ")";
+          break;
+        case "north":
+          document.getElementById("section").innerHTML = "Northern Region Sites Summaries (" + sites["North"]["data"].length + ")";
+          break;
+        case "south":
+          document.getElementById("section").innerHTML = "Southern Region Sites Summaries (" + sites["South"]["data"].length + ")";
+          break;
+      }
+      
+      $("#region_sites")[0].innerHTML = sites[region.trim()]["data"].length;
+      
+      $("#region_allocated")[0].innerHTML = sites[region.trim()]["allocated"];
+      
+      $("#region_assigned")[0].innerHTML = sites[region.trim()]["assigned"];
+      
+      $("#region_available")[0].innerHTML = sites[region.trim()]["available"];
+      
+      $("#region_status")[0].innerHTML = sites[region.trim()]["status"];
+      
+      var table = document.createElement("table");
+      table.setAttribute("width", "100%");
+      table.className = "status";
+      table.style.marginTop = "-20px";
+      
+      document.getElementById("sites").appendChild(table);
+      
+      var tbody = document.createElement("tbody");
+      
+      table.appendChild(tbody);
+      
+      var tr = document.createElement("tr");
+      
+      tbody.appendChild(tr);
+      
+      var fields = ["Site", "Allocated", "Assigned", "Available", "Status"];
+      
+      for(var i = 0; i < fields.length; i++){
+        var td = document.createElement("th");
+        td.innerHTML = fields[i];
+        
+        tr.appendChild(td);
+      }
+      
+      for(var site in sites[region.trim()]["data"]){
+        var tr = document.createElement("tr");
+      
+        tbody.appendChild(tr);
+      
+        var td1 = document.createElement("td");
+        td1.innerHTML = "<div style='width: 100% !important; text-align: left !important;'>" + sites[region.trim()]["data"][site]["name"] + "</div>";
+        
+        tr.appendChild(td1);  
+      
+        var td2 = document.createElement("td");
+        td2.innerHTML = sites[region.trim()]["data"][site]["allocated"];
+        
+        tr.appendChild(td2);  
+      
+        var td3 = document.createElement("td");
+        td3.innerHTML = sites[region.trim()]["data"][site]["assigned"];
+        
+        tr.appendChild(td3);  
+      
+        var td4 = document.createElement("td");
+        td4.innerHTML = sites[region.trim()]["data"][site]["available"];
+        
+        tr.appendChild(td4);  
+      
+        var td5 = document.createElement("td");
+        td5.innerHTML = sites[region.trim()]["data"][site]["status"];
+        
+        tr.appendChild(td5);  
+      
+      }
+    }
+  }
+   
+  switchRegion(document.getElementById("region").value); 
+    
+  //-->
+</script>

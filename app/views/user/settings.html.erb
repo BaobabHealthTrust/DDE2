@@ -1,0 +1,61 @@
+<script>
+function openPage(pg) {
+  document.location = '/user/settings?id=' + pg;
+}
+
+</script>
+
+<style type="text/css">
+  td {
+    padding: 10px !important;
+  }
+  select,
+  textarea,
+  input {
+    width: 70% !important;
+    float: left !important;
+  }
+  button {
+    margin: 10px !important;
+  }
+  .contents button {
+    width: 80%;
+    margin: 10px;
+  }
+
+  .span3 {
+    float: left;
+    width: 19%;
+    padding-left: 10px;
+    text-align: center;
+  }
+
+  .span9 {
+    float: right;
+    width: 79%;
+    padding-right: 10px;
+  }
+
+</style>
+<style type="text/css">
+  .status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  .status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center;
+  }
+  .left td {
+    text-align: left !important;
+  }
+</style>
+
+<div class="container theme-showcase" role="main">
+  <%= render(:partial => @partial) %>
+</div>
+

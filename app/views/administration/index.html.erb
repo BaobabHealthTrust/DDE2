@@ -1,0 +1,208 @@
+<style type="text/css">
+  #status th {
+    padding: 2px !important;
+    border: 1px solid #999 !important;
+    text-align: center !important;
+    color: #333 !important;
+    background-color: #ccc !important;
+  }
+  #status td {
+    padding: 2px !important;
+    border: 1px solid #ccc !important;
+    text-align: center !important;
+  }
+</style>
+<script src="/javascripts/d3.js" charset="utf-8"></script>
+<div class="container theme-showcase" role="main">
+  <div class="jumbotron head">
+    <h2>Home</h2>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        NPID Distribution By Site
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div style="float: left; width: 27%;">
+        <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 100%; overflow: hidden !important; height: 710px;" src="/national_map"></iframe>
+      </div>
+      <div class="row" style="float: right; width: 71%; height: 580px; margin-right: 8px; oveflow: auto;">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">National NPID Status</h3>
+          </div>
+          <div class="panel-body" style="height: 128px; overflow: hidden; padding: 1px !important;">
+            <table width="100%" id="status">
+              <tr>
+                <th>
+                  Region
+                </th>
+                <th>
+                  Sites
+                </th>
+                <th>
+                  Allocated
+                </th>
+                <th>
+                  Assigned
+                </th>
+                <th>
+                  Available
+                </th>
+                <th>
+                  Status
+                </th>
+              </tr>
+                
+              <%
+              
+                allocated = 0
+                assigned = 0
+                available = 0
+                sites = 0
+              
+              %> 
+               
+              <% @sites.each do |region, value| %>
+              
+                <%
+                  # Aggregates
+                  
+                  allocated += @sites[region][:allocated].to_i
+                  assigned += @sites[region][:assigned].to_i
+                  available += @sites[region][:available].to_i
+                  sites += @sites[region][:data].length
+                
+                %> 
+                
+                <tr>
+                  <td>
+                    <%= region %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:data].length %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:allocated] %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:assigned] %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:available] %>
+                  </td>
+                  <td>
+                    <%= @sites[region][:status] %>
+                  </td>
+                </tr>
+              
+              <% end %>
+              
+              <tr>
+                <th>
+                  Totals
+                </th>
+                <th>
+                  <%= sites %>
+                </th>
+                <th>
+                  <%= allocated %>
+                </th>
+                <th>
+                  <%= assigned %>
+                </th>
+                <th>
+                  <%= available %>
+                </th>
+                <th>
+                  &nbsp;
+                </th>
+              </tr>
+              
+            </table>
+          </div>
+        </div>
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title" id="section">Sites NPID Statuses</h3>
+          </div>
+          <div class="panel-body" style="height: 482px; overflow: auto; padding: 1px !important;">
+                <table width="100%" id="status">
+                  <tr>
+                    <th>
+                      Region
+                    </th>
+                    <th>
+                      Site
+                    </th>
+                    <th>
+                      Allocated
+                    </th>
+                    <th>
+                      Assigned
+                    </th>
+                    <th>
+                      Available
+                    </th>
+                    <th>
+                      Status
+                    </th>
+                  </tr>
+                                     
+                  <% @sites.each do |region, data| %>
+                  
+                    <tr style="background-color: #eee; font-weight: bold;">
+                      <td>
+                        <%= region %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:data].length %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:allocated] %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:assigned] %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:available] %>
+                      </td>
+                      <td>
+                        <%= @sites[region][:status] %>
+                      </td>
+                    </tr>
+                    
+                    <% data[:data].each do |site| %>
+                    
+                      <tr name="<%= region.downcase %>">
+                        <td>
+                          &nbsp;
+                        </td>
+                        <td style="text-align: left !important;">
+                          <%= site[:name] %>
+                        </td>
+                        <td>
+                          <%= site[:allocated] %>
+                        </td>
+                        <td>
+                          <%= site[:assigned] %>
+                        </td>
+                        <td>
+                          <%= site[:available] %>
+                        </td>
+                        <td>
+                          <%= site[:status] %>
+                        </td>
+                      </tr>
+                    
+                    <% end %>
+                  
+                  <% end %>
+                                
+                </table>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

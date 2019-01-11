@@ -1,0 +1,194 @@
+<html xmlns="http://www.w3.org/1999/html">
+    <head>
+      <script language="javascript" type="text/javascript" src="/javascripts/jquery.js"></script>
+      <style type="text/css">
+        div.footer{
+            width: 99%;
+            position: absolute;
+            bottom: 0vh;
+            height: 13vh;
+            background-color: #585858;
+        }
+
+        div.content_with_footer{
+           width: 100%;
+           padding: 2vh 0.8vw 0vh 0.8vw;
+           margin-left: auto;
+           margin-right: auto;
+           font-family: arial;
+           height: 85vh;
+        }
+
+        div.grouping{
+            height:75vh;
+            border: 1px solid #000000;
+            border-radius: 15px;
+            padding-top: 1vh;
+            font-size: 170%;
+            background-color: #F0F0F0 ;
+            margin-top: 1vh;
+        }
+
+        div.option{
+            border: 0px solid black;
+            border-bottom-width: 1px;
+            width: 98%;
+            font-size: 130%;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 1vh;
+            padding-bottom: 1vh;
+        }
+        div.circle{
+            background-color: #ffffff;
+            margin-left: 60%;
+            margin-top: 1vh;
+            margin-bottom: 1vh;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 1px solid blue;
+            text-align: center;
+
+        }
+        input{
+            border-width: 0px;
+            font-size: 100%;
+            background-color: #F0F0F0 ;
+        }
+        button{
+            height: 10vh;
+            font-size: 180%;
+            color: #ffffff;
+            margin-top: 2vh;
+            margin-left: 1vw;
+            margin-right: 1vw;
+            font-family: arial;
+            border-radius: 20px;
+            border: 2px solid;
+        }
+        button.btn-danger {
+            background-image: -webkit-linear-gradient(top, #d9534f 0%, #c12e2a 100%);
+            background-image:         linear-gradient(to bottom, #d9534f 0%, #c12e2a 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9534f', endColorstr='#ffc12e2a', GradientType=0);
+            filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+            background-repeat: repeat-x;
+            border-color: #b92c28;
+        }
+        button.btn-success {
+            background-image: -webkit-linear-gradient(top, #5cb85c 0%, #419641 100%);
+            background-image:         linear-gradient(to bottom, #5cb85c 0%, #419641 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5cb85c', endColorstr='#ff419641', GradientType=0);
+            filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+            background-repeat: repeat-x;
+            border-color: #3e8f3e;
+        }
+      </style>
+
+
+    </head>
+
+    <body style="padding: 0px;width: 98%;">
+        <div class="content_with_footer">
+           <span style="font-size: 250%;">Select Patient From The Following List<br></span>
+           <div class="grouping" style="float: left;width: 39%;padding-left: 1%;">
+             <form novalidate="novalidate" id="person" class="form-horizontal" role="form" method="post" action="/people/update_person" autocomplete="off">
+                 First Name:<input name= "names[given_name]" id="first_name"> <br>
+                 Last Name :<input name= "names[family_name]" id="last_name"><br>
+                 DOB:<input name="birthdate" id="age"> <br>
+                 National ID : <input name="npid" id="npid"><br>
+                 Current Residence : <input name="addresses[current_residence]" id="c_residence"><br>
+                 <div class="circle" id="gender">
+                    <img id ="gender_img" src="/images/female.gif" alt="" style="margin-top: 25%;height:50%;">
+                 </div>
+                 Current Village :<input name="addresses[current_village]" id="c_village"><br>
+                 Current T/A : <input name="addresses[current_ta]" id= "c_ta"><br>
+                 Current District : <input name="addresses[current_district]" id="c_district"><br>
+                 Home Village : <input name="addresses[home_village]" id="h_village"><br>
+                 Home T/A : <input name="addresses[home_ta]" id="h_ta"><br>
+                 Home District : <input name="addresses[home_district]" id=h_district><br>
+                 <input type="hidden" name="gender" id="gender_input">
+             </form>
+           </div>
+          <div id="options" class="grouping" style="float: right;width: 58%;">
+
+          </div>
+        </div>
+
+        <div class="footer">
+          <button class="btn btn-danger" style="float: left; width: 10vw;" >Cancel</button>
+          <button class="btn btn-success btn-large" style="float: right;width: 15vw;" onclick="send()">Select Patient</button>
+        </div>
+    </body>
+
+    <script type="text/javascript">
+      <!--
+        var data = {};
+        var index = 0;
+        var indexed = 0;
+        var content = document.getElementById("options");
+        <% (@matching_records || []).each do |record| %>
+        data[index] = {"person_attributes":{
+            "citizenship": '<%=record['person_attributes']['citizenship'] rescue ''%>',
+            "occupation": '<%= record['person_attributes']['occupation'] rescue ''%>',
+            "home_phone_number": '<%= record['person_attributes']['home_phone_number'] rescue ''%>',
+            "cell_phone_number": '<%= record['person_attributes']['cell_phone_number'] rescue ''%>',
+            "office_phone_number": '<%= record['person_attributes']['office_phone_number'] rescue ''%>',
+            "race": '<%= record['person_attributes']['race'] rescue ''%>'
+        },
+            "gender": '<%= record['gender'] rescue ''%>',
+            "names": {
+                "given_name": '<%= record['names']['given_name'] rescue ''%>',
+                "family_name": '<%= record['names']['family_name'] rescue ''%>'
+            },
+            "birthdate": '<%= record['birthdate'] rescue ''%>',
+            "addresses":{
+                "current_residence": '<%= record['addresses']['current_residence'] rescue '' %>',
+                "current_village": '<%= record['addresses']['current_village'] rescue '' %>',
+                "current_ta": '<%= record['addresses']['current_ta'] rescue '' %>',
+                "current_district": '<%= record['addresses']['current_district'] rescue '' %>',
+                "home_village": '<%= record['addresses']['home_village'] rescue '' %>',
+                "home_ta": '<%= record['addresses']['home_ta'] rescue '' %>',
+                "home_district": '<%= record['addresses']['home_district'] rescue '' %>'
+            },
+            "npid": '<%= record["_id"] rescue '' %>'
+        }
+
+        var option = document.createElement("div");
+        option.innerHTML = data[index]['names']['given_name'] + " " + data[index]['names']['family_name'];
+        option.innerHTML = option.innerHTML + " , " + data[index]['npid']+ " , " + data[index]["gender"];
+        option.innerHTML = option.innerHTML + " , " + data[index]['addresses']['home_ta'];
+        option.setAttribute("class", 'option');
+        option.setAttribute("onClick", 'selected('+index+')');
+        content.appendChild(option);
+        index +=1;
+        <% end %>
+        selected(indexed);
+
+        function selected(index){
+            indexed = index;
+            document.getElementById("first_name").value = data[index]['names']['given_name'];
+            document.getElementById("last_name").value = data[index]['names']['family_name'];
+            document.getElementById("age").value = data[index]['birthdate'];
+            document.getElementById("npid").value = data[index]['npid'];
+            document.getElementById("gender_input").value = data[index]['gender'];
+            document.getElementById("c_residence").value = data[index]['addresses']['current_residence'];
+            document.getElementById("c_village").value = data[index]['addresses']['current_village'];
+            document.getElementById("c_ta").value = data[index]['addresses']['current_ta'];
+            document.getElementById("h_village").value = data[index]['addresses']['home_village'];
+            document.getElementById("h_ta").value = data[index]['addresses']['home_ta'];
+            document.getElementById("h_district").value = data[index]['addresses']['home_district'];
+            document.getElementById("c_district").value = data[index]['addresses']['current_district'];
+            document.getElementById("gender_img").setAttribute("src", "/images/" + data[index]['gender'].toLowerCase()+".gif")
+        }
+       //-->
+    </script>
+    <script type="text/javascript">
+     <!--
+        function send(){
+            var my_form = document.getElementById("person");
+            my_form.submit();
+        }
+     //-->
+    </script>
+</html>

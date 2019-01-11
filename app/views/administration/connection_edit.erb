@@ -1,0 +1,153 @@
+<style type="text/css">
+  td {
+    padding: 10px !important;
+  }
+  select,
+  textarea,
+  input {
+    width: 70% !important;
+    float: left !important;
+  }
+  button {
+    margin: 10px !important;
+  }
+</style>
+
+<div class="container theme-showcase" role="main">
+  <div class="jumbotron head">
+    <h2>Connection::Editing</h2>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Edit DDE Sync Connection</h3>
+    </div>
+    <div class="panel-body">
+    
+      <%= form_tag('/administration/connection_update', method: 'post', enctype: 'multipart/form-data', 
+          id: 'site-form', class: "form-horizontal", autocomplete: "off", role: "form", novalidate: "novalidate") do %>
+      
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%">
+                  <label class="control-label">Connection:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <select id="connection" name="connection" class="form-control" placeholder="Source" required="" onchange="document.getElementById('map').setAttribute('src', '/sync_map?src=' + this.value)" >
+                    <option value="">[ - Select connection - ]</option>
+                    
+                    <% @connections.each do |code| %>
+                    
+                      <option value="<%= code[0] %>"><%= "#{code[0]} (#{code[1]})" %></option>
+                    
+                    <% end %>
+                    
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="form-control-group">
+            <table style="width: 100%;">
+              <tr>
+                <td align="right" style="width: 20%; vertical-align: top;">
+                  <label class="control-label">Connection Mapping:</label>&nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                  <iframe id="map" style="border: 1px dotted #999; padding: 0px; text-align: center; width: 70%; overflow: hidden !important; height: 720px;" src="/sync_map"></iframe>
+                </td>
+              </tr>
+            </table>
+          </div>        
+          
+          <table style="width: 100%;">
+            <tr>
+              <td style="width: 20%;">
+                  <button type="button" class="btn btn-danger" style="font-size: 18px !important; float: left;" onclick="window.location = '/'">Cancel</button>
+              </td>
+              <td>
+                  <button type="button" class="btn btn-danger btn-large" style="font-size: 18px !important; float: right;" 
+                      onclick="if(!$('#site-form').valid()) return; if(confirm('Do you really want to delete this connection?')){$('#site-form').submit()}" >Delete Connection</button>
+              </td>
+            </tr>
+          </table>
+          
+      <% end %>
+      
+    </div>
+  </div>
+</div>
+
+<script defer="true">
+  
+  function prettyPrint(){
+    $(document).ready(function(){
+      
+		    $('#site-form').validate({		    
+	        rules: {
+            sink: {
+              required: true,
+              remote: {
+                url: "/check_site_code",
+                type: "get",
+                data: {
+                  source: function() {
+                    return $( "#source" ).val();
+                  },
+                  sink: function() {
+                    return $( "#sink" ).val();
+                  }
+                }
+              }
+            }
+          },
+			    highlight: function(element) {
+				    $(element).closest('.control-group').removeClass('success').addClass('error');
+			    },
+			    success: function(element) {
+				    element
+				    .text('OK!').addClass('valid')
+				    .closest('.control-group').removeClass('error').addClass('success');
+			    }
+	      });
+
+    }); // end document.ready
+  }
+  
+  $(document).ready(function(){
+      
+		  $('#site-form').validate({		    
+	      rules: {
+          sink: {
+            required: true,
+            remote: {
+              url: "/check_duplicate_connections",
+              type: "get",
+              data: {
+                source: function() {
+                  return $( "#source" ).val();
+                },
+                sink: function() {
+                  return $( "#sink" ).val();
+                }
+              }
+            }
+          }
+        },
+			  highlight: function(element) {
+				  $(element).closest('.control-group').removeClass('success').addClass('error');
+			  },
+			  success: function(element) {
+				  element
+				  .text('OK!').addClass('valid')
+				  .closest('.control-group').removeClass('error').addClass('success');
+			  }
+	    });
+
+  }); // end document.ready
+  
+  addEventListener('load', prettyPrint, false);
+	$(document).ready(function(){
+	  $('pre').addClass('prettyprint linenums');
+	});
+</script>
